@@ -1,0 +1,21 @@
+{
+    "basket.json" : 105.0,
+    "id" : 105.0,
+    "type" : 1.0,
+    "N" : 50.0,
+    "k" : 0.0,
+    "nburst" : 1.0,
+    "threshold" : 0.0,
+    "z" : 1.0,
+    
+    "ap" : 1.0,
+    "ref" : 30.0,
+    "del" : 0.0,
+    "dur" : 150.0,
+
+    "osc" : 0.0,
+
+    "ext_type": 1,
+    "ext_val" : 10,
+    "ext_step" : 5
+}

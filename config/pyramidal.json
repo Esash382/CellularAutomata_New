@@ -1,0 +1,21 @@
+{
+    "pyramidal" : 101.0,
+    "id" : 101.0,
+    "type" : 0.0,
+    "N" : 1500.0,
+    "k" : 5.0,
+    "nburst" : 1.0,
+    "threshold" : 1.0,
+    "z" : 500.0,
+    
+    "ap" : 12,
+    "ref" : 20.0,
+    "del" : 5.0,
+    "dur" : 10.0,
+
+    "osc" : 10.0,
+
+    "ext_type": 0,
+    "ext_val" : 5,
+    "ext_step" : 5
+}

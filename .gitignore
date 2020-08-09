@@ -1,0 +1,9 @@
+results
+results/*
+bin
+bin/*
+obj
+obj/*
+cscope.out
+tags
+*.txt
