@@ -5,17 +5,19 @@
     "N" : 1000.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : -1.0,
+    "threshold" : 1.0,
     "z" : 0.0,
 
-    "ap" : 10.0,
-    "ref" : 30.0,
+    "ap" : 1.0,
+    "ref" : 11.0,
     "del" : 5.0,
     "dur" : 10.0,
 
     "osc" : 0.0,
 
+    "num_ext_input" : 1,
     "ext_type": 0,
-    "ext_val" : 5,
+    "ext_val_1" : 12,
+    "ext_val_2" : -5,
     "ext_step" : 5
 }

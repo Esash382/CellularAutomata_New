@@ -166,16 +166,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -224,16 +224,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -282,16 +282,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 2.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 2.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -340,16 +340,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == ON);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 2.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 3.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 2.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 3.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -398,16 +398,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 4.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 2.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 3.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 4.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 2.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 3.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -456,16 +456,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 4.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 5.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 3.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 4.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 5.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 3.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -514,16 +514,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 4.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 5.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 4.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 5.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -572,16 +572,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == ON);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 5.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 5.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -630,16 +630,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 8.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 8.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -688,16 +688,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 8.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 9.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 8.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 9.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -746,16 +746,16 @@ void TestModel::testPeriodicExternalInputWithoutDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 8.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 9.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 8.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 9.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -891,16 +891,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -949,16 +949,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == ON);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 1.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -1007,16 +1007,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 1.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1065,16 +1065,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 1.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 1.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 1.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1123,16 +1123,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1181,16 +1181,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1239,16 +1239,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == OFF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 0.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -1297,16 +1297,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == ON);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == ON);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == ON);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.5);
@@ -1355,16 +1355,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 6.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 6.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1413,16 +1413,16 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
             CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][3] == 0.0f);
 
             // States of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == REF);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_state == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[0] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[1] == OFF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[2] == REF);
+            CPPUNIT_ASSERT(mTestObj->m_n_matrix[3] == REF);
 
             // Firing times of neurons
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_firing == 0.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_firing == 7.0);
-            CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[1]->m_firing == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == 0.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == 7.0);
+            CPPUNIT_ASSERT(mTestObj->m_nf_matrix[3] == 7.0);
 
             // Check 'ex' network stats
             CPPUNIT_ASSERT(mTestObj->population_network[0]->ac_stats[n] == 0.0);
@@ -1443,7 +1443,7 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
 
 void TestModel::setUp(void)
 {
-	handle = dlopen("libca.so", RTLD_NOW);
+	handle = dlopen("libcaf.so", RTLD_NOW);
 	char* error;
     const char* filepath = "/home/esash/Documents/Projects/CellularAutomata/CellularAutomata_Fast/";
 

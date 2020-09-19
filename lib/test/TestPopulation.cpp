@@ -89,8 +89,8 @@ void TestPopulation::testComputeWeights(void)
         uint i = 1;
         uint n = rand() % mTestObj->time_vec.size();
 
-        mTestObj->population_network[0]->m_nnetwork[0]->m_state = ON;
-        mTestObj->population_network[0]->m_nnetwork[0]->m_firing = mTestObj->time_vec[n];
+        mTestObj->m_n_matrix[0] = ON;
+        mTestObj->m_nf_matrix[0] = mTestObj->time_vec[n];
         sum = mTestObj->call_compute_weights(mTestObj->population_network[0], n, i);
 
         // weight of projection: 2.0 + external input value: 0.0
@@ -100,7 +100,7 @@ void TestPopulation::testComputeWeights(void)
         sum = mTestObj->call_compute_weights(mTestObj->population_network[0], n, i);
         CPPUNIT_ASSERT(sum == 5.0);
         CPPUNIT_ASSERT(sum > mTestObj->population_network[0]->threshold);
-        mTestObj->population_network[0]->m_nnetwork[1]->m_state = ON;
+        mTestObj->m_n_matrix[1] = ON;
     }
 
     sum = 0.0;
@@ -109,8 +109,8 @@ void TestPopulation::testComputeWeights(void)
         uint i = 3;
         uint n = rand() % mTestObj->time_vec.size();
 
-        mTestObj->population_network[1]->m_nnetwork[0]->m_state = ON;
-        mTestObj->population_network[1]->m_nnetwork[0]->m_firing = mTestObj->time_vec[n];
+        mTestObj->m_n_matrix[2] = ON;
+        mTestObj->m_nf_matrix[2] = mTestObj->time_vec[n];
         sum = mTestObj->call_compute_weights(mTestObj->population_network[1], n, i);
 
         // weight of projection: 2.0 + external input value: 0.0
@@ -126,11 +126,12 @@ void TestPopulation::testComputeWeights(void)
     mTestObj->call_threshold_block(mTestObj->population_network[0], n, 0, OFF);
     mTestObj->call_threshold_block(mTestObj->population_network[0], n, 1, OFF);
     mTestObj->call_threshold_block(mTestObj->population_network[1], n, 0, OFF);
-    mTestObj->population_network[0]->m_nnetwork[0]->m_firing = 0.0;
-    mTestObj->population_network[1]->m_nnetwork[0]->m_firing = 0.0;
-    CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == OFF);
-    CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[1]->m_state == OFF);
-    CPPUNIT_ASSERT(mTestObj->population_network[1]->m_nnetwork[0]->m_state == OFF);
+    mTestObj->m_nf_matrix[0] = 0.0;
+    mTestObj->m_nf_matrix[1] = 0.0;
+    mTestObj->m_nf_matrix[2] = 0.0;
+    CPPUNIT_ASSERT(mTestObj->m_nf_matrix[0] == OFF);
+    CPPUNIT_ASSERT(mTestObj->m_nf_matrix[1] == OFF);
+    CPPUNIT_ASSERT(mTestObj->m_nf_matrix[2] == OFF);
 
     std::cout << "\n===== TestPopulation : COMPUTE WEIGHTS TESTS PASSED =====" << std::endl;
 
@@ -272,59 +273,12 @@ void TestPopulation::testComputeWeights(void)
     CPPUNIT_ASSERT(mTestObj->m_s_matrix[2][3] == S_OFF);
     CPPUNIT_ASSERT(mTestObj->m_s_matrix[3][3] == S_OFF);
 
-
     std::cout << "\n===== TestPopulation : ACTIVATE SYNAPSES AFTER DELAY TEST PASSED =====" << std::endl;
 }
 
-/*
-void TestPopulation::testSynapticBlock_RandomStimulation(void)
-{
-    // RAND stimulation
-    uint n = rand() % mTestObj->time_vec.size();
-    mTestObj->population_network[0]->tau_del = 0.0f;
-    mTestObj->population_network[1]->tau_del = 0.0f;
-    mTestObj->population_network[0]->external_input = UNKNOWN;
-    mTestObj->population_network[1]->external_input = UNKNOWN;
-    mTestObj->call_synaptic_block(mTestObj->population_network[0], n, 0);
-    mTestObj->call_activate_synapses(n);
-
-    CPPUNIT_ASSERT(mTestObj->m_sf_matrix[0][0] == 0.0);
-    CPPUNIT_ASSERT(mTestObj->m_sf_matrix[1][0] == mTestObj->time_vec[n]);
-    CPPUNIT_ASSERT(mTestObj->m_sf_matrix[2][0] == mTestObj->time_vec[n]);
-    CPPUNIT_ASSERT(mTestObj->m_sf_matrix[3][0] == mTestObj->time_vec[n]);
-
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[0][0] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[1][0] == S_ON);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[2][0] == S_ON);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[3][0] == S_ON);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[0][1] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[1][1] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[2][1] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[3][1] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[0][2] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[1][2] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[2][2] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[3][2] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[0][3] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[1][3] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[2][3] == S_OFF);
-    CPPUNIT_ASSERT(mTestObj->m_s_matrix[3][3] == S_OFF);
-
-    CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_state == ON);
-    CPPUNIT_ASSERT(mTestObj->population_network[0]->m_nnetwork[0]->m_firing == mTestObj->time_vec[n]);
-
-    std::cout << "\n===== TestPopulation : SYNAPTIC BLOCK RANDOM STIMULATION TEST PASSED =====" << std::endl;
-
-    mTestObj->population_network[0]->tau_del = 5.0f;
-    mTestObj->population_network[1]->tau_del = 5.0f;
-    mTestObj->population_network[0]->external_input = RANDOM;
-    mTestObj->population_network[1]->external_input = RANDOM;
-}
-*/
-
 void TestPopulation::setUp(void)
 {
-	handle = dlopen("libca.so", RTLD_NOW);
+	handle = dlopen("libcaf.so", RTLD_NOW);
 	char* error;
     const char* filepath = "/home/esash/Documents/Projects/CellularAutomata/CellularAutomata_Fast/";
 

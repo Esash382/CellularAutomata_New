@@ -22,6 +22,8 @@ typedef enum _SYNAPSE_ACTIVATION_METHOD_ {
     EINPUT
 } SAM;
 
+typedef std::multimap<_time_t, std::map<uint, std::vector<uint>>> mmap;
+
 class Population {
 public:
     Population();
@@ -42,9 +44,9 @@ private:
     void create_interneuronal_network_projections(Config* config);
     void create_recurrent_network_projections(Config* config);
 
-    void burst_generator_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
+    shared_ptr<Network> getNetwork(uint neuron_id);
 
     void activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i);
     void activate_single_random_synapse(shared_ptr<Network> ntwk, uint n, uint i);
@@ -53,7 +55,7 @@ private:
     void deactivate_neurons(uint n);
     double compute_weights(shared_ptr<Network> ntwk, uint n, uint i);
 
-    void update_stats(_time_t n);
+    void update_stats(uint n);
     void write_stats();
 
     // getters and setters for tests
@@ -74,7 +76,6 @@ public:
     void call_synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     double call_compute_weights(shared_ptr<Network> ntwk, uint n, uint i);
     void call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
-    void call_burst_generator_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
     void call_update_stats(uint n);
 
 public:
@@ -101,11 +102,11 @@ public:
 
     std::vector<double> weighted_sum;
 
-     // Active synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
-    std::map<_time_t, std::map<uint, std::vector<uint>>> s_activate;
+     // Activate synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
+    mmap s_activate;
 
-    // Deactive synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
-    std::map<_time_t, std::map<uint, std::vector<uint>>> s_deactivate;
+    // Deactivate synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
+    mmap s_deactivate;
     
     // Deactivate neuron: map <time , vector<neuron_id> >
     std::map<_time_t, std::vector<uint>> n_deactivate;

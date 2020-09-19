@@ -228,11 +228,6 @@ void Population::create_recurrent_network_projections(Config *config)
     }
 }
 
-double Population::call_compute_weights(shared_ptr<Network> cell, uint n, uint i)
-{
-    return compute_weights(cell, n, i);
-}
-
 void Population::add_network(std::string filepath)
 {
     logger->log("add_network");
@@ -291,38 +286,6 @@ void Population::set_neuron_state(shared_ptr<Network> ntwk, uint i, MTYPE type)
     this->m_n_matrix[ntwk->start_from_row_index + i] = type;
 }
 
-double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
-{
-    logger->log("compute_weights with a given network for a particular cell");
-
-    double sum = 0.0f;
-    uint cell_id = cell->start_from_row_index + i;
-
-    if (this->m_n_matrix[cell_id] == ON) return 0.0f;
-
-    for (auto ntwk : this->population_network) {
-        uint size = ntwk->start_from_row_index + ntwk->m_N;
-        for (uint j = ntwk->start_from_row_index; j < size; j++) {
-            if ((this->m_w_matrix[j][cell_id] != 0) &&
-                (this->m_s_matrix[j][cell_id] == S_ON)) {
-                sum += this->m_w_matrix[j][cell_id];
-            }
-            // In case of pseudo neuronal synapses for external inputs
-            if ((this->m_w_matrix[j][cell_id] != 0) &&
-                (this->m_s_matrix[j][cell_id] != S_ON) &&
-                (this->m_n_matrix[j] == ON)) {
-                sum += this->m_w_matrix[j][cell_id];
-            }
-        }
-    }
-
-    sum += cell->external_input_vec[n];
-
-    logger->log("weighted sum for neuron: " + std::to_string(i) + " in network : " + cell->m_ntwk_name + " at " + std::to_string(time_vec[n]) + " is : " + std::to_string(sum));
-
-    return sum;
-}
-
 void Population::activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i)
 {
     logger->log("activate_single_neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
@@ -363,31 +326,44 @@ void Population::activate_single_random_synapse(shared_ptr<Network> ntwk, uint n
     this->m_sf_matrix[rsyn][cell_id] = time_vec[n] + ntwk->tau_del;
 }
 
+shared_ptr<Network> Population::getNetwork(uint neuron_id)
+{
+    for (auto ntwk : this->population_network) {
+        uint size = ntwk->start_from_row_index + ntwk->m_N;
+        if ((neuron_id >= ntwk->start_from_row_index) && (neuron_id < size)) {
+            return ntwk;
+        }
+    }
+    return nullptr;
+}
+
 void Population::activate_synapses(uint n)
 {
     logger->log("activate_synapses");
 
-    if ( n == 0 ) return;
+    std::vector<uint> neurons_to_compute;
+    for (mmap::iterator itr = this->s_activate.begin(); itr != this->s_activate.end(); itr++) {
+        if (itr->first == this->time_vec[n]) {
+            std::map<uint, std::vector<uint>> neuron_map = itr->second;
+            for(auto [neuron_id, syn_vec] : neuron_map) {
+                for (uint i = 0; i < syn_vec.size(); i++) {
+                    this->m_s_matrix[neuron_id][syn_vec[i]] = S_ON;
+                    neurons_to_compute.push_back(syn_vec[i]);
 
-    for (auto ntwk : this->population_network) {
-        uint size = ntwk->start_from_row_index + ntwk->m_N;
-        uint index = 0;
-
-        for (uint i = ntwk->start_from_row_index; i < size; i++) {
-            bool flag = 0;
-            for (uint j = 0; j < m_N; j++) {
-                if ((this->m_w_matrix[j][i] != 0) &&
-                    (this->m_s_matrix[j][i] == S_OFF) &&
-                    (std::abs((time_vec[n] - this->m_sf_matrix[j][i])) < epsilon)) {
-                    this->m_s_matrix[j][i] = S_ON;
-                    logger->log("activate_synapses : switching on synapse : " + std::to_string(i) + " for neuron : " + std::to_string(j)+ " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
-
-                    flag = 1;
+                    logger->log("activate_synapses : switching on synapse : " + std::to_string(syn_vec[i]) + " for neuron : " + std::to_string(neuron_id)+ " : time : " + std::to_string(time_vec[n]));
+                    std::string str = ("activate_synapses : switching on synapse : " + std::to_string(syn_vec[i]) + " for neuron : " + std::to_string(neuron_id)+ " : time : " + std::to_string(time_vec[n]));
+                    //std::cout << str << std::endl;
                 }
             }
-            if (flag)
-                threshold_block(ntwk, n, index, ON);
-            index++;
+        }
+    }
+
+    this->s_activate.erase(time_vec[n]);
+
+    for (auto i : neurons_to_compute) {
+        auto ntwk = getNetwork(i);
+        if (ntwk) {
+            threshold_block(ntwk, n, (i - ntwk->start_from_row_index), ON);
         }
     }
 }
@@ -397,6 +373,45 @@ void Population::deactivate_synapses(uint n)
     logger->log("deactivate_synapses");
 
     if ( n == 0 ) return;
+
+    /*
+    std::cout << __FUNCTION__ << " : size of s map  = " << this->s_deactivate.size() << std::endl;
+
+    std::vector<uint> neurons_to_compute;
+    for (mmap::iterator itr = this->s_deactivate.begin(); itr != this->s_deactivate.end(); itr++) {
+        if (itr->first == this->time_vec[n]) {
+            std::map<uint, std::vector<uint>> neuron_map = itr->second;
+            std::cout << __FUNCTION__ << " : size of neuron_map = " << neuron_map.size() << std::endl;
+            for(auto [neuron_id, syn_vec] : neuron_map) {
+                std::cout << __FUNCTION__ << " : neuron_id  = " << neuron_id << std::endl;
+                std::cout << __FUNCTION__ << " : syn_vec.size = " << syn_vec.size() << std::endl;
+                for (uint i = 0; i < syn_vec.size(); i++) {
+                    this->m_s_matrix[neuron_id][syn_vec[i]] = S_OFF;
+                    this->m_sf_matrix[neuron_id][syn_vec[i]] = 0.0f;
+                    neurons_to_compute.push_back(syn_vec[i]);
+
+                    logger->log("deactivate_synapses : switching off synapse : " + std::to_string(syn_vec[i]) + " for neuron : " + std::to_string(neuron_id)+ " : time : " + std::to_string(time_vec[n]));
+                    std::string str = ("deactivate_synapses : switching off synapse : " + std::to_string(syn_vec[i]) + " for neuron : " + std::to_string(neuron_id)+ " : time : " + std::to_string(time_vec[n]));
+                    std::cout << str << std::endl;
+                }
+            }
+        }
+    }
+
+    this->s_deactivate.erase(time_vec[n]);
+
+    std::cout << __FUNCTION__ << " : neurons_to_compute = " << neurons_to_compute.size() << std::endl;
+
+    for (auto i : neurons_to_compute) {
+        auto ntwk = getNetwork(i);
+        if (ntwk) {
+            std::cout << __FUNCTION__ << " : neuron_id - ntwk->start_from_row_index = " << i - ntwk->start_from_row_index << std::endl;
+            threshold_block(ntwk, n, (i - ntwk->start_from_row_index), OFF);
+        } else {
+            std::cout << __FUNCTION__ << "ntwk = nullptr" << std::endl;
+        }
+    }
+    */
 
     for (auto ntwk : this->population_network) {
         uint size = ntwk->start_from_row_index + ntwk->m_N;
@@ -409,6 +424,8 @@ void Population::deactivate_synapses(uint n)
                         this->m_s_matrix[i][j] = S_OFF;
                         this->m_sf_matrix[i][j] = 0.0f;
                         logger->log("deactivate_synapses : switching off synapse : " + std::to_string(j) + " for neuron : " + std::to_string(index)+ " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
+                        std::string str = ("deactivate_synapses : switching off synapse : " + std::to_string(j) + " for neuron : " + std::to_string(index)+ " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
+//                        std::cout << str << std::endl;
 
                         flag = 1;
                     }
@@ -438,12 +455,55 @@ void Population::synaptic_block(shared_ptr<Network> ntwk, uint n, uint i)
     deactivate_synapses(n);
     activate_synapses(n);
     if (this->m_n_matrix[ntwk->start_from_row_index + i] == REF) {
-            logger->log("synaptic_block: REF state neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        logger->log("synaptic_block: REF state neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        std::string str = ("synaptic_block: REF state neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        //std::cout << str << std::endl;
         threshold_block(ntwk, n, i, REF);
     } else {
-            logger->log("synaptic_block: switch on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        logger->log("synaptic_block: switch on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        std::string str = ("synaptic_block: switch on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+        //std::cout << str << std::endl;
         threshold_block(ntwk, n, i, ON);
     }
+}
+
+double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
+{
+    logger->log("compute_weights with a given network for a particular cell");
+
+    double sum = 0.0f;
+    uint cell_id = cell->start_from_row_index + i;
+
+    if (this->m_n_matrix[cell_id] == ON) return 0.0f;
+
+    for (auto ntwk : this->population_network) {
+        uint size = ntwk->start_from_row_index + ntwk->m_N;
+        for (uint j = ntwk->start_from_row_index; j < size; j++) {
+            if ((this->m_w_matrix[j][cell_id] != 0) &&
+                (this->m_s_matrix[j][cell_id] == S_ON)) {
+                sum += this->m_w_matrix[j][cell_id];
+            }
+            // In case of pseudo neuronal synapses for external inputs
+            if ((this->m_w_matrix[j][cell_id] != 0) &&
+                (this->m_s_matrix[j][cell_id] != S_ON) &&
+                (this->m_n_matrix[j] == ON)) {
+                sum += this->m_w_matrix[j][cell_id];
+            }
+        }
+    }
+
+    sum += cell->external_input_vec[n];
+
+    logger->log("weighted sum for neuron: " + std::to_string(i) + " in network : " + cell->m_ntwk_name + " at " + std::to_string(time_vec[n]) + " is : " + std::to_string(sum));
+    std::string str = ("weighted sum for neuron: " + std::to_string(i) + " in network : " + cell->m_ntwk_name + " at " + std::to_string(time_vec[n]) + " is : " + std::to_string(sum));
+    //std::cout << str << std::endl;
+
+    return sum;
+}
+
+double Population::call_compute_weights(shared_ptr<Network> cell, uint n, uint i)
+{
+    return compute_weights(cell, n, i);
 }
 
 void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type)
@@ -451,11 +511,8 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
     logger->log("threshold_block");
 
     if (type == ON || type == REF) {
-        if (this->m_n_matrix[ntwk->start_from_row_index + i] == ON) {
-            burst_generator_block(ntwk, n, i, ON);
-            return;
-        } else if (this->m_n_matrix[ntwk->start_from_row_index + i] == REF) {
-            burst_generator_block(ntwk, n, i, REF);
+        if (this->m_n_matrix[ntwk->start_from_row_index + i] == ON ||
+            this->m_n_matrix[ntwk->start_from_row_index + i] == REF) {
             return;
         }
     }
@@ -470,23 +527,37 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             _time_t off_time = this->m_nf_matrix[ntwk->start_from_row_index + i] + ntwk->tau_ap + ntwk->tau_ref;
             _time_t ref_time = this->m_nf_matrix[ntwk->start_from_row_index + i] + ntwk->tau_ap;
 
-            n_deactivate[off_time].push_back(i);
-            n_refractory[ref_time].push_back(i); 
+            n_deactivate[off_time].push_back(ntwk->start_from_row_index + i);
+            n_refractory[ref_time].push_back(ntwk->start_from_row_index + i);
+
+            logger->log("threshold_block: neuron: " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]) + " : off time = " + std::to_string(off_time)); 
+            std::string str = ("threshold_block: neuron: " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]) + " : off time = " + std::to_string(off_time)); 
+            //std::cout << str << std::endl;
+
+            logger->log("threshold_block: neuron: " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]) + " : ref time = " + std::to_string(ref_time)); 
+            str = ("threshold_block: neuron: " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]) + " : ref time = " + std::to_string(ref_time));
+            //std::cout << str << std::endl;
 
             // activate neuron i 's synapses including delay
             uint cur = ntwk->start_from_row_index + i;
+            std::vector<uint> syn_vec;
+            std::map<uint, std::vector<uint>> neuron_map;
             for (uint k = 0; k < this->m_N; k++) {
                 if (this->m_w_matrix[cur][k] != 0) {
+                    syn_vec.push_back(k);
                     if (ntwk->tau_del == 0) {
-                        this->m_sf_matrix[cur][k] = time_vec[n];
                         this->m_s_matrix[cur][k] = S_ON;
-                    } else {
-                        this->m_sf_matrix[cur][k] = time_vec[n] + ntwk->tau_del;
                     }
+                    this->m_sf_matrix[cur][k] = time_vec[n] + ntwk->tau_del;
                 }
             }
+            neuron_map[cur] = syn_vec;
+            this->s_activate.insert(pair<_time_t, std::map<uint, std::vector<uint>>> ((time_vec[n] + ntwk->tau_del), neuron_map));
+            this->s_deactivate.insert(pair<_time_t, std::map<uint, std::vector<uint>>> ((time_vec[n] + ntwk->tau_del + ntwk->tau_dur), neuron_map));
 
             logger->log("threshold_block: switching on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+            str = ("threshold_block: switching on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+            //std::cout << str << std::endl;
         }
     } else {
         if (sum <= ntwk->threshold) {
@@ -494,6 +565,8 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             this->m_nf_matrix[ntwk->start_from_row_index + i] = 0.0f;
 
             logger->log("threshold_block: switching off neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+            std::string str = ("threshold_block: switching off neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
+            //std::cout << str << std::endl;
         }
     }
 }
@@ -506,14 +579,18 @@ void Population::deactivate_neurons(uint n)
     for (uint i = 0; i < vec1.size(); i++) {
         this->m_n_matrix[vec1[i]] = OFF;
         this->m_nf_matrix[vec1[i]] = 0.0f;
-        logger->log("deactivate_neurons : switching off neuron: " + std::to_string(i) + " : in network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
+        logger->log("deactivate_neurons : switching off neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        std::string str = ("deactivate_neurons : switching off neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        //std::cout << str << std::endl;
     }
     n_deactivate.erase(time_vec[n]);
 
     std::vector<uint> vec2 = n_refractory[time_vec[n]];
     for (uint i = 0; i < vec2.size(); i++) {
         this->m_n_matrix[vec2[i]] = REF;
-        logger->log("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : in network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
+        logger->log("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        std::string str = ("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        //std::cout << str << std::endl;
     }
     n_refractory.erase(time_vec[n]);
 }
@@ -531,11 +608,6 @@ void Population::call_synaptic_block(shared_ptr<Network> ntwk, uint n, uint i)
 void Population::call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type)
 {
     threshold_block(ntwk, n, i, type);
-}
-
-void Population::call_burst_generator_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type)
-{
-    burst_generator_block(ntwk, n, i, type);
 }
 
 void Population::process_networks()
@@ -556,7 +628,7 @@ void Population::process_networks()
     logger->log("DONE");
 }
 
-void Population::update_stats(time_t n)
+void Population::update_stats(uint n)
 {
     logger->log("update_stats");
 
@@ -574,12 +646,17 @@ void Population::update_stats(time_t n)
                  ++ref_stats;
         }
 
-        logger->log("update_stats: network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(n) + " : #active : " + std::to_string(ac_stats));
+        logger->log("update_stats: network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(this->time_vec[n]) + " : #active : " + std::to_string(ac_stats));
 
         ntwk->ac_stats.push_back(ac_stats / ntwk->m_N);
         ntwk->in_stats.push_back(in_stats / ntwk->m_N);
         ntwk->ref_stats.push_back(ref_stats / ntwk->m_N);
     }
+}
+
+void Population::call_update_stats(uint n)
+{
+    update_stats(n);
 }
 
 void Population::write_stats()

@@ -3,19 +3,22 @@
     "id" : 101.0,
     "type" : 0.0,
     "N" : 1500.0,
-    "k" : 5.0,
+    "k" : 10.0,
     "nburst" : 1.0,
     "threshold" : 1.0,
-    "z" : 500.0,
+    "z" : 10.0,
     
-    "ap" : 12,
-    "ref" : 20.0,
-    "del" : 5.0,
+    "ap" : 1,
+    "ref" : 12.0,
+    "del" : 0.0,
     "dur" : 10.0,
 
-    "osc" : 10.0,
+    "osc" : 0.0,
 
+    "num_ext_input" : 3,
     "ext_type": 0,
-    "ext_val" : 5,
+    "ext_val_1" : 2,
+    "ext_val_2" : 12,
+    "ext_val_3" : -1,
     "ext_step" : 5
 }

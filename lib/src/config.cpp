@@ -109,10 +109,26 @@ shared_ptr<Network> Config::create_network(std::string name)
         return NULL;
     }
 
+    float ext_val = 0.0f;
+    uint num_ext_input = con["num_ext_input"];
+
+    if (num_ext_input == 0) {
+        return std::make_shared<Network>(name, uint(con["id"]), uint(con["N"]), 
+                        NETWORK_TYPE(con["type"]),
+                        con["threshold"], con["k"], con["ap"],
+                        con["ref"], uint(con["z"]), con["del"], 
+                        con["dur"], con["osc"],
+                        PERIODIC, 0.0f, con["ext_step"]);
+    }
+
+    for (uint i = 1; i <= num_ext_input; i++) {
+        ext_val += con["ext_val_"+std::to_string(i)];
+    }
+
     return std::make_shared<Network>(name, uint(con["id"]), uint(con["N"]), 
                         NETWORK_TYPE(con["type"]),
                         con["threshold"], con["k"], con["ap"],
                         con["ref"], uint(con["z"]), con["del"], 
-                        con["dur"], con["osc"], 
-                        EXTERNAL_INPUT(con["ext_type"]), con["ext_val"], con["ext_step"]);
+                        con["dur"], con["osc"],
+                        EXTERNAL_INPUT(con["ext_type"]), ext_val, con["ext_step"]);
 }

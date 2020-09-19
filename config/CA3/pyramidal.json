@@ -2,20 +2,20 @@
     "pyramidal.json" : 101.0,
     "id" : 101.0,
     "type" : 0.0,
-    "N" : 90.0,
+    "N" : 1500.0,
     "k" : 10.0,
     "nburst" : 1.0,
     "threshold" : 1.0,
     "z" : 20.0,
     
-    "ap" : 12,
-    "ref" : 20.0,
-    "del" : 0.0,
-    "dur" : 100.0,
+    "ap" : 1,
+    "ref" : 12.0,
+    "del" : 5.0,
+    "dur" : 10.0,
 
     "osc" : 10.0,
 
     "ext_type": 0,
-    "ext_val" : 0,
+    "ext_val" : 5,
     "ext_step" : 5
 }
