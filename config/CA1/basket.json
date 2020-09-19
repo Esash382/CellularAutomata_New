@@ -8,14 +8,16 @@
     "threshold" : 0.0,
     "z" : 0.0,
     
-    "ap" : 10.0,
-    "ref" : 30.0,
-    "del" : 0.0,
-    "dur" : 10.0,
+    "ap" : 1.0,
+    "ref" : 11.0,
+    "del" : 5.0,
+    "dur" : 12.0,
 
     "osc" : 0.0,
 
+    "num_ext_input" : 2,
     "ext_type": 0,
-    "ext_val" : 5,
+    "ext_val_1" : 8,
+    "ext_val_2" : 4,
     "ext_step" : 5
 }
