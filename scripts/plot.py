@@ -42,7 +42,7 @@ with open('results/ca_stats.csv') as f:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (16, 9))
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA3 dynamics')
     ax1.plot(t, E_CA3)
     ax1.set_ylabel('Pyramidal')
