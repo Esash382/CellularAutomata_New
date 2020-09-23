@@ -1,8 +1,8 @@
 {
     "pyramidal_bistratified" : 206.0,
     "id" : 206.0,
-    "ksd" : 20.0,
-    "zsd" : 80.0,
+    "ksd" : 50.0,
+    "zsd" : 10.0,
     "kds" : -10.0,
-    "zds" : 90.0
+    "zds" : 10.0
 }
