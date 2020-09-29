@@ -58,6 +58,8 @@ private:
     void update_stats(uint n);
     void write_stats();
 
+    _time_t get_noisy_delay(_time_t del);
+
     // getters and setters for tests
     // and some wrapper calls for private functions
 public:

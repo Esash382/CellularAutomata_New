@@ -1,8 +1,8 @@
 {
-    "bistratified1_septum.json" : 205.0,
-    "id" : 205.0,
-    "ksd" : -10.0,
-    "zsd" : 20.0,
+    "bistratified_septum": 407.0,
+    "id" : 409.0,
+    "ksd" : 0.0,
+    "zsd" : 0.0,
     "kds" : -8.0,
-    "zds" : 30.0
+    "zds" : 50.0
 }

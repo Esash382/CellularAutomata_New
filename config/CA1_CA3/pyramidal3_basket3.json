@@ -1,8 +1,8 @@
 {
-    "pyramidal3_basket3.json" : 222.0,
-    "id" : 222.0,
-    "ksd" : 10.0,
-    "zsd" : 10.0,
-    "kds" : -50.0,
-    "zds" : 20.0
+    "pyramidal_basket" : 205.0,
+    "id" : 205.0,
+    "ksd" : 20.0,
+    "zsd" : 80.0,
+    "kds" : -150.0,
+    "zds" : 10.0
 }

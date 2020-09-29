@@ -9,6 +9,17 @@ uint get_random_number(uint low, uint high)
     return d(gen);
 }
 
+_time_t get_random_number(_time_t low, _time_t high)
+{
+    static bool first = true;
+    if (first)
+    {
+        srand(time(NULL));
+        first = false;
+    }
+    return low + (double)rand() * (high - low) / (double)RAND_MAX;
+}
+
 _time_* _time_::m_instance = 0;
 _time_t _time_::m_total_time = 0.0;
 _time_t _time_::m_time_step = 0.0;

@@ -1,8 +1,8 @@
 {
-    "pyramidal3_interneurons3.json" : 224.0,
-    "id" : 224.0,
-    "ksd" : 0.0,
-    "zsd" : 0.0,
-    "kds" : -50.0,
-    "zds" : 1.0
+    "pyramidal_interneurons" : 201.0,
+    "id" : 201.0,
+    "ksd" : 10.0,
+    "zsd" : 50.0,
+    "kds" : -10.0,
+    "zds" : 90.0
 }

@@ -1,8 +1,8 @@
 {
-    "pyramidal1_backprojection.json" : 209.0,
-    "id" : 209.0,
-    "ksd" : 10.0,
+    "pyramidal_backprojection" : 410.0,
+    "id" : 410.0,
+    "ksd" : 50.0,
     "zsd" : 10.0,
-    "kds" : 0.0,
-    "zds" : 0.0
+    "kds" : -1.0,
+    "zds" : 10.0
 }

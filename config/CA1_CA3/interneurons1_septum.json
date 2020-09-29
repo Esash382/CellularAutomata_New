@@ -1,8 +1,8 @@
 {
-    "interneurons1_septum.json" : 208.0,
-    "id" : 208.0,
+    "interneurons_septum" : 403.0,
+    "id" : 403.0,
     "ksd" : 0.0,
     "zsd" : 0.0,
-    "kds" : -8.0,
+    "kds" : -10.0,
     "zds" : 10.0
 }

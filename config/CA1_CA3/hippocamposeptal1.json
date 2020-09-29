@@ -1,21 +1,21 @@
 {
-    "hippocamposeptal1.json" : 102.0,
-    "id" : 102.0,
+    "hippocamposeptal" : 302.0,
+    "id" : 302.0,
     "type" : 1.0,
-    "N" : 50.0,
+    "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : -1.0,
+    "threshold" : 1.0,
     "z" : 0.0,
     
     "ap" : 1.0,
-    "ref" : 30.0,
-    "del" : 0.0,
+    "ref" : 11.0,
+    "del" : 10.0,
     "dur" : 150.0,
 
     "osc" : 0.0,
 
+    "num_ext_input" : 0,
     "ext_type": 0,
-    "ext_val" : 0,
-    "ext_step" : 5
+    "ext_step" : 0
 }

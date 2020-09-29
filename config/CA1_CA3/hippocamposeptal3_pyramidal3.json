@@ -1,8 +1,8 @@
 {
-    "hippocamposeptal3_pyramidal3.json" : 219.0,
-    "id" : 219.0,
+    "hippocamposeptal_pyramidal" : 202.0,
+    "id" : 202.0,
     "ksd" : 0.0,
     "zsd" : 0.0,
-    "kds" : 15.0,
-    "zds" : 45.0
+    "kds" : 10.0,
+    "zds" : 10.0
 }
