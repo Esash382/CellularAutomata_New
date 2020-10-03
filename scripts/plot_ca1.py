@@ -39,6 +39,8 @@ with open('results/ca_stats.csv') as f:
                 I_B = data[:, i]
             elif (name == "bistratified"):
                 I_BS = data[:, i]
+            elif (name == "backprojection"):
+                I_BP = data[:, i]
             else:
                 I_S = data[:, i]
 
@@ -93,7 +95,7 @@ with open('results/ca_stats.csv') as f:
     '''
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(7, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA1 dynamics')
     ax1.plot(t, E_CA1)
     ax1.set_ylabel('Pyramidal')
@@ -104,10 +106,12 @@ with open('results/ca_stats.csv') as f:
     ax4.plot(t, I_CA1I)
     ax4.set_ylabel('Interneurons')
     ax5.plot(t, I_CA1P)
-    ax5.set_ylabel('hippocampo-septal')
-    ax6.plot(t, I_S)
-    ax6.set_ylabel('Septum')
-    ax6.set_xlabel('time (ms)')
+    ax5.set_ylabel('Hippocampo-septal')
+    ax6.plot(t, I_BP)
+    ax6.set_ylabel('Backprojection')
+    ax7.plot(t, I_S)
+    ax7.set_ylabel('Septum')
+    ax7.set_xlabel('time (ms)')
     plt.show()
 
     '''

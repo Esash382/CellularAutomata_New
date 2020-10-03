@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+#include <cassert>
 
 using namespace std;
 
@@ -110,18 +111,18 @@ void Population::init_nmatrices()
 void Population::init_neuron_population(Config* config)
 {
     auto unique_files = config->get_unique_files();
-    uint prev_ntwk_size = 0;
+    uint prev_ntwk_end_index = 0;
 
     this->population_network.reserve(unique_files.size());
 
     for (uint i = 0; i < unique_files.size(); i++) {
         shared_ptr<Network> ntwk = config->create_network(unique_files[i]);
-        prev_ntwk_size = ntwk->m_N;
         if (i == 0) {
             ntwk->start_from_row_index = 0;
         } else {
-            ntwk->start_from_row_index = prev_ntwk_size;
+            ntwk->start_from_row_index = prev_ntwk_end_index;
         }
+        prev_ntwk_end_index = ntwk->start_from_row_index + ntwk->m_N;
         this->population_network.push_back(std::move(ntwk));
     }
 
@@ -169,28 +170,26 @@ void Population::create_interneuronal_network_projections(Config* config)
 
                 for (uint k = 0; k < zsd; k++) {
                     uint j = indices[k];
-                    if (this->m_w_matrix[i][j] == 0) {
-                        this->m_w_matrix[i][j] = ksd;
-                        this->m_s_matrix[i][j] = S_OFF;
-                        this->m_sf_matrix[i][j] = 0.0f;
-                    }
+                    assert(this->m_w_matrix[i][j] == 0);
+                    this->m_w_matrix[i][j] = ksd;
+                    this->m_s_matrix[i][j] = S_OFF;
+                    this->m_sf_matrix[i][j] = 0.0f;
                 }
             }
         }
         
         if (zds != 0) {
-            for (uint i = dst_start_from_row_index; i < (dst_start_from_row_index + src_size); i++) {
-                std::vector<unsigned int> indices(dst_size);
-                std::iota(indices.begin(), indices.end(), dst_start_from_row_index);
+            for (uint i = dst_start_from_row_index; i < (dst_start_from_row_index + dst_size); i++) {
+                std::vector<unsigned int> indices(src_size);
+                std::iota(indices.begin(), indices.end(), src_start_from_row_index);
                 std::random_shuffle(indices.begin(), indices.end());
 
                 for (uint k = 0; k < zds; k++) {
                     uint j = indices[k];
-                    if (this->m_w_matrix[i][j] == 0) {
-                        this->m_w_matrix[i][j] = kds;
-                        this->m_s_matrix[i][j] = S_OFF;
-                        this->m_sf_matrix[i][j] = 0.0f;
-                    }
+                    assert(this->m_w_matrix[i][j] == 0);
+                    this->m_w_matrix[i][j] = kds;
+                    this->m_s_matrix[i][j] = S_OFF;
+                    this->m_sf_matrix[i][j] = 0.0f;
                 }
             }
         }
@@ -288,8 +287,7 @@ void Population::set_neuron_state(shared_ptr<Network> ntwk, uint i, MTYPE type)
 
 _time_t Population::get_noisy_delay(_time_t del)
 {
-    return get_random_number(del - 1, del + 1);
-    //return del;
+    return get_random_number(del - 0, del + 0);
 }
 
 void Population::activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i)
@@ -351,7 +349,10 @@ void Population::activate_synapses(uint n)
     for (mmap::iterator itr = this->s_activate.begin(); itr != this->s_activate.end(); itr++) {
         if (itr->first == this->time_vec[n]) {
             std::map<uint, std::vector<uint>> neuron_map = itr->second;
-            for(auto [neuron_id, syn_vec] : neuron_map) {
+            for (const auto &val : neuron_map) {
+            // for(auto [neuron_id, syn_vec] : neuron_map) { // this is introduced in C++17. Commenting to avoid compiler warnings.
+                auto neuron_id = val.first;
+                auto syn_vec = val.second;
                 for (uint i = 0; i < syn_vec.size(); i++) {
                     this->m_s_matrix[neuron_id][syn_vec[i]] = S_ON;
                     neurons_to_compute.push_back(syn_vec[i]);
@@ -629,6 +630,20 @@ void Population::process_networks()
         synaptic_block(this->population_network[ntwk_id], n, k);
         update_stats(this->time_vec[n]);
     }
+
+    /*
+    uint index = 0;
+    for (uint n = 0; n < time_vec.size(); n++) {
+        deactivate_neurons(n);
+        uint k = (rand() % this->population_network[index]->m_N);
+        synaptic_block(this->population_network[index], n, k);
+        update_stats(this->time_vec[n]);
+
+        index++;
+        if (index == this->population_network.size())
+            index = 0;
+    }
+    */
 
     write_stats();
 
