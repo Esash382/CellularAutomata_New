@@ -34,6 +34,7 @@ public:
     void process_networks();
 
 private:
+    void calculate_number_of_synapses();
     void add_network_internal_func(Config *config);
     void calculate_network_size();
     void init_weight_matrix();
@@ -46,7 +47,8 @@ private:
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
-    shared_ptr<Network> getNetwork(uint neuron_id);
+    shared_ptr<Network> get_network(uint neuron_id);
+    string get_network_name(uint neuron_id);
 
     void activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i);
     void activate_single_random_synapse(shared_ptr<Network> ntwk, uint n, uint i);

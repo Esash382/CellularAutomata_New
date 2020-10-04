@@ -28,7 +28,7 @@ void init_and_process_networks(const char* filepath) {
 	}
 
 	clock_t start = clock();
-	printf("Start time: %.2f mins\n", (double)(start)/(CLOCKS_PER_SEC * 60));
+//	printf("Start time: %.2f mins\n", (double)(start)/(CLOCKS_PER_SEC * 60));
 
 	Population* pp_network = (*create)(filepath);
 

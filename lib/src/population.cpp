@@ -162,8 +162,11 @@ void Population::create_interneuronal_network_projections(Config* config)
                 break;
         }
 
+//        std::cout << cell[0] << " = " << src_start_from_row_index << " : " << cell[1] << " = " << dst_start_from_row_index << std::endl;
+
         if (zsd != 0) {
             for (uint i = src_start_from_row_index; i < (src_start_from_row_index + src_size); i++) {
+                uint index = 0;
                 std::vector<unsigned int> indices(dst_size);
                 std::iota(indices.begin(), indices.end(), dst_start_from_row_index);
                 std::random_shuffle(indices.begin(), indices.end());
@@ -174,12 +177,29 @@ void Population::create_interneuronal_network_projections(Config* config)
                     this->m_w_matrix[i][j] = ksd;
                     this->m_s_matrix[i][j] = S_OFF;
                     this->m_sf_matrix[i][j] = 0.0f;
+//                    std::cout << cell[0] << " -> " << cell[1] << " = " << zsd << " : " << index << " = " << k << " : this->m_w_matrix[" << i << "][" << j << "]" << this->m_w_matrix[i][j] << std::endl;
+                    index++;
                 }
+
+                /*
+                string str = "";
+                for (uint count = 0; count < indices.size(); count++) {
+                    if (count == 0)
+                        str += "[ " + std::to_string(indices[count]) + ", ";
+                    else if (count == indices.size() - 1)
+                        str += std::to_string(indices[count]) + " ]";
+                    else
+                        str += std::to_string(indices[count]) + " , ";
+                }
+
+                std::cout << cell[0] << " -> " << cell[1] << " = " << zsd << " : " << index << " = " << str << std::endl;
+                */
             }
         }
         
         if (zds != 0) {
             for (uint i = dst_start_from_row_index; i < (dst_start_from_row_index + dst_size); i++) {
+                uint index = 0;
                 std::vector<unsigned int> indices(src_size);
                 std::iota(indices.begin(), indices.end(), src_start_from_row_index);
                 std::random_shuffle(indices.begin(), indices.end());
@@ -190,7 +210,23 @@ void Population::create_interneuronal_network_projections(Config* config)
                     this->m_w_matrix[i][j] = kds;
                     this->m_s_matrix[i][j] = S_OFF;
                     this->m_sf_matrix[i][j] = 0.0f;
+//                    std::cout << cell[1] << " -> " << cell[0] << " = " << zds << " : " << index << " = " << k << " : this->m_w_matrix[" << i << "][" << j << "]" << this->m_w_matrix[i][j] << std::endl;
+                    index++;
                 }
+
+                /*
+                string str = "";
+                for (uint count = 0; count < indices.size(); count++) {
+                    if (count == 0)
+                        str += "[ " + std::to_string(indices[count]) + ", ";
+                    else if (count == indices.size() - 1)
+                        str += std::to_string(indices[count]) + " ]";
+                    else
+                        str += std::to_string(indices[count]) + " , ";
+                }
+
+                std::cout << cell[1] << " -> " << cell[0] << " = " << zds << " : " << index << " = " << str << std::endl;
+                */
             }
         }
     }
@@ -251,6 +287,25 @@ void Population::add_network(std::string filepath, std::string foldername)
     add_network_internal_func(&config);
 }
 
+void Population::calculate_number_of_synapses()
+{
+    for (uint i = 0; i < m_N; i++) {
+        uint sum = 0;
+        for (uint j = 0; j < m_N; j++) {
+            if (this->m_w_matrix[j][i] != 0)
+                sum++;
+        }
+//        std::cout << get_network_name(i) << " = " << sum << std::endl;
+    }
+
+    for (uint i = 0; i < m_N; i++) {
+        for (uint j = 0; j < m_N; j++) {
+//            std::cout << this->m_w_matrix[i][j] << "\t";
+        }
+//        std::cout << std::endl;
+    }
+}
+
 void Population::add_network_internal_func(Config *config)
 {
     this->total_time = config->time;
@@ -273,6 +328,8 @@ void Population::add_network_internal_func(Config *config)
 
     // create another loop for recurrent collaterals
     create_recurrent_network_projections(config);
+
+    calculate_number_of_synapses();
 }
 
 void Population::set_neuron_firing_time(shared_ptr<Network> ntwk, uint i, _time_t firing)
@@ -330,7 +387,7 @@ void Population::activate_single_random_synapse(shared_ptr<Network> ntwk, uint n
     this->m_sf_matrix[rsyn][cell_id] = time_vec[n] + get_noisy_delay(ntwk->tau_del);
 }
 
-shared_ptr<Network> Population::getNetwork(uint neuron_id)
+shared_ptr<Network> Population::get_network(uint neuron_id)
 {
     for (auto ntwk : this->population_network) {
         uint size = ntwk->start_from_row_index + ntwk->m_N;
@@ -340,6 +397,19 @@ shared_ptr<Network> Population::getNetwork(uint neuron_id)
     }
     return nullptr;
 }
+
+string Population::get_network_name(uint neuron_id)
+{
+    for (auto ntwk : this->population_network) {
+        uint size = ntwk->start_from_row_index + ntwk->m_N;
+        if ((neuron_id >= ntwk->start_from_row_index) && (neuron_id < size)) {
+            return ntwk->m_ntwk_name;
+        }
+    }
+    return nullptr;
+}
+
+
 
 void Population::activate_synapses(uint n)
 {
@@ -368,7 +438,7 @@ void Population::activate_synapses(uint n)
     this->s_activate.erase(time_vec[n]);
 
     for (auto i : neurons_to_compute) {
-        auto ntwk = getNetwork(i);
+        auto ntwk = get_network(i);
         if (ntwk) {
             threshold_block(ntwk, n, (i - ntwk->start_from_row_index), ON);
         }
@@ -410,7 +480,7 @@ void Population::deactivate_synapses(uint n)
     std::cout << __FUNCTION__ << " : neurons_to_compute = " << neurons_to_compute.size() << std::endl;
 
     for (auto i : neurons_to_compute) {
-        auto ntwk = getNetwork(i);
+        auto ntwk = get_network(i);
         if (ntwk) {
             std::cout << __FUNCTION__ << " : neuron_id - ntwk->start_from_row_index = " << i - ntwk->start_from_row_index << std::endl;
             threshold_block(ntwk, n, (i - ntwk->start_from_row_index), OFF);
@@ -517,6 +587,11 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
 {
     logger->log("threshold_block");
 
+    /*
+    if (type == REF)
+        std::cout << n << "\t" << ntwk->m_ntwk_name << "\t" << i << "\t REF" << "\t" << std::endl;
+    */
+
     if (type == ON || type == REF) {
         if (this->m_n_matrix[ntwk->start_from_row_index + i] == ON ||
             this->m_n_matrix[ntwk->start_from_row_index + i] == REF) {
@@ -525,6 +600,13 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
     }
 
     double sum = compute_weights(ntwk, n, i);
+
+    /*
+    if (type == ON)
+        std::cout << n << "\t" << ntwk->m_ntwk_name << "\t" << i << "\t ON" << "\t" << sum << std::endl;
+    else if (type == OFF)
+        std::cout << n << "\t" << ntwk->m_ntwk_name << "\t" << i << "\t OFF" << "\t" << sum << std::endl;
+    */
 
     if (type == ON) {
         if (sum > ntwk->threshold) {
@@ -623,6 +705,7 @@ void Population::process_networks()
     logger->log("process_networks");
 
     srand(NULL);
+    /*
     for (uint n = 0; n < time_vec.size(); n++) {
         deactivate_neurons(n);
         uint ntwk_id = rand() % this->population_network.size();
@@ -630,8 +713,8 @@ void Population::process_networks()
         synaptic_block(this->population_network[ntwk_id], n, k);
         update_stats(this->time_vec[n]);
     }
+    */
 
-    /*
     uint index = 0;
     for (uint n = 0; n < time_vec.size(); n++) {
         deactivate_neurons(n);
@@ -643,7 +726,6 @@ void Population::process_networks()
         if (index == this->population_network.size())
             index = 0;
     }
-    */
 
     write_stats();
 
@@ -669,6 +751,8 @@ void Population::update_stats(uint n)
         }
 
         logger->log("update_stats: network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(this->time_vec[n]) + " : #active : " + std::to_string(ac_stats));
+
+//        std::cout << n << " : " << ntwk->m_ntwk_name << " : " << ac_stats << std::endl;
 
         ntwk->ac_stats.push_back(ac_stats / ntwk->m_N);
         ntwk->in_stats.push_back(in_stats / ntwk->m_N);

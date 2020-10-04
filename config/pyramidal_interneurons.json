@@ -2,7 +2,7 @@
     "pyramidal_interneurons" : 201.0,
     "id" : 201.0,
     "ksd" : 10.0,
-    "zsd" : 50.0,
+    "zsd" : 5.0,
     "kds" : -10.0,
-    "zds" : 90.0
+    "zds" : 5.0
 }
