@@ -17,6 +17,6 @@
 
     "num_ext_input" : 1,
     "ext_type": 0,
-    "ext_val_1" : 50,
-    "ext_step" : 0
+    "ext_val_1" : 8,
+    "ext_step" : 2
 }
