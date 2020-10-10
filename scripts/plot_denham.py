@@ -17,6 +17,7 @@ with open('results/ca_stats.csv') as f:
     data = genfromtxt('results/ca_stats.csv', delimiter='\t')
     data = np.delete(data, (0), axis=0)
 
+    t = data[:, 0]
     E_CA1 = []
     I_CA1P = []
     I_CA1I = []
@@ -35,32 +36,17 @@ with open('results/ca_stats.csv') as f:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig = plt.figure(1, figsize=(8, 6)) 
-    ax1 = fig.add_subplot(221)
-    ax1.plot(data[:, 0], E_CA1)
-    ax1.set_xlabel('time, t(ms)')
-    ax1.set_ylabel('E_CA1(t)')
-    ax1.set_title('CA1: Excitatory population')
-
-    ax2 = fig.add_subplot(222)
-    ax2.plot(data[:, 0], I_CA1P)
-    ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('I_CA1P(t)')
-    ax2.set_title('CA1: Hippocampo-septal projection neurons')
-
-    ax3 = fig.add_subplot(223)
-    ax3.plot(data[:, 0], I_CA1I)
-    ax3.set_xlabel('time, t(ms)')
-    ax3.set_ylabel('I_CA1I(t)')
-    ax3.set_title('CA1: Inhibitory interneurons')
-
-    ax4 = fig.add_subplot(224)
-    ax4.plot(data[:, 0], I_S)
-    ax4.set_xlabel('time, t(ms)')
-    ax4.set_ylabel('I_S(t)')
-    ax4.set_title('Septum: Inhibitory projection neurons')
-
-    plt.tight_layout()
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex = True, figsize = (8, 6))
+    ax1.set_title('CA1 dynamics')
+    ax1.plot(t, E_CA1)
+    ax1.set_ylabel('Pyramidal')
+    ax2.plot(t, I_CA1P)
+    ax2.set_ylabel('Hippocampo-septal')
+    ax3.plot(t, I_CA1I)
+    ax3.set_ylabel('Interneurons')
+    ax4.plot(t, I_S)
+    ax4.set_ylabel('Septum')
+    ax4.set_xlabel('time (ms)')
     plt.show()
 
     # Plot inactive neuron stats

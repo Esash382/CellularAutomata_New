@@ -11,12 +11,12 @@
     "ap" : 1.0,
     "ref" : 30.0,
     "del" : 10.0,
-    "dur" : 100.0,
+    "dur" : 150.0,
 
     "osc" : 0.0,
 
     "num_ext_input" : 1,
     "ext_type": 0,
-    "ext_val_1" : 10,
+    "ext_val_1" : 8,
     "ext_step" : 2
 }
