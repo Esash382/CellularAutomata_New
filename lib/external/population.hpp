@@ -60,7 +60,7 @@ private:
     void update_stats(uint n);
     void write_stats();
 
-    _time_t get_noisy_delay(_time_t del);
+    _time_t get_noisy_delay(_time_t del, uint step);
 
     // getters and setters for tests
     // and some wrapper calls for private functions
@@ -92,6 +92,9 @@ public:
     _time_t total_time;
     _time_t time_step;
     _time_t last_osc_run_time;
+
+    const uint th_step;
+    const uint del_step;
 
     uint m_N;
 

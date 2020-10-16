@@ -2,16 +2,16 @@
     "basket": 105.0,
     "id" : 105.0,
     "type" : 1.0,
-    "N" : 150.0,
+    "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : 500.0,
+    "threshold" : 10.0,
     "z" : 0.0,
     
     "ap" : 1.0,
     "ref" : 11.0,
     "del" : 5.0,
-    "dur" : 12.0,
+    "dur" : 8.0,
 
     "osc" : 0.0,
 
@@ -19,5 +19,5 @@
     "ext_type": 0,
     "ext_val_1" : 2,
     "ext_val_2" : -1,
-    "ext_step" : 5
+    "ext_step" : 0
 }

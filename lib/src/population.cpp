@@ -9,6 +9,8 @@
 using namespace std;
 
 Population::Population()
+    : th_step(10)
+    , del_step(2)
 {
 	logger = Log::getInstance();
 
@@ -342,9 +344,9 @@ void Population::set_neuron_state(shared_ptr<Network> ntwk, uint i, MTYPE type)
     this->m_n_matrix[ntwk->start_from_row_index + i] = type;
 }
 
-_time_t Population::get_noisy_delay(_time_t del)
+_time_t Population::get_noisy_delay(_time_t del, uint step)
 {
-    return get_random_number(del - 2, del + 2);
+    return get_random_number(del - step, del + step);
 }
 
 void Population::activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i)
@@ -357,7 +359,7 @@ void Population::activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i
 
     for (uint j = 0; j < this->m_N; j++) {
         if (this->m_w_matrix[j][cell_id] != 0) {
-            this->m_sf_matrix[j][cell_id] = time_vec[n] + get_noisy_delay(ntwk->tau_del);
+            this->m_sf_matrix[j][cell_id] = time_vec[n] + get_noisy_delay(ntwk->tau_del, this->del_step);
         }
     }
 }
@@ -384,7 +386,7 @@ void Population::activate_single_random_synapse(shared_ptr<Network> ntwk, uint n
 
     uint rsyn = rand() % synapses.size();
     logger->log("activate_single_random_synapse: for neuron : " + std::to_string(i) + " : has #synapses : " + std::to_string(synapses.size()) + " : activate synapse : " + std::to_string(rsyn) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n]));
-    this->m_sf_matrix[rsyn][cell_id] = time_vec[n] + get_noisy_delay(ntwk->tau_del);
+    this->m_sf_matrix[rsyn][cell_id] = time_vec[n] + get_noisy_delay(ntwk->tau_del, this->del_step);
 }
 
 shared_ptr<Network> Population::get_network(uint neuron_id)
@@ -623,7 +625,7 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
     */
 
     if (type == ON) {
-        if (sum > ntwk->threshold) {
+        if (sum > get_noisy_delay(ntwk->threshold, this->th_step)) {
             this->m_n_matrix[ntwk->start_from_row_index + i] = ON;
             this->m_nf_matrix[ntwk->start_from_row_index + i] = time_vec[n];
 
@@ -645,7 +647,7 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             uint cur = ntwk->start_from_row_index + i;
             std::vector<uint> syn_vec;
             std::map<uint, std::vector<uint>> neuron_map;
-            _time_t del = get_noisy_delay(ntwk->tau_del);
+            _time_t del = get_noisy_delay(ntwk->tau_del, this->del_step);
             for (uint k = 0; k < this->m_N; k++) {
                 if (this->m_w_matrix[cur][k] != 0) {
                     syn_vec.push_back(k);
@@ -664,7 +666,7 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             //std::cout << str << std::endl;
         }
     } else {
-        if (sum <= ntwk->threshold) {
+        if (sum <= get_noisy_delay(ntwk->threshold, this->th_step)) {
             this->m_n_matrix[ntwk->start_from_row_index + i] = OFF;
             this->m_nf_matrix[ntwk->start_from_row_index + i] = 0.0f;
 

@@ -5,7 +5,7 @@
     "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : 30.0,
+    "threshold" : 10.0,
     "z" : 0.0,
     
     "ap" : 1.0,
@@ -17,7 +17,7 @@
 
     "num_ext_input" : 2,
     "ext_type": 0,
-    "ext_val_1" : 8,
-    "ext_val_2" : 4,
-    "ext_step" : 5
+    "ext_val_1" : 2,
+    "ext_val_2" : -1,
+    "ext_step" : 0
 }
