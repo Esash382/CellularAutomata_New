@@ -24,7 +24,8 @@ typedef enum _MTYPE {
 typedef enum _EXTERNAL_INPUT {
     PERIODIC = 0,
     RANDOM,
-    POISSON
+    POISSON,
+    CONTINUOUS_RANDOM
 } EXTERNAL_INPUT;
 
 uint get_random_number(uint low, uint high);

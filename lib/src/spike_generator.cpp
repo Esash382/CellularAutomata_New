@@ -51,3 +51,23 @@ std::vector<float> Spike_Generator::generate_poisson_spikes(uint n, float value)
 
     return vec;
 }
+
+std::vector<float> Spike_Generator::generate_continuous_spikes(uint n, uint step, float value)
+{
+    std::vector<float> vec;
+    vec.reserve(n);
+
+    if (step == 0.0) {
+        std::vector<float> vec(n, value);
+        return vec;
+    }
+
+    for (uint i = 0; i < n; i++) {
+        if ((i + 1) % step == 0)
+            vec.push_back(0);
+        else
+            vec.push_back(value);
+    }
+
+    return vec;
+}

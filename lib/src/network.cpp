@@ -42,6 +42,8 @@ Network::Network(std::string name, uint ntwk_id, uint N,
 		external_input_vec = Spike_Generator::generate_random_spikes(time_vec_size, this->external_input_value);
 	else if (e_in == POISSON)
 		external_input_vec = Spike_Generator::generate_poisson_spikes(time_vec_size, this->external_input_value);
+    else if (e_in == CONTINUOUS_RANDOM)
+        external_input_vec = Spike_Generator::generate_continuous_spikes(time_vec_size, ext_step, this->external_input_value);
     else {
         std::vector<float> vec(time_vec_size, 0);
         external_input_vec = vec;
