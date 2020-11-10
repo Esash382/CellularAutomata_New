@@ -1,23 +1,21 @@
 {
-    "interneurons": 103.0,
     "id" : 103.0,
     "type" : 1.0,
     "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : 10.0,
+    "threshold" : 1.0,
     "z" : 0.0,
-
+    
     "ap" : 1.0,
-    "ref" : 11.0,
+    "ref" : 10.0,
     "del" : 10.0,
     "dur" : 150.0,
 
     "osc" : 0.0,
 
-    "num_ext_input" : 2,
-    "ext_type": 3,
-    "ext_val_1" : 12,
-    "ext_val_2" : 5,
-    "ext_step" : 0 
+    "num_ext_input" : 1,
+    "ext_type": 0,
+    "ext_val_1" : 0,
+    "ext_step" : 0
 }

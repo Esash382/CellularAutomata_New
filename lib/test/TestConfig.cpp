@@ -70,8 +70,9 @@ void TestConfig::testReadNeuronFile(void)
     CPPUNIT_ASSERT(con["del"] == 5.0);
     CPPUNIT_ASSERT(con["dur"] == 10.0);
     CPPUNIT_ASSERT(con["osc"] == 0.0);
+    CPPUNIT_ASSERT(con["num_ext_input"] == 1);
     CPPUNIT_ASSERT(con["ext_type"] == 0);
-    CPPUNIT_ASSERT(con["ext_val"] == 3);
+    CPPUNIT_ASSERT(con["ext_val_1"] == 3);
     CPPUNIT_ASSERT(con["ext_step"] == 100);
     std::cout << "\n===== TestConfig : READ NEURON FILES TEST PASSED =====" << std::endl;
 }

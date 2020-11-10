@@ -1,24 +1,21 @@
 {
-    "pyramidal" : 101.0,
     "id" : 101.0,
     "type" : 0.0,
-    "N" : 150.0,
-    "k" : 1.0,
+    "N" : 100.0,
+    "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : 10.0,
-    "z" : 1.0,
-
-    "ap" : 1,
+    "threshold" : 1.0,
+    "z" : 0.0,
+    
+    "ap" : 1.0,
     "ref" : 16.0,
-    "del" : 3.0,
+    "del" : 5.0, 
     "dur" : 5.0,
 
     "osc" : 0.0,
 
-    "num_ext_input" : 3,
-    "ext_type": 3,
-    "ext_val_1" : 12,
-    "ext_val_2" : 2,
-    "ext_val_3" : -1,
+    "num_ext_input" : 1,
+    "ext_type": 0,
+    "ext_val_1" : 0,
     "ext_step" : 0
 }

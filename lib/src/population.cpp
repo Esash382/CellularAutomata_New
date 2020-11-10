@@ -5,11 +5,12 @@
 #include <numeric>
 #include <cmath>
 #include <cassert>
+#include <chrono>
 
 using namespace std;
 
 Population::Population()
-    : th_step(10)
+    : th_step(1)
     , del_step(2)
 {
 	logger = Log::getInstance();
@@ -70,7 +71,6 @@ void Population::init_weight_matrix()
         std::vector<double> vec(this->m_N);
         this->m_w_matrix.push_back(vec);
     }
-    this->weighted_sum.reserve(this->m_N);
 
     logger->log("Weight matrix initialized : size : " + std::to_string(this->m_w_matrix.size()));
 }
@@ -171,7 +171,8 @@ void Population::create_interneuronal_network_projections(Config* config)
                 uint index = 0;
                 std::vector<unsigned int> indices(dst_size);
                 std::iota(indices.begin(), indices.end(), dst_start_from_row_index);
-                std::random_shuffle(indices.begin(), indices.end());
+                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
                 for (uint k = 0; k < zsd; k++) {
                     uint j = indices[k];
@@ -204,7 +205,8 @@ void Population::create_interneuronal_network_projections(Config* config)
                 uint index = 0;
                 std::vector<unsigned int> indices(src_size);
                 std::iota(indices.begin(), indices.end(), src_start_from_row_index);
-                std::random_shuffle(indices.begin(), indices.end());
+                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
                 for (uint k = 0; k < zds; k++) {
                     uint j = indices[k];
@@ -247,7 +249,8 @@ void Population::create_recurrent_network_projections(Config *config)
             for (uint i = start_index; i < (start_index + size); i++) {
                 std::vector<unsigned int> indices(size);
                 std::iota(indices.begin(), indices.end(), start_index);
-                std::random_shuffle(indices.begin(), indices.end());
+                unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
                 for (uint k = 0; k < cell->m_Z; k++) {
                    uint j = indices[k];
@@ -261,6 +264,27 @@ void Population::create_recurrent_network_projections(Config *config)
                 }     
             }
             
+        }
+    }
+}
+
+void Population::set_firing_time_for_random_time_network()
+{
+    std::vector<unsigned int> t_indices(this->time_vec.size());
+    std::iota(t_indices.begin(), t_indices.end(), this->time_vec[0]);
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::shuffle(t_indices.begin(), t_indices.end(), std::default_random_engine(seed));
+
+    for (auto ntwk : this->population_network) {
+        if (ntwk->external_input == RANDOM_TIME) {
+            std::vector<unsigned int> n_indices(ntwk->m_N);
+            std::iota(n_indices.begin(), n_indices.end(), 0);
+            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(seed));
+
+            for (uint i = 0; i < ntwk->m_N; i++) {
+                n_rand_activate[t_indices[i]] = n_indices[i];
+            }
         }
     }
 }
@@ -330,6 +354,9 @@ void Population::add_network_internal_func(Config *config)
 
     // create another loop for recurrent collaterals
     create_recurrent_network_projections(config);
+
+    // create the random times for spiking population of neurons
+    set_firing_time_for_random_time_network();
 
     calculate_number_of_synapses();
 }
@@ -584,7 +611,10 @@ double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
         }
     }
 
-    sum += cell->external_input_vec[n];
+    if (cell->external_input == RANDOM_TIME)
+        sum += cell->external_input_value;
+    else
+        sum += cell->external_input_vec[n];
 
     logger->log("weighted sum for neuron: " + std::to_string(i) + " in network : " + cell->m_ntwk_name + " at " + std::to_string(time_vec[n]) + " is : " + std::to_string(sum));
     std::string str = ("weighted sum for neuron: " + std::to_string(i) + " in network : " + cell->m_ntwk_name + " at " + std::to_string(time_vec[n]) + " is : " + std::to_string(sum));
@@ -716,6 +746,7 @@ void Population::call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, 
     threshold_block(ntwk, n, i, type);
 }
 
+/*
 void Population::process_networks()
 {
     logger->log("process_networks");
@@ -729,19 +760,36 @@ void Population::process_networks()
         update_stats(this->time_vec[n]);
     }
 
-    /*
-    uint index = 0;
-    for (uint n = 0; n < time_vec.size(); n++) {
-        deactivate_neurons(n);
-        uint k = (rand() % this->population_network[index]->m_N);
-        synaptic_block(this->population_network[index], n, k);
-        update_stats(this->time_vec[n]);
+    write_stats();
 
-        index++;
-        if (index == this->population_network.size())
-            index = 0;
+    logger->log("DONE");
+}
+*/
+
+void Population::process_networks()
+{
+    logger->log("process_networks");
+
+    srand(NULL);
+
+    for (auto ntwk : this->population_network) {
+        if (ntwk->external_input != RANDOM_TIME)
+            continue;
+
+        for (uint n = 0; n < time_vec.size(); n++) {
+            deactivate_neurons(n);
+
+            auto it = n_rand_activate.find(time_vec[n]);
+            if (it != n_rand_activate.end()) {
+                uint neuron_id = it->second;
+                synaptic_block(ntwk, n, neuron_id);
+            } else {
+                deactivate_synapses(n);
+                activate_synapses(n);
+            }
+            update_stats(this->time_vec[n]);
+        }
     }
-    */
 
     write_stats();
 

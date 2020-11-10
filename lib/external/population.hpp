@@ -44,6 +44,7 @@ private:
     void init_neuron_population(Config* config);
     void create_interneuronal_network_projections(Config* config);
     void create_recurrent_network_projections(Config* config);
+    void set_firing_time_for_random_time_network();
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -107,8 +108,6 @@ public:
     std::vector<std::vector<double>> m_sf_matrix;
     std::vector<double> m_nf_matrix;
 
-    std::vector<double> weighted_sum;
-
      // Activate synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
     mmap s_activate;
 
@@ -120,6 +119,9 @@ public:
     
     // Refractory : map <time , vector<neuron_id> >
     std::map<_time_t, std::vector<uint>> n_refractory;
+
+    // Activate neurons according to uniform distribution firing times
+    std::map<time_t, uint> n_rand_activate;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

@@ -18,45 +18,35 @@ with open('results/ca_stats.csv') as f:
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
-    E_CA3 = []
-    I_CA3P = []
-    I_CA3I = []
+    E_CA1 = []
+    I_CA1P = []
+    I_CA1I = []
     I_S = []
-    I_B = []
-    I_BS = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
             name = row[i][:row[i].find('_')]
             if (name == "pyramidal"):
-                E_CA3 = data[:, i]
+                E_CA1 = data[:, i]
             elif (name == "hippocamposeptal"):
-                I_CA3P = data[:, i]
+                I_CA1P = data[:, i]
             elif (name == "interneurons"):
-                I_CA3I = data[:, i]
-            elif (name == "basket"):
-                I_B = data[:, i]
-            elif (name == "bistratified"):
-                I_BS = data[:, i]
+                I_CA1I = data[:, i]
             else:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA3 dynamics')
-    ax1.plot(t, E_CA3)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex = True, figsize = (8, 6))
+    ax1.set_title('CA1 dynamics')
+    ax1.plot(t, E_CA1)
     ax1.set_ylabel('Pyramidal')
-    ax2.plot(t, I_B)
-    ax2.set_ylabel('Basket')
-    ax3.plot(t, I_BS)
-    ax3.set_ylabel('Bistratified')
-    ax4.plot(t, I_CA3I)
-    ax4.set_ylabel('Interneurons')
-    ax5.plot(t, I_CA3P)
-    ax5.set_ylabel('hippocampo-septal')
-    ax6.plot(t, I_S)
-    ax6.set_ylabel('Septum')
-    ax6.set_xlabel('time (ms)')
+    ax2.plot(t, I_CA1P)
+    ax2.set_ylabel('Hippocampo-septal')
+    ax3.plot(t, I_CA1I)
+    ax3.set_ylabel('Interneurons')
+    ax4.plot(t, I_S)
+    ax4.set_ylabel('Septum')
+    ax4.set_xlabel('time (ms)')
     plt.show()
 
     # Plot inactive neuron stats

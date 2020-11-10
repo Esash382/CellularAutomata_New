@@ -3,17 +3,18 @@
     "type" : 1.0,
     "N" : 2.0,
     "k" : 0.0,
-    "threshold" : 2.0,
+    "threshold" : 12.0,
     "z" : 0.0,
     
     "ap" : 1.0,
     "ref" : 10.0,
     "del" : 5.0,
-    "dur" : 10.0,
+    "dur" : 150.0,
 
     "osc" : 0.0,
 
-    "ext_type": 0,
-    "ext_val" : 3,
-    "ext_step" : 100
+    "num_ext_input" : 1,
+    "ext_type": 2,
+    "ext_val_1" : 3,
+    "ext_step" : 0
 }
