@@ -121,7 +121,7 @@ public:
     std::map<_time_t, std::vector<uint>> n_refractory;
 
     // Activate neurons according to uniform distribution firing times
-    std::map<time_t, uint> n_rand_activate;
+    std::map<uint, std::map<time_t, uint>> n_rand_map;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

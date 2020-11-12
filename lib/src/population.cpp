@@ -270,21 +270,25 @@ void Population::create_recurrent_network_projections(Config *config)
 
 void Population::set_firing_time_for_random_time_network()
 {
-    std::vector<unsigned int> t_indices(this->time_vec.size());
-    std::iota(t_indices.begin(), t_indices.end(), this->time_vec[0]);
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::shuffle(t_indices.begin(), t_indices.end(), std::default_random_engine(seed));
-
     for (auto ntwk : this->population_network) {
         if (ntwk->external_input == RANDOM_TIME) {
+            std::vector<unsigned int> t_indices(this->time_vec.size());
+            std::iota(t_indices.begin(), t_indices.end(), this->time_vec[0]);
+            unsigned tseed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(t_indices.begin(), t_indices.end(), std::default_random_engine(tseed));
+
+            std::map<time_t, uint> n_rand_activate;
+
             std::vector<unsigned int> n_indices(ntwk->m_N);
             std::iota(n_indices.begin(), n_indices.end(), 0);
-            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-            std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(seed));
+            unsigned nseed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(nseed));
 
             for (uint i = 0; i < ntwk->m_N; i++) {
                 n_rand_activate[t_indices[i]] = n_indices[i];
             }
+        
+            n_rand_map[ntwk->m_ntwk_id] = n_rand_activate;
         }
     }
 }
@@ -772,23 +776,30 @@ void Population::process_networks()
 
     srand(NULL);
 
-    for (auto ntwk : this->population_network) {
-        if (ntwk->external_input != RANDOM_TIME)
-            continue;
+    for (uint n = 0; n < time_vec.size(); n++) {
+        deactivate_neurons(n);
 
-        for (uint n = 0; n < time_vec.size(); n++) {
-            deactivate_neurons(n);
-
-            auto it = n_rand_activate.find(time_vec[n]);
-            if (it != n_rand_activate.end()) {
-                uint neuron_id = it->second;
-                synaptic_block(ntwk, n, neuron_id);
-            } else {
-                deactivate_synapses(n);
-                activate_synapses(n);
+        bool flag = false;
+        for (auto ntwk : this->population_network) {
+            auto it = n_rand_map.find(ntwk->m_ntwk_id);
+            if (it != n_rand_map.end()) {
+                auto n_rand_activate = it->second;
+                auto it2 = n_rand_activate.find(time_vec[n]);
+                if (it2 != n_rand_activate.end()) {
+                    uint neuron_id = it2->second;
+                    synaptic_block(ntwk, n, neuron_id);
+                    flag = true;
+                }
             }
-            update_stats(this->time_vec[n]);
         }
+
+        if (!flag) {
+            deactivate_synapses(n);
+            activate_synapses(n);
+            flag = false;
+        }
+
+        update_stats(this->time_vec[n]);
     }
 
     write_stats();
