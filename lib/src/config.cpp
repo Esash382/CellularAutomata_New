@@ -104,10 +104,12 @@ std::vector<std::string> Config::get_unique_files()
 
 shared_ptr<Network> Config::create_network(std::string name)
 {
+	Log* logger = Log::getInstance();
 	std::map<string, float> con = read_file(name);
     if (con.empty()) {
         return NULL;
     }
+    logger->log("read_file = " + name);
 
     float ext_val = 0.0f;
     uint num_ext_input = con["num_ext_input"];

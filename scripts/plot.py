@@ -22,6 +22,8 @@ with open('results/ca_stats.csv') as f:
     I_CA1P = []
     I_CA1I = []
     I_S = []
+    CA3 = []
+    PS = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
@@ -32,11 +34,15 @@ with open('results/ca_stats.csv') as f:
                 I_CA1P = data[:, i]
             elif (name == "interneurons"):
                 I_CA1I = data[:, i]
+            elif (name == "ca3"):
+                CA3 = data[:, i]
+            elif (name == "ps"):
+                PS = data[:, i]
             else:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex = True, figsize = (8, 6))
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (8, 6))
     ax1.set_title('CA1 dynamics')
     ax1.plot(t, E_CA1)
     ax1.set_ylabel('Pyramidal')
@@ -46,7 +52,30 @@ with open('results/ca_stats.csv') as f:
     ax3.set_ylabel('Interneurons')
     ax4.plot(t, I_S)
     ax4.set_ylabel('Septum')
-    ax4.set_xlabel('time (ms)')
+    ax5.plot(t, CA3)
+    ax5.set_ylabel('CA3')
+    ax6.plot(t, PS)
+    ax6.set_ylabel('PS')
+    ax6.set_xlabel('time (ms)')
+    plt.show()
+
+    width = 10
+
+    bins = []
+    for i in range(len(t) + 1):
+        if ( i != 0 and i % width == 0):
+            bins.append(i)
+    values = []
+    count = 0
+    for i in range(len(E_CA1)):
+        if (E_CA1[i] > 0):
+            count = count + 1
+        if (i != 0 and i % width == 0):
+            values.append(count)
+            count = 0
+    values.append(count)
+    plt.bar(bins, values, color='b', width=5)
+    plt.xticks(bins)
     plt.show()
 
     # Plot inactive neuron stats

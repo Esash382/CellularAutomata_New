@@ -1,7 +1,8 @@
 {
-    "id" : 201.0,
+    "pyramidal_interneurons" : 206.0,
+    "id" : 206.0,
     "ksd" : 0.0,
     "zsd" : 0.0,
     "kds" : -1.0,
-    "zds" : 12.0
+    "zds" : 10.0
 }

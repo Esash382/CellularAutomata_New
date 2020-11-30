@@ -118,6 +118,7 @@ void Population::init_neuron_population(Config* config)
     this->population_network.reserve(unique_files.size());
 
     for (uint i = 0; i < unique_files.size(); i++) {
+        logger->log("files = " + unique_files[i]);
         shared_ptr<Network> ntwk = config->create_network(unique_files[i]);
         if (i == 0) {
             ntwk->start_from_row_index = 0;
@@ -377,7 +378,7 @@ void Population::set_neuron_state(shared_ptr<Network> ntwk, uint i, MTYPE type)
 
 _time_t Population::get_noisy_delay(_time_t del, uint step)
 {
-    return get_random_number(del - step, del + step);
+    return del ? get_random_number(del - step, del + step) : del;
 }
 
 void Population::activate_single_neuron(shared_ptr<Network> ntwk, uint n, uint i)
@@ -572,7 +573,6 @@ void Population::synaptic_block(shared_ptr<Network> ntwk, uint n, uint i)
     logger->log("synaptic_block");
     
     deactivate_synapses(n);
-    activate_synapses(n);
     if (this->m_n_matrix[ntwk->start_from_row_index + i] == REF) {
         logger->log("synaptic_block: REF state neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
         std::string str = ("synaptic_block: REF state neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
@@ -584,6 +584,7 @@ void Population::synaptic_block(shared_ptr<Network> ntwk, uint n, uint i)
         //std::cout << str << std::endl;
         threshold_block(ntwk, n, i, ON);
     }
+    activate_synapses(n);
 }
 
 double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
@@ -686,8 +687,13 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
                 if (this->m_w_matrix[cur][k] != 0) {
                     syn_vec.push_back(k);
                     if (ntwk->tau_del == 0) {
+                        del = ntwk->tau_del;
+                        logger->log("switch on synapses of neuron " + std::to_string(i) + " synapse s = " + std::to_string(k) + "with no delay at time " + std::to_string(time_vec[n]));
+                        logger->log("switch on synapses of neuron " + std::to_string(i) + " synapse s = " + std::to_string(k) + "with no delay and duration = " + std::to_string(ntwk->tau_dur) + " at time " + std::to_string(time_vec[n]));
                         this->m_s_matrix[cur][k] = S_ON;
                     }
+                    logger->log("switch on synapses of neuron " + std::to_string(i) + " synapse s = " + std::to_string(k) + "with delay = " + std::to_string(del) + " at time " + std::to_string(time_vec[n]));
+                    logger->log("switch on synapses of neuron " + std::to_string(i) + " synapse s = " + std::to_string(k) + "with delay = " + std::to_string(del) + " and duration = " + std::to_string(ntwk->tau_dur) + " at time " + std::to_string(time_vec[n]));
                     this->m_sf_matrix[cur][k] = time_vec[n] + del;
                 }
             }

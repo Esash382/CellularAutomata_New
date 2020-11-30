@@ -12,7 +12,8 @@
 
 typedef enum _NETWORK_TYPE_ {
 	EXCITATORY = 0,
-	INHIBITORY
+	INHIBITORY,
+    PSEUDO_NEURON
 } NETWORK_TYPE;
 
 class Network
