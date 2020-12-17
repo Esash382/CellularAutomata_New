@@ -6,7 +6,7 @@ std::ofstream Log::out;
 Log* Log::getInstance() {
     if (!m_instance) {
         m_instance = new Log();
-        out.open("/home/esash/Documents/Projects/CellularAutomata/CellularAutomata_Fast/results/log.txt", ios::out | ios::binary);
+        out.open("/home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast/results/log.txt", ios::out | ios::binary);
     }
 
     return m_instance;

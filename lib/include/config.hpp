@@ -19,8 +19,9 @@ public:
     shared_ptr<Network> create_network(std::string name);
 
 public:
-    double time;
+    double ttime;
     double time_step;
+    uint bin_size;
 
 private:
     void get_time();

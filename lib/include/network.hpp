@@ -22,8 +22,10 @@ public:
 	Network(std::string name, uint ntwk_id, uint N, 
 			NETWORK_TYPE type, float threshold,
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
-			_time_t tau_del, _time_t tau_dur, _time_t tau_osc,
+			_time_t tau_del, _time_t tau_dur, _time_t tau_osc, uint nf,
 			EXTERNAL_INPUT e_in, float value, float step);
+
+    void init_bins();
 
 	// Logger
 	Log* logger;
@@ -57,7 +59,9 @@ public:
     std::vector<double> ac_stats;
     std::vector<double> in_stats;
     std::vector<double> ref_stats;
-    
+
+    uint number_of_firing_times;
+
     // starting row index in the matrix
     // which means, 
     // ntwk->start_from_row_index + i = required specific neuron in this population

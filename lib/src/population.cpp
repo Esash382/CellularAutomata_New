@@ -18,6 +18,7 @@ Population::Population()
 	this->time_vec.reserve(0);
 	this->filepath = "";
 	this->result_file_path = "";
+    this->bin_size = 0;
 
     logger->log("Population constructor");
 }
@@ -132,6 +133,23 @@ void Population::init_neuron_population(Config* config)
     logger->log("Neuron population initialized");
 }
 
+void Population::init_bins()
+{
+    //uint number_of_bins = this->total_time / bin_size;
+    // For each network
+    for (uint i = 0; i < this->population_network.size(); i++) {
+        std::map<_time_t, std::set<uint>> tmap;
+
+        // For each bin_size, put time in the map and the set
+        for (uint j = bin_size; j <= this->total_time; j += bin_size) {
+            std::set<uint> tset;
+            tmap[j] = tset;
+        }
+
+        this->bin_values.push_back(tmap);
+    }
+}
+
 void Population::create_interneuronal_network_projections(Config* config)
 {
     logger->log("create_interneuronal_network_projections");
@@ -178,7 +196,10 @@ void Population::create_interneuronal_network_projections(Config* config)
                 for (uint k = 0; k < zsd; k++) {
                     uint j = indices[k];
                     assert(this->m_w_matrix[i][j] == 0);
-                    this->m_w_matrix[i][j] = ksd;
+                    if (this->population_network.size() == 2)
+                        this->m_w_matrix[i][j] = get_random_number(ksd - 10, ksd + 10);
+                    else
+                        this->m_w_matrix[i][j] = ksd;
                     this->m_s_matrix[i][j] = S_OFF;
                     this->m_sf_matrix[i][j] = 0.0f;
 //                    std::cout << cell[0] << " -> " << cell[1] << " = " << zsd << " : " << index << " = " << k << " : this->m_w_matrix[" << i << "][" << j << "]" << this->m_w_matrix[i][j] << std::endl;
@@ -212,7 +233,10 @@ void Population::create_interneuronal_network_projections(Config* config)
                 for (uint k = 0; k < zds; k++) {
                     uint j = indices[k];
                     assert(this->m_w_matrix[i][j] == 0);
-                    this->m_w_matrix[i][j] = kds;
+                    if (this->population_network.size() == 2)
+                        this->m_w_matrix[i][j] = get_random_number(kds - 10, kds + 10);
+                    else
+                        this->m_w_matrix[i][j] = kds;
                     this->m_s_matrix[i][j] = S_OFF;
                     this->m_sf_matrix[i][j] = 0.0f;
 //                    std::cout << cell[1] << " -> " << cell[0] << " = " << zds << " : " << index << " = " << k << " : this->m_w_matrix[" << i << "][" << j << "]" << this->m_w_matrix[i][j] << std::endl;
@@ -269,26 +293,37 @@ void Population::create_recurrent_network_projections(Config *config)
     }
 }
 
+// THUMB rule: number of external input neurons < size of time_vec array
 void Population::set_firing_time_for_random_time_network()
 {
     for (auto ntwk : this->population_network) {
         if (ntwk->external_input == RANDOM_TIME) {
+            std::map<time_t, uint> n_rand_activate;
+
             std::vector<unsigned int> t_indices(this->time_vec.size());
             std::iota(t_indices.begin(), t_indices.end(), this->time_vec[0]);
             unsigned tseed = std::chrono::system_clock::now().time_since_epoch().count();
             std::shuffle(t_indices.begin(), t_indices.end(), std::default_random_engine(tseed));
 
-            std::map<time_t, uint> n_rand_activate;
+            uint total_possible_firing_repeat_times = this->time_vec.size() / ntwk->m_N;
 
-            std::vector<unsigned int> n_indices(ntwk->m_N);
-            std::iota(n_indices.begin(), n_indices.end(), 0);
-            unsigned nseed = std::chrono::system_clock::now().time_since_epoch().count();
-            std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(nseed));
+            for (uint j= 0;
+                 (j < ntwk->number_of_firing_times &&
+                  j <= total_possible_firing_repeat_times);
+                  j++) {
+                std::vector<unsigned int> n_indices(ntwk->m_N);
+                std::iota(n_indices.begin(), n_indices.end(), 0);
+                unsigned nseed = std::chrono::system_clock::now().time_since_epoch().count();
+                std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(nseed));
 
-            for (uint i = 0; i < ntwk->m_N; i++) {
-                n_rand_activate[t_indices[i]] = n_indices[i];
+                for (uint i = 0; i < ntwk->m_N; i++) {
+                    if (j > 0)
+                        n_rand_activate[this->time_vec[t_indices[j*ntwk->m_N]]] = n_indices[i];
+                    else
+                        n_rand_activate[this->time_vec[t_indices[i]]] = n_indices[i];
+                }
             }
-        
+
             n_rand_map[ntwk->m_ntwk_id] = n_rand_activate;
         }
     }
@@ -339,13 +374,15 @@ void Population::calculate_number_of_synapses()
 
 void Population::add_network_internal_func(Config *config)
 {
-    this->total_time = config->time;
+    this->total_time = config->ttime;
     this->time_step = (config->time_step == 0.0) ? 0.1 : config->time_step;
+    this->bin_size = config->bin_size;
 
 	get_time_vector(this->total_time, this->time_step);
 
     // Initialize neuron population one by one
     init_neuron_population(config);
+    init_bins();
 
     calculate_network_size();
 
@@ -780,7 +817,7 @@ void Population::process_networks()
 {
     logger->log("process_networks");
 
-    srand(NULL);
+    srand(0);
 
     for (uint n = 0; n < time_vec.size(); n++) {
         deactivate_neurons(n);
@@ -813,31 +850,49 @@ void Population::process_networks()
     logger->log("DONE");
 }
 
+int Population::get_bin_index(uint n)
+{
+    for (uint j = bin_size; j <= this->total_time; j += bin_size) {
+        if (this->time_vec[n] < j) {
+            return j;
+        }
+    }
+    return -1;
+}
+
 void Population::update_stats(uint n)
 {
     logger->log("update_stats");
 
-    for (auto ntwk : this->population_network) {
+    for (uint i = 0; i < this->population_network.size(); i++) { // i loop in init_bins
         double ac_stats = 0;
         double in_stats = 0;
         double ref_stats = 0;
-        uint size = ntwk->start_from_row_index + ntwk->m_N;
-        for (uint i = ntwk->start_from_row_index; i < size; i++) {
-            if (this->m_n_matrix[i] == ON)
+        uint size = this->population_network[i]->start_from_row_index +
+                                            this->population_network[i]->m_N;
+
+        auto& tmap = this->bin_values[i]; // map of the ntwk -> this->population_network[i]
+//        std::cout << "ntwk_name  = " << this->population_network[i]->m_ntwk_name << " time = " << this->time_vec[n] << " set size = " << tmap[get_bin_index(n)].size() << std::endl;
+
+        for (uint j = this->population_network[i]->start_from_row_index; j < size; j++) { // j loop in init_bins
+            if (this->m_n_matrix[j] == ON) {
                 ++ac_stats;
-            else if (this->m_n_matrix[i] == OFF)
+                tmap[get_bin_index(n)].insert(j);
+            } else if (this->m_n_matrix[j] == OFF)
                 ++in_stats;
-            else if (this->m_n_matrix[i] == REF)
+            else if (this->m_n_matrix[j] == REF)
                  ++ref_stats;
         }
 
-        logger->log("update_stats: network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(this->time_vec[n]) + " : #active : " + std::to_string(ac_stats));
+//        std::cout << "ntwk_name  = " << this->population_network[i]->m_ntwk_name << " time = " << this->time_vec[n] << " set size = " << tmap[get_bin_index(n)].size() << std::endl;
 
-//        std::cout << n << " : " << ntwk->m_ntwk_name << " : " << ac_stats << std::endl;
+        logger->log("update_stats: network : " + this->population_network[i]->m_ntwk_name + " : time : " + std::to_string(this->time_vec[n]) + " : #active : " + std::to_string(ac_stats));
 
-        ntwk->ac_stats.push_back(ac_stats / ntwk->m_N);
-        ntwk->in_stats.push_back(in_stats / ntwk->m_N);
-        ntwk->ref_stats.push_back(ref_stats / ntwk->m_N);
+//        std::cout << n << " : " << this->population_network[i]->m_ntwk_name << " : " << ac_stats << std::endl;
+
+        this->population_network[i]->ac_stats.push_back(ac_stats / this->population_network[i]->m_N);
+        this->population_network[i]->in_stats.push_back(in_stats / this->population_network[i]->m_N);
+        this->population_network[i]->ref_stats.push_back(ref_stats / this->population_network[i]->m_N);
     }
 }
 
@@ -869,4 +924,23 @@ void Population::write_stats()
         }
     }
     out.close();
+
+    std::ofstream out2(this->result_file_path + "/ca_bin_stats.csv", std::ios_base::binary);
+    if (out2.good()) {
+        for (uint i = 0; i < this->bin_values.size(); i++) { // for each ntwk
+            auto tmap = this->bin_values[i];
+            out2 << "bins\t";
+            for (auto it = tmap.begin(); it != tmap.end(); it++) {
+                out2 << it->first << "\t";
+            }
+            out2 << "\n";
+            out2 << this->population_network[i]->m_ntwk_name << "\t";
+
+            for (auto it = tmap.begin(); it != tmap.end(); it++) {
+                out2 << it->second.size() << "\t";
+            }
+            out2 << "\n";
+        }
+    }
+    out2.close();
 }

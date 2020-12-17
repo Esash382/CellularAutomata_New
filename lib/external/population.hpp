@@ -3,6 +3,7 @@
 #include "../include/config.hpp"
 
 #include <map>
+#include <set>
 #include <memory>
 
 using std::unique_ptr;
@@ -45,6 +46,8 @@ private:
     void create_interneuronal_network_projections(Config* config);
     void create_recurrent_network_projections(Config* config);
     void set_firing_time_for_random_time_network();
+    void init_bins();
+    int get_bin_index(uint n);
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -92,6 +95,7 @@ public:
     std::vector<_time_t> time_vec;
     _time_t total_time;
     _time_t time_step;
+    uint bin_size;
     _time_t last_osc_run_time;
 
     const uint th_step;
@@ -108,6 +112,8 @@ public:
     std::vector<std::vector<double>> m_sf_matrix;
     std::vector<double> m_nf_matrix;
 
+    std::vector<std::map<_time_t, std::set<uint>>> bin_values;
+
      // Activate synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
     mmap s_activate;
 
@@ -122,6 +128,7 @@ public:
 
     // Activate neurons according to uniform distribution firing times
     std::map<uint, std::map<time_t, uint>> n_rand_map;
+    //std::map<uint, std::vector<std::vector<double>>> n_rand_map;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

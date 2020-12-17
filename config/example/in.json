@@ -1,18 +1,20 @@
 {
     "id" : 102.0,
     "type" : 1.0,
-    "N" : 2.0,
+    "N" : 100.0,
     "k" : 0.0,
-    "threshold" : 1.0,
+    "threshold" : 5.0,
     "z" : 0.0,
     
     "ap" : 1.0,
-    "ref" : 1.0,
-    "del" : 1.0,
-    "dur" : 1.0,
+    "ref" : 11.0,
+    "del" : 5.0,
+    "dur" : 8.0,
 
     "osc" : 0.0,
 
     "num_ext_input" : 0,
-    "ext_step" : 0
+    "ext_step" : 0,
+
+    "nf" : 1
 }

@@ -15,9 +15,6 @@
 
     "osc" : 0.0,
 
-    "num_ext_input" : 2,
-    "ext_type": 3,
-    "ext_val_1" : 12,
-    "ext_val_2" : 5,
+    "num_ext_input" : 0,
     "ext_step" : 0 
 }

@@ -1443,9 +1443,9 @@ void TestModel::testPeriodicExternalInputWithDelay(void)
 
 void TestModel::setUp(void)
 {
-	handle = dlopen("libcaf.so", RTLD_NOW);
+	handle = dlopen("libca.so", RTLD_NOW);
 	char* error;
-    const char* filepath = "/home/esash/Documents/Projects/CellularAutomata/CellularAutomata_Fast/";
+    const char* filepath = "/home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast/";
 
 	if (!handle) {
 		fputs (dlerror(), stderr);

@@ -59,23 +59,62 @@ with open('results/ca_stats.csv') as f:
     ax6.set_xlabel('time (ms)')
     plt.show()
 
-    width = 10
+with open('results/ca_bin_stats.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
 
     bins = []
-    for i in range(len(t) + 1):
-        if ( i != 0 and i % width == 0):
-            bins.append(i)
-    values = []
-    count = 0
-    for i in range(len(E_CA1)):
-        if (E_CA1[i] > 0):
-            count = count + 1
-        if (i != 0 and i % width == 0):
-            values.append(count)
-            count = 0
-    values.append(count)
-    plt.bar(bins, values, color='b', width=5)
-    plt.xticks(bins)
+    E = []
+    I_CA1P = []
+    I_CA1I = []
+    I_S = []
+    CA3 = []
+    PS = []
+
+    for row in reader:
+        if (row[0] == "pyramidal"):
+            E = row[1:-1]
+            E = [int(i) for i in E]
+        elif (row[0] == "septum"):
+            I_S = row[1:-1]
+            I_S = [int(i) for i in I_S]
+        elif (row[0] == "hippocamposeptal"):
+            I_CA1P = row[1:-1]
+            I_CA1P = [int(i) for i in I_CA1P]
+        elif (row[0] == "interneurons"):
+            I_CA1I = row[1:-1]
+            I_CA1I = [int(i) for i in I_CA1I]
+        elif (row[0] == "ca3"):
+            CA3 = row[1:-1]
+            CA3 = [int(i) for i in CA3]
+        elif (row[0] == "ps"):
+            PS = row[1:-1]
+            PS = [int(i) for i in PS]
+        elif (row[0] == "bins"):
+            bins = row[1:-1]
+            bins = [int(i) for i in bins]
+
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
+    ax1.set_title('CA1 dynamics')
+    ax1.bar(bins, E, width = 5)
+    ax1.set_ylabel('Pyramidal')
+
+    ax2.bar(bins, I_CA1I, width = 5)
+    ax2.set_ylabel('Interneurons')
+
+    ax3.bar(bins, I_CA1P, width = 5)
+    ax3.set_ylabel('Hippocampo-septal')
+
+    ax4.bar(bins, I_S, width = 5)
+    ax4.set_ylabel('Septum')
+
+    ax5.bar(bins, CA3, width = 5)
+    ax5.set_ylabel('CA3')
+
+    ax6.bar(bins, PS, width = 5)
+    ax6.set_ylabel('PS')
+    ax6.set_xlabel('time (ms)')
+
+    plt.tight_layout()
     plt.show()
 
     # Plot inactive neuron stats

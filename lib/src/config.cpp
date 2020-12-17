@@ -39,8 +39,9 @@ void Config::get_time()
 
     ifs.close();
 
-    this->time = con["time"];
+    this->ttime = con["time"];
     this->time_step = con["step"];
+    this->bin_size = con["binsize"];
 }
 
 std::map<string, float> Config::read_file(std::string filename)
@@ -119,7 +120,7 @@ shared_ptr<Network> Config::create_network(std::string name)
                         NETWORK_TYPE(con["type"]),
                         con["threshold"], con["k"], con["ap"],
                         con["ref"], uint(con["z"]), con["del"], 
-                        con["dur"], con["osc"],
+                        con["dur"], con["osc"], con["nf"],
                         PERIODIC, 0.0f, con["ext_step"]);
     }
 
@@ -131,6 +132,6 @@ shared_ptr<Network> Config::create_network(std::string name)
                         NETWORK_TYPE(con["type"]),
                         con["threshold"], con["k"], con["ap"],
                         con["ref"], uint(con["z"]), con["del"], 
-                        con["dur"], con["osc"],
+                        con["dur"], con["osc"], con["nf"],
                         EXTERNAL_INPUT(con["ext_type"]), ext_val, con["ext_step"]);
 }

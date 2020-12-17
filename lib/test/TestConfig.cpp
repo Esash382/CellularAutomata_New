@@ -98,7 +98,7 @@ void TestConfig::testCreateNetwork(void)
 
 void TestConfig::setUp(void)
 {
-    mTestObj = new Config("/home/esash/Documents/Projects/CellularAutomata/CellularAutomata_Fast/", "example");
+    mTestObj = new Config("/home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast/", "example");
 }
 
 void TestConfig::tearDown(void)

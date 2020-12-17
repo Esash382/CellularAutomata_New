@@ -3,7 +3,7 @@
 Network::Network(std::string name, uint ntwk_id, uint N, 
 			NETWORK_TYPE type, float threshold,
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
-			_time_t tau_del, _time_t tau_dur, _time_t tau_osc,
+			_time_t tau_del, _time_t tau_dur, _time_t tau_osc, uint nf,
 			EXTERNAL_INPUT e_in, float value, float step)
 {
 	logger = Log::getInstance();
@@ -28,6 +28,8 @@ Network::Network(std::string name, uint ntwk_id, uint N,
 	this->tau_dur = tau_dur;
 	this->tau_osc = tau_osc;
 	this->last_osc_run_time = 0;
+
+    this->number_of_firing_times = nf;
 
 	uint time_vec_size = this->time_vec.size();
 	this->ext_step = step;
