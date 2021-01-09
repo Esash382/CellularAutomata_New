@@ -2,6 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.fftpack
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -171,44 +172,87 @@ with open('results/ca_bin_stats.csv') as f:
     I_S = []
     I_B = []
     I_BS = []
+    CA3 = []
+    PS = []
+    EC = []
 
     for row in reader:
         if (row[0] == "pyramidal"):
-            E = row[1:]
+            E = row[1:-1]
+            E = [int(i) for i in E]
         elif (row[0] == "basket"):
-            I_B = row[1:]
+            I_B = row[1:-1]
+            I_B = [int(i) for i in I_B]
         elif (row[0] == "bistratified"):
-            I_BS = row[1:]
+            I_BS = row[1:-1]
+            I_BS = [int(i) for i in I_BS]
         elif (row[0] == "septum"):
-            I_S = row[1:]
+            I_S = row[1:-1]
+            I_S = [int(i) for i in I_S]
         elif (row[0] == "hippocamposeptal"):
-            I_CA1P = row[1:]
+            I_CA1P = row[1:-1]
+            I_CA1P = [int(i) for i in I_CA1P]
         elif (row[0] == "interneurons"):
-            I_CA1I = row[1:]
+            I_CA1I = row[1:-1]
+            I_CA1I = [int(i) for i in I_CA1I]
+        elif (row[0] == "ca3"):
+            CA3 = row[1:-1]
+            CA3 = [int(i) for i in CA3]
+        elif (row[0] == "ps"):
+            PS = row[1:-1]
+            PS = [int(i) for i in PS]
+        elif (row[0] == "ec"):
+            EC = row[1:-1]
+            EC = [int(i) for i in EC]
         elif (row[0] == "bins"):
-            bins = row[1:]
+            bins = row[1:-1]
+            bins = [int(i) for i in bins]
 
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA1 dynamics')
     ax1.bar(bins, E)
+    ax1.plot(bins, E)
     ax1.set_ylabel('Pyramidal')
 
     ax2.bar(bins, I_B)
+    ax2.plot(bins, I_B)
     ax2.set_ylabel('Basket')
 
     ax3.bar(bins, I_BS)
+    ax3.plot(bins, I_BS)
     ax3.set_ylabel('Bistratified')
 
-    ax4.bar(bins, I_CA1I)
-    ax4.set_ylabel('Interneurons')
+    ax4.bar(bins, I_CA1P)
+    ax4.plot(bins, I_CA1P)
+    ax4.set_ylabel('Hippocampo-septal')
 
-    ax5.bar(bins, I_CA1P)
-    ax5.set_ylabel('Hippocampo-septal')
+    ax5.bar(bins, I_CA1I)
+    ax5.plot(bins, I_CA1I)
+    ax5.set_ylabel('Interneurons')
 
     ax6.bar(bins, I_S)
+    ax6.plot(bins, I_S)
     ax6.set_ylabel('Septum')
     ax6.set_xlabel('time (ms)')
 
+    plt.tight_layout()
+    plt.show()
+
+    # FFT
+    # Number of samplepoints
+    N = 1000
+    # sample spacing
+    T = 1.0 / 1000.0
+    yf = scipy.fftpack.fft(E)
+    xf = np.linspace(0.0, 1.0/(2.0*T), int(N/2))
+
+    xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
+    yt = scipy.fftpack.fft(E)
+    plt.figure(figsize=(8, 5))
+    plt.semilogx(xt[1:], 2.0/len(bins) * np.abs(yt[0:int(len(bins)/2)])[1:])
+    plt.title('FFT plot: Pyramidal cell population')
+    plt.xlabel('time')
+    plt.ylabel('frequency')
     plt.tight_layout()
     plt.show()
 

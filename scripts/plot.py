@@ -2,6 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.fftpack
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -96,24 +97,48 @@ with open('results/ca_bin_stats.csv') as f:
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA1 dynamics')
     ax1.bar(bins, E, width = 5)
+    ax1.plot(bins, E)
     ax1.set_ylabel('Pyramidal')
 
-    ax2.bar(bins, I_CA1I, width = 5)
-    ax2.set_ylabel('Interneurons')
+    ax2.bar(bins, I_CA1P, width = 5)
+    ax2.plot(bins, I_CA1P)
+    ax2.set_ylabel('Hippocampo-septal')
 
-    ax3.bar(bins, I_CA1P, width = 5)
-    ax3.set_ylabel('Hippocampo-septal')
+    ax3.bar(bins, I_CA1I, width = 5)
+    ax3.plot(bins, I_CA1I)
+    ax3.set_ylabel('Interneurons')
 
     ax4.bar(bins, I_S, width = 5)
+    ax4.plot(bins, I_S)
     ax4.set_ylabel('Septum')
 
     ax5.bar(bins, CA3, width = 5)
+    ax5.plot(bins, CA3)
     ax5.set_ylabel('CA3')
 
     ax6.bar(bins, PS, width = 5)
+    ax6.plot(bins, PS)
     ax6.set_ylabel('PS')
     ax6.set_xlabel('time (ms)')
 
+    plt.tight_layout()
+    plt.show()
+
+    # FFT
+    # Number of samplepoints
+    N = 600
+    # sample spacing
+    T = 1.0 / 800.0
+    yf = scipy.fftpack.fft(E)
+    xf = np.linspace(0.0, 1.0/(2.0*T), int(N/2))
+
+    xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
+    yt = scipy.fftpack.fft(E)
+    plt.figure(figsize=(8, 5))
+    plt.semilogx(xt[1:], 2.0/len(bins) * np.abs(yt[0:int(len(bins)/2)])[1:])
+    plt.title('FFT plot: Pyramidal cell population')
+    plt.xlabel('time')
+    plt.ylabel('frequency')
     plt.tight_layout()
     plt.show()
 

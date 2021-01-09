@@ -18,5 +18,7 @@
     "num_ext_input" : 1,
     "ext_type" : 3,
     "ext_val_1" : 10,
-    "ext_step" : 0
+    "ext_step" : 0,
+
+    "nf" : 5
 }
