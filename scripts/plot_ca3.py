@@ -2,7 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.fftpack
+from scipy.fft import fft, fftfreq
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -79,6 +79,22 @@ with open('results/ca_stats.csv') as f:
     ax10.set_ylabel('Ext Septum')
     ax10.set_xlabel('time (ms)')
     plt.show()
+
+    # FFT
+    # Number of sample points
+    N = len(t)
+    # sample spacing
+    T = 1.0 / len(t)
+    yf = fft(E_CA3)
+    xf = fftfreq(N, T)[:N//2]
+    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
+    plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.grid()
+    plt.show()
+
+
 
     # Plot inactive neuron stats
     # fig = plt.figure(figsize=(8, 6))

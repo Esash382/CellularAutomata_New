@@ -1,8 +1,8 @@
 {
-    "interneurons_septum" : 403.0,
-    "id" : 403.0,
+    "interneurons_septum" : 203.0,
+    "id" : 203.0,
     "ksd" : 0.0,
     "zsd" : 0.0,
     "kds" : -10.0,
-    "zds" : 10.0
+    "zds" : 5.0
 }

@@ -1,11 +1,11 @@
 {
-    "backprojection": 307.0,
-    "id" : 307.0,
+    "backprojection": 107.0,
+    "id" : 107.0,
     "type" : 1.0,
     "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
-    "threshold" : 1.0,
+    "threshold" : 10.0,
     "z" : 0.0,
 
     "ap" : 1.0,
@@ -16,6 +16,5 @@
     "osc" : 0.0,
 
     "num_ext_input" : 0,
-    "ext_type": 0,
-    "ext_step" : 5
+    "ext_step" : 0
 }

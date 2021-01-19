@@ -125,6 +125,21 @@ with open('results/ca_stats.csv') as f:
     ax9.set_xlabel('time (ms)')
     plt.show()
 
+    # FFT
+    # Number of sample points
+    N = len(t)
+    # sample spacing
+    T = 1.0 / len(t)
+    yf = fft(E_CA1)
+    xf = fftfreq(N, T)[:N//2]
+    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
+    plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.grid()
+    plt.show()
+
+
     '''
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA1 dynamics')
@@ -166,7 +181,7 @@ with open('results/ca_bin_stats.csv') as f:
     data = np.delete(data, (len(data)-1), axis=0)
 
     bins = []
-    E_CA1 = []
+    E = []
     I_CA1P = []
     I_CA1I = []
     I_S = []
@@ -239,13 +254,6 @@ with open('results/ca_bin_stats.csv') as f:
     plt.show()
 
     # FFT
-    # Number of samplepoints
-    N = 1000
-    # sample spacing
-    T = 1.0 / 1000.0
-    yf = scipy.fftpack.fft(E)
-    xf = np.linspace(0.0, 1.0/(2.0*T), int(N/2))
-
     xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
     yt = scipy.fftpack.fft(E)
     plt.figure(figsize=(8, 5))

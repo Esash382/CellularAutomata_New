@@ -16,6 +16,5 @@
     "osc" : 0.0,
 
     "num_ext_input" : 0,
-    "ext_type": 0,
-    "ext_step" : 5
+    "ext_step" : 0
 }

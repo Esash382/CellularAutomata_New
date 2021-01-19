@@ -2,7 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.fftpack
+from scipy.fft import fft, fftfreq
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -58,6 +58,20 @@ with open('results/ca_stats.csv') as f:
     ax6.plot(t, PS)
     ax6.set_ylabel('PS')
     ax6.set_xlabel('time (ms)')
+    plt.show()
+
+    # FFT
+    # Number of sample points
+    N = len(t)
+    # sample spacing
+    T = 1.0 / len(t)
+    yf = fft(E_CA1)
+    xf = fftfreq(N, T)[:N//2]
+    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
+    plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.grid()
     plt.show()
 
 with open('results/ca_bin_stats.csv') as f:
@@ -124,23 +138,6 @@ with open('results/ca_bin_stats.csv') as f:
     plt.tight_layout()
     plt.show()
 
-    # FFT
-    # Number of samplepoints
-    N = 600
-    # sample spacing
-    T = 1.0 / 800.0
-    yf = scipy.fftpack.fft(E)
-    xf = np.linspace(0.0, 1.0/(2.0*T), int(N/2))
-
-    xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
-    yt = scipy.fftpack.fft(E)
-    plt.figure(figsize=(8, 5))
-    plt.semilogx(xt[1:], 2.0/len(bins) * np.abs(yt[0:int(len(bins)/2)])[1:])
-    plt.title('FFT plot: Pyramidal cell population')
-    plt.xlabel('time')
-    plt.ylabel('frequency')
-    plt.tight_layout()
-    plt.show()
 
     # Plot inactive neuron stats
     # fig = plt.figure(figsize=(8, 6))

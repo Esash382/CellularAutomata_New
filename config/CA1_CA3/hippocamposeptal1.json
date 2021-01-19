@@ -1,6 +1,6 @@
 {
-    "hippocamposeptal" : 302.0,
-    "id" : 302.0,
+    "hippocamposeptal" : 102.0,
+    "id" : 102.0,
     "type" : 1.0,
     "N" : 100.0,
     "k" : 0.0,
@@ -16,6 +16,5 @@
     "osc" : 0.0,
 
     "num_ext_input" : 0,
-    "ext_type": 0,
     "ext_step" : 0
 }
