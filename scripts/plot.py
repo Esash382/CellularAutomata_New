@@ -19,78 +19,83 @@ with open('results/ca_stats.csv') as f:
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
-    E_CA1 = []
-    I_CA1P = []
-    I_CA1I = []
+    E_CA3 = []
+    I_CA3P = []
+    I_CA3I = []
     I_S = []
     I_B = []
     I_BS = []
-    CA3 = []
+    CA1 = []
     PS = []
     EC = []
+    DG = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
             name = row[i][:row[i].find('_')]
             if (name == "pyramidal"):
-                E_CA1 = data[:, i]
+                E_CA3 = data[:, i]
             elif (name == "hippocamposeptal"):
-                I_CA1P = data[:, i]
+                I_CA3P = data[:, i]
             elif (name == "interneurons"):
-                I_CA1I = data[:, i]
+                I_CA3I = data[:, i]
             elif (name == "basket"):
                 I_B = data[:, i]
             elif (name == "bistratified"):
                 I_BS = data[:, i]
-            elif (name == "ca3"):
-                CA3 = data[:, i]
+            elif (name == "ca1"):
+                CA1 = data[:, i]
             elif (name == "ec"):
                 EC = data[:, i]
             elif (name == "ps"):
                 PS = data[:, i]
+            elif (name == "dg"):
+                DG = data[:, i]
             else:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig1, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA1 dynamics')
-    ax1.plot(t, E_CA1)
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
+    ax1.set_title('CA3 dynamics')
+    ax1.plot(t, E_CA3)
     ax1.set_ylabel('Pyramidal')
     ax2.plot(t, I_B)
     ax2.set_ylabel('Basket')
     ax3.plot(t, I_BS)
     ax3.set_ylabel('Bistratified')
-    ax4.plot(t, I_CA1I)
+    ax4.plot(t, I_CA3I)
     ax4.set_ylabel('Interneurons')
-    ax5.plot(t, I_CA1P)
-    ax5.set_ylabel('Hippocampo-septal')
+    ax5.plot(t, I_CA3P)
+    ax5.set_ylabel('hippocampo-septal')
     ax6.plot(t, I_S)
     ax6.set_ylabel('Septum')
-    ax7.plot(t, CA3)
-    ax7.set_ylabel('CA3')
+    '''
+    ax7.plot(t, CA1)
+    ax7.set_ylabel('CA1')
     ax8.plot(t, EC)
     ax8.set_ylabel('EC')
-    ax9.plot(t, PS)
-    ax9.set_ylabel('Ext Septum')
-    ax9.set_xlabel('time (ms)')
+    ax9.plot(t, DG)
+    ax9.set_ylabel('DG')
+    ax10.plot(t, PS)
+    ax10.set_ylabel('Ext Septum')
+    '''
+    ax6.set_xlabel('time (ms)')
 
-'''
     # FFT
     # Number of sample points
     N = len(t)
     # sample spacing
     T = 1.0 / len(t)
-    yf = fft(E_CA1)
+    yf = fft(E_CA3)
     xf = fftfreq(N, T)[:N//2]
-    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
-    plt.plot(xf[:20], 1.0 / 10 * np.abs(yf[0:N//50]))
-    #plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
+    plt.figure()
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]))
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
     plt.show()
-'''
 
+'''
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
 
@@ -102,14 +107,15 @@ with open('results/ca_bin_stats.csv') as f:
 
     bins = []
     E = []
-    I_CA1P = []
-    I_CA1I = []
+    I_CA3P = []
+    I_CA3I = []
     I_S = []
     I_B = []
     I_BS = []
-    CA3 = []
+    CA1 = []
     PS = []
     EC = []
+    DG = []
 
     for row in reader:
         if (row[0] == "pyramidal"):
@@ -125,14 +131,14 @@ with open('results/ca_bin_stats.csv') as f:
             I_S = row[1:-1]
             I_S = [int(i) for i in I_S]
         elif (row[0] == "hippocamposeptal"):
-            I_CA1P = row[1:-1]
-            I_CA1P = [int(i) for i in I_CA1P]
+            I_CA3P = row[1:-1]
+            I_CA3P = [int(i) for i in I_CA3P]
         elif (row[0] == "interneurons"):
-            I_CA1I = row[1:-1]
-            I_CA1I = [int(i) for i in I_CA1I]
-        elif (row[0] == "ca3"):
-            CA3 = row[1:-1]
-            CA3 = [int(i) for i in CA3]
+            I_CA3I = row[1:-1]
+            I_CA3I = [int(i) for i in I_CA3I]
+        elif (row[0] == "ca1"):
+            CA1 = row[1:-1]
+            CA3 = [int(i) for i in CA1]
         elif (row[0] == "ps"):
             PS = row[1:-1]
             PS = [int(i) for i in PS]
@@ -143,7 +149,7 @@ with open('results/ca_bin_stats.csv') as f:
             bins = row[1:-1]
             bins = [int(i) for i in bins]
 
-    fig2, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
     ax1.set_title('CA1 dynamics')
     ax1.bar(bins, E)
     ax1.plot(bins, E)
@@ -157,13 +163,13 @@ with open('results/ca_bin_stats.csv') as f:
     ax3.plot(bins, I_BS)
     ax3.set_ylabel('Bistratified')
 
-    ax4.bar(bins, I_CA1P)
-    ax4.plot(bins, I_CA1P)
-    ax4.set_ylabel('Hippocampo-septal')
+    ax4.bar(bins, I_CA3I)
+    ax4.plot(bins, I_CA3I)
+    ax4.set_ylabel('Interneurons')
 
-    ax5.bar(bins, I_CA1I)
-    ax5.plot(bins, I_CA1I)
-    ax5.set_ylabel('Interneurons')
+    ax5.bar(bins, I_CA3P)
+    ax5.plot(bins, I_CA3P)
+    ax5.set_ylabel('Hippocampo-septal')
 
     ax6.bar(bins, I_S)
     ax6.plot(bins, I_S)
@@ -171,6 +177,7 @@ with open('results/ca_bin_stats.csv') as f:
     ax6.set_xlabel('time (ms)')
 
     plt.tight_layout()
+    plt.show()
 
     # FFT
     # Number of sample points
@@ -179,13 +186,11 @@ with open('results/ca_bin_stats.csv') as f:
     T = 1.0 / len(bins)
     yf = fft(E)
     xf = fftfreq(N, T)[:N//2]
-    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
     plt.figure()
-    plt.plot(xf[:20], 1.0 / 10 * np.abs(yf[0:N//2]))
-    #plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
+    plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
     plt.show()
 
-
+'''
