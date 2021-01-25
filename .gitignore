@@ -8,3 +8,5 @@ cscope.out
 tags
 *.txt
 config/.*.swp
+config/CA3/.*.swp
+*/.*.swp
