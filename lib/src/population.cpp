@@ -1,5 +1,6 @@
 #include "../external/population.hpp"
 
+#include <functional>
 #include <iostream>
 #include <algorithm>
 #include <numeric>
@@ -307,6 +308,11 @@ void Population::set_firing_time_for_random_time_network()
 
             uint total_possible_firing_repeat_times = this->time_vec.size() / ntwk->m_N;
 
+            if (ntwk->number_of_firing_times > total_possible_firing_repeat_times) {
+                std::cout << "Error: Number of firing times is greater than the length of time vector!" << std::endl;
+                exit(1);
+            }
+
             for (uint j= 0;
                  (j < ntwk->number_of_firing_times &&
                   j <= total_possible_firing_repeat_times);
@@ -316,11 +322,20 @@ void Population::set_firing_time_for_random_time_network()
                 unsigned nseed = std::chrono::system_clock::now().time_since_epoch().count();
                 std::shuffle(n_indices.begin(), n_indices.end(), std::default_random_engine(nseed));
 
-                for (uint i = 0; i < ntwk->m_N; i++) {
-                    if (j > 0)
-                        n_rand_activate[this->time_vec[t_indices[j*ntwk->m_N]]] = n_indices[i];
-                    else
-                        n_rand_activate[this->time_vec[t_indices[i]]] = n_indices[i];
+                if (ntwk->m_N < this->time_vec.size()) {
+                    for (uint i = 0; i < ntwk->m_N; i++) {
+                        if (j > 0)
+                            n_rand_activate[this->time_vec[t_indices[i+j*ntwk->m_N]]] = n_indices[i];
+                        else
+                            n_rand_activate[this->time_vec[t_indices[i]]] = n_indices[i];
+                    }
+                } else {
+                    for (uint i = 0; i < this->time_vec.size(); i++) {
+                        if (j > 0)
+                            n_rand_activate[this->time_vec[t_indices[i+j*ntwk->m_N]]] = n_indices[i];
+                        else
+                            n_rand_activate[this->time_vec[t_indices[i]]] = n_indices[i];
+                    }
                 }
             }
 
@@ -758,6 +773,15 @@ void Population::deactivate_neurons(uint n)
 {
     if ( n == 0 ) return;
 
+    std::vector<uint> vec2 = n_refractory[time_vec[n]];
+    for (uint i = 0; i < vec2.size(); i++) {
+        this->m_n_matrix[vec2[i]] = REF;
+        logger->log("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        std::string str = ("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
+        //std::cout << str << std::endl;
+    }
+    n_refractory.erase(time_vec[n]);
+
     std::vector<uint> vec1 = n_deactivate[time_vec[n]];
     for (uint i = 0; i < vec1.size(); i++) {
         this->m_n_matrix[vec1[i]] = OFF;
@@ -767,15 +791,6 @@ void Population::deactivate_neurons(uint n)
         //std::cout << str << std::endl;
     }
     n_deactivate.erase(time_vec[n]);
-
-    std::vector<uint> vec2 = n_refractory[time_vec[n]];
-    for (uint i = 0; i < vec2.size(); i++) {
-        this->m_n_matrix[vec2[i]] = REF;
-        logger->log("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
-        std::string str = ("deactivate_neurons : switching to REF neuron: " + std::to_string(i) + " : time : " + std::to_string(time_vec[n]));
-        //std::cout << str << std::endl;
-    }
-    n_refractory.erase(time_vec[n]);
 }
 
 void Population::call_deactivate_neurons(uint n)

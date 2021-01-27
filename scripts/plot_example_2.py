@@ -2,8 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-from scipy import optimize
+from scipy.fft import fft, fftfreq
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -21,7 +20,7 @@ with open('results/ca_stats.csv') as f:
 
     t = data[:, 0]
     E = []
-    I = []
+    EXT = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
@@ -29,71 +28,73 @@ with open('results/ca_stats.csv') as f:
             if (name == "ex"):
                 E = data[:, i]
             else:
-                I = data[:, i]
+                EXT = data[:, i]
 
     # Plot active neuron stats
-    fig = plt.figure(1, figsize=(8, 6)) 
-    plt.plot(t, E)
-    plt.xlabel('time, t(ms)')
-    plt.ylabel('E(t)')
-    plt.title('Excitatory population')
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+    ax1.plot(t, E)
+    ax1.set_xlabel('time, t(ms)')
+    ax1.set_ylabel('E(t)')
+    ax1.set_title('Excitatory population')
+
+    ax2.plot(t, EXT)
+    ax2.set_xlabel('time, t(ms)')
+    ax2.set_ylabel('External input')
+    ax2.set_title('External input')
+
     plt.tight_layout()
     plt.show()
 
-'''
-    width = 10
-
-    bins = []
-    for i in range(len(t) + 1):
-        if ( i != 0 and i % width == 0):
-            bins.append(i)
-    values = []
-    count = 0
-    for i in range(len(E)):
-        if (E[i] > 0):
-            count = count + 1
-        if (i != 0 and i % width == 0):
-            values.append(count)
-            count = 0
-    values.append(count)
-'''
-
-def func1(x, a, b, c):
-    # a Gaussian distribution
-    # return a * np.exp(-(x-b)**2/(2*c**2))
-    return a + b*x + c*x*x
-
-def func(x, a, b):
-    return a * np.sin(b * x)
+    # FFT
+    # Number of sample points
+    N = len(t)
+    # sample spacing
+    T = 1.0 / len(t)
+    yf = fft(E)
+    xf = fftfreq(N, T)[:N//2]
+    plt.figure()
+    plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.grid()
+    plt.show()
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
-    row = next(reader)
 
     dataR = genfromtxt('results/ca_bin_stats.csv', delimiter='\t')
     data = dataR.T
+
+    data = np.delete(data, 0, axis=0)
     data = np.delete(data, (len(data)-1), axis=0)
 
-    bins = data[:, 0]
+    bins = []
     E = []
+    EXT = []
 
-    for i in range(len(data[0])):
-        if (i%2 != 0):
-            E = data[:, i]
-            break
+    for row in reader:
+        if (row[0] == "ex"):
+            E = row[1:-1]
+            E = [int(i) for i in E]
+        elif (row[0] == "ext"):
+            EXT = row[1:-1]
+            EXT = [int(i) for i in EXT]
+        elif (row[0] == "bins"):
+            bins = row[1:-1]
+            bins = [int(i) for i in bins]
 
-    width = 1/1000
-    # fit bar plot data using curve_fit
-    # popt, pcov = curve_fit(func, bins, E)
-    popt, pcov = optimize.curve_fit(func, bins, E, p0=[2, 2])
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+    ax1.bar(bins, E)
+    ax1.plot(bins, E)
+    ax1.set_xlabel('time, t(ms)')
+    ax1.set_ylabel('E(t)')
+    ax1.set_title('Excitatory population')
 
-    x = np.linspace(bins[0], bins[-1], 100)
-    y = func(x, *popt)
+    ax2.bar(bins, EXT)
+    ax2.plot(bins, EXT)
+    ax2.set_xlabel('time, t(ms)')
+    ax2.set_ylabel('External input')
+    ax2.set_title('External input')
 
-    plt.figure()
-    plt.bar(bins, E, color='b', width=5)
-    plt.xticks(bins)
-    #plt.plot(bins, E, c='g')
-    #plt.plot(bins, y + max(E), c='g')
-
+    plt.tight_layout()
     plt.show()

@@ -2,8 +2,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-from scipy import optimize
+from scipy.fft import fft, fftfreq
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -35,7 +34,7 @@ with open('results/ca_stats.csv') as f:
                 I = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
     ax1.plot(data[:, 0], E)
     ax1.set_xlabel('time, t(ms)')
     ax1.set_ylabel('E(t)')
@@ -46,31 +45,22 @@ with open('results/ca_stats.csv') as f:
     ax2.set_ylabel('I(t)')
     ax2.set_title('Inhibitory population')
 
-    ax3.plot(data[:, 0], EXT)
-    ax3.set_xlabel('time, t(ms)')
-    ax3.set_ylabel('External input')
-    ax3.set_title('External input')
-
     plt.tight_layout()
     plt.show()
 
-'''
-    width = 10
-
-    bins = []
-    for i in range(len(t) + 1):
-        if ( i != 0 and i % width == 0):
-            bins.append(i)
-    values = []
-    count = 0
-    for i in range(len(E)):
-        if (E[i] > 0):
-            count = count + 1
-        if (i != 0 and i % width == 0):
-            values.append(count)
-            count = 0
-    values.append(count)
-'''
+    # FFT
+    # Number of sample points
+    N = len(t)
+    # sample spacing
+    T = 1.0 / len(t)
+    yf = fft(E)
+    xf = fftfreq(N, T)[:N//2]
+    plt.figure()
+    plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.grid()
+    plt.show()
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -88,29 +78,30 @@ with open('results/ca_bin_stats.csv') as f:
 
     for row in reader:
         if (row[0] == "ex"):
-            E = row[1:]
+            E = row[1:-1]
+            E = [int(i) for i in E]
         elif (row[0] == "in"):
-            I = row[1:]
+            I = row[1:-1]
+            I = [int(i) for i in I]
         elif (row[0] == "ext"):
-            EXT = row[1:]
+            EXT = row[1:-1]
+            EXT = [int(i) for i in EXT]
         elif (row[0] == "bins"):
-            bins = row[1:]
+            bins = row[1:-1]
+            bins = [int(i) for i in bins]
 
-    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
     ax1.bar(bins, E)
+    ax1.plot(bins, E)
     ax1.set_xlabel('time, t(ms)')
     ax1.set_ylabel('E(t)')
     ax1.set_title('Excitatory population')
 
     ax2.bar(bins, I)
+    ax2.plot(bins, I)
     ax2.set_xlabel('time, t(ms)')
     ax2.set_ylabel('I(t)')
     ax2.set_title('Inhibitory population')
-
-    ax3.bar(bins, EXT)
-    ax3.set_xlabel('time, t(ms)')
-    ax3.set_ylabel('External input')
-    ax3.set_title('External input')
 
     plt.tight_layout()
     plt.show()
