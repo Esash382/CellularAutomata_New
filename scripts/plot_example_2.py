@@ -45,6 +45,7 @@ with open('results/ca_stats.csv') as f:
     plt.tight_layout()
     plt.show()
 
+'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -98,3 +99,4 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
+'''

@@ -1,6 +1,6 @@
 {
-    "interneurons_septum" : 203.0,
-    "id" : 203.0,
+    "pyramidal_interneurons" : 201.0,
+    "id" : 201.0,
     "ksd" : 0.0,
     "zsd" : 0.0,
     "kds" : -1.0,

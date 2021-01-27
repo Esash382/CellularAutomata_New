@@ -8,6 +8,10 @@
 #include <cassert>
 #include <chrono>
 
+#define ASSERT_WITH_MESSAGE(condition, message) do { \
+if (!(condition)) { std::cout << ((message)) << std::endl; } \
+assert ((condition)); } while(false)
+
 using namespace std;
 
 Population::Population()
@@ -196,7 +200,7 @@ void Population::create_interneuronal_network_projections(Config* config)
 
                 for (uint k = 0; k < zsd; k++) {
                     uint j = indices[k];
-                    assert(this->m_w_matrix[i][j] == 0);
+                    ASSERT_WITH_MESSAGE((this->m_w_matrix[i][j] == 0), "There aren't enough number of neurons in the destination population to project to");
                     if (this->population_network.size() == 2)
                         this->m_w_matrix[i][j] = get_random_number(ksd - 10, ksd + 10);
                     else
@@ -233,7 +237,7 @@ void Population::create_interneuronal_network_projections(Config* config)
 
                 for (uint k = 0; k < zds; k++) {
                     uint j = indices[k];
-                    assert(this->m_w_matrix[i][j] == 0);
+                    ASSERT_WITH_MESSAGE((this->m_w_matrix[i][j] == 0), "There aren't enough number of neurons in the destination population to project to");
                     if (this->population_network.size() == 2)
                         this->m_w_matrix[i][j] = get_random_number(kds - 10, kds + 10);
                     else

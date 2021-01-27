@@ -55,13 +55,7 @@ with open('results/ca_stats.csv') as f:
     ax4.set_ylabel('Septum')
     ax4.set_xlabel('time (ms)')
     plt.show()
-'''    
-    ax5.plot(t, CA3)
-    ax5.set_ylabel('CA3')
-    ax6.plot(t, PS)
-    ax6.set_ylabel('PS')
-'''
-'''
+
     # FFT
     # Number of sample points
     N = len(t)
@@ -75,7 +69,6 @@ with open('results/ca_stats.csv') as f:
     plt.ylabel('Amplitude')
     plt.grid()
     plt.show()
-'''
 
 '''
 with open('results/ca_bin_stats.csv') as f:
