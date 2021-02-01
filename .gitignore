@@ -9,4 +9,5 @@ tags
 *.txt
 config/.*.swp
 config/CA3/.*.swp
-*/.*.swp
+lib/external/.*.swp
+lib/src/.*.swp

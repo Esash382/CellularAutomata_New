@@ -2,7 +2,7 @@
 // main.cpp : Defines the entry point for the console application.
 
 #include <cstdlib>
-#include <time.h>
+#include <chrono>
 #include <vector>
 #include <map>
 #include <dlfcn.h>
@@ -27,7 +27,7 @@ void init_and_process_networks(const char* filepath) {
 		exit(1);
 	}
 
-	clock_t start = clock();
+    auto start = std::chrono::high_resolution_clock::now();
 //	printf("Start time: %.2f mins\n", (double)(start)/(CLOCKS_PER_SEC * 60));
 
 	Population* pp_network = (*create)(filepath);
@@ -40,7 +40,10 @@ void init_and_process_networks(const char* filepath) {
     pp_network->add_network(filepath);
 	pp_network->process_networks();
 
-	printf("Time taken: %.2f mins\n", (double)(clock() - start)/(CLOCKS_PER_SEC * 60));
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
+
+	printf("Time taken: %.3f minutes\n", (elapsed.count() * 1e-9)/60.0);
 
 	free(pp_network);
 	dlclose(handle);

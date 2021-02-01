@@ -30,6 +30,7 @@ typedef enum _EXTERNAL_INPUT {
 } EXTERNAL_INPUT;
 
 uint get_random_number(uint low, uint high);
+_time_t get_random_real_number(float low, float high);
 
 const double epsilon = 0.000001;
 

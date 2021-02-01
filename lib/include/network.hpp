@@ -59,6 +59,7 @@ public:
     std::vector<double> ac_stats;
     std::vector<double> in_stats;
     std::vector<double> ref_stats;
+    std::vector<std::vector<uint>> active_neuron_stats;
 
     uint number_of_firing_times;
 

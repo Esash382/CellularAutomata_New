@@ -64,7 +64,7 @@ private:
     void update_stats(uint n);
     void write_stats();
 
-    _time_t get_noisy_delay(_time_t del, uint step);
+    _time_t get_noisy_delay(float del, float step);
 
     // getters and setters for tests
     // and some wrapper calls for private functions
@@ -127,8 +127,7 @@ public:
     std::map<_time_t, std::vector<uint>> n_refractory;
 
     // Activate neurons according to uniform distribution firing times
-    std::map<uint, std::map<time_t, uint>> n_rand_map;
-    //std::map<uint, std::vector<std::vector<double>>> n_rand_map;
+    std::map<uint, std::map<time_t, std::vector<uint>>> n_rand_map;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

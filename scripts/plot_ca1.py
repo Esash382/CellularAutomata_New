@@ -56,21 +56,28 @@ with open('results/ca_stats.csv') as f:
 
     # Plot active neuron stats
     fig1, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(7, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA1 dynamics')
-    ax1.plot(t, E_CA1)
-    ax1.set_ylabel('Pyramidal')
-    ax2.plot(t, I_B)
-    ax2.set_ylabel('Basket')
-    ax3.plot(t, I_BS)
-    ax3.set_ylabel('Bistratified')
-    ax4.plot(t, I_CA1I)
-    ax4.set_ylabel('Interneurons')
-    ax5.plot(t, I_CA1P)
-    ax5.set_ylabel('Hippocampo-septal')
-    ax6.plot(t, I_BP)
-    ax6.set_ylabel('Backprojection')
-    ax7.plot(t, I_S)
-    ax7.set_ylabel('Septum')
+    if (len(E_CA1) > 0):
+        ax1.set_title('CA1 dynamics')
+        ax1.plot(t, E_CA1)
+        ax1.set_ylabel('Pyramidal')
+    if (len(I_B) > 0):
+        ax2.plot(t, I_B)
+        ax2.set_ylabel('Basket')
+    if (len(I_BS) > 0):
+        ax3.plot(t, I_BS)
+        ax3.set_ylabel('Bistratified')
+    if (len(I_CA1I) > 0):
+        ax4.plot(t, I_CA1I)
+        ax4.set_ylabel('Interneurons')
+    if (len(I_CA1P) > 0):
+        ax5.plot(t, I_CA1P)
+        ax5.set_ylabel('Hippocampo-septal')
+    if (len(I_BP) > 0):
+        ax6.plot(t, I_BP)
+        ax6.set_ylabel('Backprojection')
+    if (len(I_S) > 0):
+        ax7.plot(t, I_S)
+        ax7.set_ylabel('Septum')
     '''
     ax7.plot(t, CA3)
     ax7.set_ylabel('CA3')
@@ -78,11 +85,10 @@ with open('results/ca_stats.csv') as f:
     ax8.set_ylabel('EC')
     ax9.plot(t, PS)
     ax9.set_ylabel('Ext Septum')
-    '''
     ax7.set_xlabel('time (ms)')
     plt.show()
+    '''
 
-'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -91,14 +97,11 @@ with open('results/ca_stats.csv') as f:
     yf = fft(E_CA1)
     xf = fftfreq(N, T)[:N//2]
     plt.figure()
-    #plt.plot(xf, 2.0/N * np.abs(yf[0:N//2]))
     plt.plot(xf[:20], 1.0 / 10 * np.abs(yf[0:N//50]))
-    #plt.semilogy(xf[1:N//2], 2.0/N * np.abs(yf[1:N//2]), '-b')
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
     plt.show()
-'''
 
 '''
 with open('results/ca_bin_stats.csv') as f:
