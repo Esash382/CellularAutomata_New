@@ -3,6 +3,8 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
+from PIL import Image
+from io import BytesIO
 
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
@@ -11,6 +13,8 @@ from scipy.fft import fft, fftfreq
 # |time|basket_active|basket_inactive|basket_ref|olm_active|olm_inactive|olm_ref|pyramidal_active|pyramidal_inactive|pyramidal_ref|
 #-|-------------------------------------------------------------------------------------------------------------------------------|
 
+time_start = 0
+time_end = 0
 with open('results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
     row = next(reader)
@@ -19,6 +23,8 @@ with open('results/ca_stats.csv') as f:
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
+    time_start = t[0]
+    time_end = t[-1]
     E = []
     EXT = []
 
@@ -43,9 +49,7 @@ with open('results/ca_stats.csv') as f:
     ax2.set_title('External input')
 
     plt.tight_layout()
-    plt.show()
 
-'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -58,7 +62,37 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
-    plt.show()
+
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
+with open('results/ex.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax1.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax1.scatter(x, row[1:])
+
+with open('results/ext.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    index = 0
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax2.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax2.scatter(x, row[1:])
+
+ax1.set_ylabel('Excitatory population: neuron number')
+ax2.set_ylabel('External pseudo population: neuron number')
+ax2.set_xlabel('time (ms)')
+plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -99,4 +133,3 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
-'''

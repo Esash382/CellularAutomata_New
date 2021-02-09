@@ -20,6 +20,7 @@ with open('results/ca_stats.csv') as f:
 
     t = data[:, 0]
     E = []
+    I = []
     EXT = []
 
     for i in range(len(row)):
@@ -27,56 +28,25 @@ with open('results/ca_stats.csv') as f:
             name = row[i][:row[i].find('_')]
             if (name == "ex"):
                 E = data[:, i]
-            else:
+            elif (name == "ext"):
                 EXT = data[:, i]
+            else:
+                I = data[:, i]
 
     # Plot active neuron stats
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-    ax1.plot(t, E)
+    ax1.plot(data[:, 0], E)
     ax1.set_xlabel('time, t(ms)')
     ax1.set_ylabel('E(t)')
     ax1.set_title('Excitatory population')
 
-    ax2.plot(t, EXT)
+    ax2.plot(data[:, 0], I)
     ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('External input')
-    ax2.set_title('External input')
+    ax2.set_ylabel('I(t)')
+    ax2.set_title('Inhibitory population')
 
     plt.tight_layout()
-    plt.show()
 
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-with open('results/ex.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax1.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax1.scatter(x, row[1:])
-
-with open('results/ext.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    index = 0
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax2.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax2.scatter(x, row[1:])
-
-ax1.set_ylabel('Excitatory population: neuron number')
-ax2.set_ylabel('External pseudo population: neuron number')
-ax2.set_xlabel('time (ms)')
-plt.show()
-
-'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -89,7 +59,49 @@ plt.show()
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
-    plt.show()
+
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
+with open('results/ex.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax1.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax1.scatter(x, row[1:])
+
+with open('results/in.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax2.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax2.scatter(x, row[1:])
+
+with open('results/ext.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    index = 0
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax3.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax3.scatter(x, row[1:])
+
+ax1.set_ylabel('Excitatory population: neuron number')
+ax2.set_ylabel('Inhibitory population: neuron number')
+ax3.set_ylabel('External pseudo population: neuron number')
+ax3.set_xlabel('time (ms)')
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -102,12 +114,16 @@ with open('results/ca_bin_stats.csv') as f:
 
     bins = []
     E = []
+    I = []
     EXT = []
 
     for row in reader:
         if (row[0] == "ex"):
             E = row[1:-1]
             E = [int(i) for i in E]
+        elif (row[0] == "in"):
+            I = row[1:-1]
+            I = [int(i) for i in I]
         elif (row[0] == "ext"):
             EXT = row[1:-1]
             EXT = [int(i) for i in EXT]
@@ -122,12 +138,11 @@ with open('results/ca_bin_stats.csv') as f:
     ax1.set_ylabel('E(t)')
     ax1.set_title('Excitatory population')
 
-    ax2.bar(bins, EXT)
-    ax2.plot(bins, EXT)
+    ax2.bar(bins, I)
+    ax2.plot(bins, I)
     ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('External input')
-    ax2.set_title('External input')
+    ax2.set_ylabel('I(t)')
+    ax2.set_title('Inhibitory population')
 
     plt.tight_layout()
     plt.show()
-'''

@@ -46,8 +46,54 @@ with open('results/ca_stats.csv') as f:
     ax2.set_title('Inhibitory population')
 
     plt.tight_layout()
-    plt.show()
 
+'''
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
+with open('results/ex.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax1.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax1.scatter(x, row[1:])
+
+with open('results/in.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax2.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax2.scatter(x, row[1:])
+
+with open('results/ext.csv') as f:
+    reader = csv.reader(f, delimiter='\t')
+    index = 0
+    for row in reader: 
+        if (len(row)-1 == 0):
+            x = [row[0]] * len(row)
+            row = 0
+            ax3.scatter(x, row)
+        else:
+            x = [row[0]] * (len(row)-1)
+            row = [int(i) for i in row]
+            ax3.scatter(x, row[1:])
+
+ax1.set_ylabel('Excitatory population: neuron number')
+ax2.set_ylabel('Inhibitory population: neuron number')
+ax3.set_ylabel('External pseudo population: neuron number')
+ax3.set_xlabel('time (ms)')
+'''
+plt.show()
+
+'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -105,3 +151,4 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
+'''
