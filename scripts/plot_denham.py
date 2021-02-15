@@ -43,19 +43,30 @@ with open('results/ca_stats.csv') as f:
                 I_S = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex = True, figsize = (8, 6))
-    ax1.set_title('CA1 dynamics')
-    ax1.plot(t, E_CA1)
-    ax1.set_ylabel('Pyramidal')
-    ax2.plot(t, I_CA1P)
-    ax2.set_ylabel('Hippocampo-septal')
-    ax3.plot(t, I_CA1I)
-    ax3.set_ylabel('Interneurons')
-    ax4.plot(t, I_S)
-    ax4.set_ylabel('Septum')
-    ax4.set_xlabel('time (ms)')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (8, 6))
+    if (len(E_CA1) > 0):
+        ax1.set_title('CA1 dynamics')
+        ax1.plot(t, E_CA1)
+        ax1.set_ylabel('Pyramidal')
+    if (len(I_CA1P) > 0):
+        ax2.plot(t, I_CA1P)
+        ax2.set_ylabel('Hippocampo-septal')
+    if (len(I_CA1I) > 0):
+        ax3.plot(t, I_CA1I)
+        ax3.set_ylabel('Interneurons')
+    if (len(I_S) > 0):
+        ax4.plot(t, I_S)
+        ax4.set_ylabel('Septum')
+    if (len(CA3) > 0):
+        ax5.plot(t, CA3)
+        ax5.set_ylabel('CA3')
+    if (len(PS) > 0):
+        ax6.plot(t, PS)
+        ax6.set_ylabel('PS')
+        ax6.set_xlabel('time (ms)')
     plt.show()
 
+'''
     # FFT
     # Number of sample points
     N = len(t)
@@ -68,7 +79,6 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
-    plt.show()
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -133,3 +143,4 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
+'''    
