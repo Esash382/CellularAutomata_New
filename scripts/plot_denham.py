@@ -70,7 +70,6 @@ with open('results/ca_stats.csv') as f:
     plt.grid()
     plt.show()
 
-'''
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
 
@@ -134,4 +133,3 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
-'''

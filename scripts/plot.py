@@ -19,130 +19,128 @@ with open('results/ca_stats.csv') as f:
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
-    E = []
-    I = []
-    EXT = []
+    E_CA1 = []
+    I_CA1P = []
+    I_CA1I = []
+    I_S = []
+    CA3 = []
+    PS = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
             name = row[i][:row[i].find('_')]
-            if (name == "ex"):
-                E = data[:, i]
-            elif (name == "ext"):
-                EXT = data[:, i]
+            if (name == "pyramidal"):
+                E_CA1 = data[:, i]
+            elif (name == "hippocamposeptal"):
+                I_CA1P = data[:, i]
+            elif (name == "interneurons"):
+                I_CA1I = data[:, i]
+            elif (name == "ca3"):
+                CA3 = data[:, i]
+            elif (name == "ps"):
+                PS = data[:, i]
             else:
-                I = data[:, i]
+                I_S = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-    ax1.plot(data[:, 0], E)
-    ax1.set_xlabel('time, t(ms)')
-    ax1.set_ylabel('E(t)')
-    ax1.set_title('Excitatory population')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (8, 6))
+    if (len(E_CA1) > 0):
+        ax1.set_title('CA1 dynamics')
+        ax1.plot(t, E_CA1)
+        ax1.set_ylabel('Pyramidal')
+    if (len(I_CA1P) > 0):
+        ax2.plot(t, I_CA1P)
+        ax2.set_ylabel('Hippocampo-septal')
+    if (len(I_CA1I) > 0):
+        ax3.plot(t, I_CA1I)
+        ax3.set_ylabel('Interneurons')
+    if (len(I_S) > 0):
+        ax4.plot(t, I_S)
+        ax4.set_ylabel('Septum')
+    if (len(CA3) > 0):
+        ax5.plot(t, CA3)
+        ax5.set_ylabel('CA3')
+    if (len(PS) > 0):
+        ax6.plot(t, PS)
+        ax6.set_ylabel('PS')
+        ax6.set_xlabel('time (ms)')
+    plt.show()
 
-    ax2.plot(data[:, 0], I)
-    ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('I(t)')
-    ax2.set_title('Inhibitory population')
-
-    plt.tight_layout()
-
+'''
     # FFT
     # Number of sample points
     N = len(t)
     # sample spacing
     T = 1.0 / len(t)
-    yf = fft(E)
+    yf = fft(E_CA1)
     xf = fftfreq(N, T)[:N//2]
     plt.figure()
-    plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
+    plt.plot(xf[:20], 1.0 / 10 * np.abs(yf[0:N//50]))
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
-with open('results/ex.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax1.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax1.scatter(x, row[1:])
-
-with open('results/in.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax2.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax2.scatter(x, row[1:])
-
-with open('results/ext.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    index = 0
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax3.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax3.scatter(x, row[1:])
-
-ax1.set_ylabel('Excitatory population: neuron number')
-ax2.set_ylabel('Inhibitory population: neuron number')
-ax3.set_ylabel('External pseudo population: neuron number')
-ax3.set_xlabel('time (ms)')
-
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
 
-    dataR = genfromtxt('results/ca_bin_stats.csv', delimiter='\t')
-    data = dataR.T
-
-    data = np.delete(data, 0, axis=0)
-    data = np.delete(data, (len(data)-1), axis=0)
-
     bins = []
     E = []
-    I = []
-    EXT = []
+    I_CA1P = []
+    I_CA1I = []
+    I_S = []
+    CA3 = []
+    PS = []
 
     for row in reader:
-        if (row[0] == "ex"):
+        if (row[0] == "pyramidal"):
             E = row[1:-1]
             E = [int(i) for i in E]
-        elif (row[0] == "in"):
-            I = row[1:-1]
-            I = [int(i) for i in I]
-        elif (row[0] == "ext"):
-            EXT = row[1:-1]
-            EXT = [int(i) for i in EXT]
+        elif (row[0] == "septum"):
+            I_S = row[1:-1]
+            I_S = [int(i) for i in I_S]
+        elif (row[0] == "hippocamposeptal"):
+            I_CA1P = row[1:-1]
+            I_CA1P = [int(i) for i in I_CA1P]
+        elif (row[0] == "interneurons"):
+            I_CA1I = row[1:-1]
+            I_CA1I = [int(i) for i in I_CA1I]
+        elif (row[0] == "ca3"):
+            CA3 = row[1:-1]
+            CA3 = [int(i) for i in CA3]
+        elif (row[0] == "ps"):
+            PS = row[1:-1]
+            PS = [int(i) for i in PS]
         elif (row[0] == "bins"):
             bins = row[1:-1]
             bins = [int(i) for i in bins]
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-    ax1.bar(bins, E)
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
+    ax1.set_title('CA1 dynamics')
+    ax1.bar(bins, E, width = 5)
     ax1.plot(bins, E)
-    ax1.set_xlabel('time, t(ms)')
-    ax1.set_ylabel('E(t)')
-    ax1.set_title('Excitatory population')
+    ax1.set_ylabel('Pyramidal')
 
-    ax2.bar(bins, I)
-    ax2.plot(bins, I)
-    ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('I(t)')
-    ax2.set_title('Inhibitory population')
+    ax2.bar(bins, I_CA1P, width = 5)
+    ax2.plot(bins, I_CA1P)
+    ax2.set_ylabel('Hippocampo-septal')
+
+    ax3.bar(bins, I_CA1I, width = 5)
+    ax3.plot(bins, I_CA1I)
+    ax3.set_ylabel('Interneurons')
+
+    ax4.bar(bins, I_S, width = 5)
+    ax4.plot(bins, I_S)
+    ax4.set_ylabel('Septum')
+
+    ax5.bar(bins, CA3, width = 5)
+    ax5.plot(bins, CA3)
+    ax5.set_ylabel('CA3')
+
+    ax6.bar(bins, PS, width = 5)
+    ax6.plot(bins, PS)
+    ax6.set_ylabel('PS')
+    ax6.set_xlabel('time (ms)')
 
     plt.tight_layout()
     plt.show()
+'''    

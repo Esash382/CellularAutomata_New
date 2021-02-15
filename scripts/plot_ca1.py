@@ -78,6 +78,7 @@ with open('results/ca_stats.csv') as f:
     if (len(I_S) > 0):
         ax7.plot(t, I_S)
         ax7.set_ylabel('Septum')
+        ax7.set_xlabel('time (ms)')
     '''
     ax7.plot(t, CA3)
     ax7.set_ylabel('CA3')
@@ -85,7 +86,6 @@ with open('results/ca_stats.csv') as f:
     ax8.set_ylabel('EC')
     ax9.plot(t, PS)
     ax9.set_ylabel('Ext Septum')
-    ax7.set_xlabel('time (ms)')
     plt.show()
     '''
 
