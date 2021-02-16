@@ -2,7 +2,7 @@
 
 #include "util.hpp"
 
-#define DEBUG
+// #define DEBUG
 
 class Log
 {
