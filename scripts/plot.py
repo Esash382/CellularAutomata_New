@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
 
+import datetime
+
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
 # |  0 |      1      |       2       |     3    |     4    |      5     |   6   |        7       |         8        |      9      |
@@ -64,9 +66,11 @@ with open('results/ca_stats.csv') as f:
         ax6.plot(t, PS)
         ax6.set_ylabel('PS')
         ax6.set_xlabel('time (ms)')
-    plt.show()
-
-'''
+    now = datetime.datetime.now()
+    hour = '{:02d}'.format(now.hour)
+    minute = '{:02d}'.format(now.minute)
+    second = '{:02d}'.format(now.second)
+#    plt.savefig(hour + "-" + minute + "-" + second + ".png", dpi=100)
 
     # FFT
     # Number of sample points
@@ -80,6 +84,9 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
+    plt.show()
+
+'''
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')

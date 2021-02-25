@@ -196,7 +196,7 @@ void Population::create_interneuronal_network_projections(Config* config)
 
 //        std::cout << cell[0] << " = " << src_start_from_row_index << " : " << cell[1] << " = " << dst_start_from_row_index << std::endl;
 
-        if (zsd != 0) {
+        if (zsd != 0 || src_ext_pseudo_neuron) {
             for (uint i = src_start_from_row_index; i < (src_start_from_row_index + src_size); i++) {
                 uint index = 0;
                 std::vector<unsigned int> indices(dst_size);
@@ -206,8 +206,8 @@ void Population::create_interneuronal_network_projections(Config* config)
 
                 uint t_zsd = zsd;
                 if (src_ext_pseudo_neuron)
-                    t_zsd = get_random_number(1, zsd);
-
+                    t_zsd = get_random_number(1, dst_size);
+//                std::cout << "src = " << cell[0] << " ; dst = " << cell[1] << " ; z = " << t_zsd << std::endl;
                 for (uint k = 0; k < t_zsd; k++) {
                     uint j = indices[k];
                     if (this->m_w_matrix[i][j] == 0) {
@@ -237,7 +237,7 @@ void Population::create_interneuronal_network_projections(Config* config)
             }
         }
         
-        if (zds != 0) {
+        if (zds != 0 || dst_ext_pseudo_neuron) {
             for (uint i = dst_start_from_row_index; i < (dst_start_from_row_index + dst_size); i++) {
                 uint index = 0;
                 std::vector<unsigned int> indices(src_size);
@@ -247,7 +247,8 @@ void Population::create_interneuronal_network_projections(Config* config)
 
                 uint t_zds = zds;
                 if (dst_ext_pseudo_neuron)
-                    t_zds = get_random_number(1, zds);
+                    t_zds = get_random_number(1, src_size);
+//                std::cout << "dst = " << cell[0] << " ; src = " << cell[1] << " ; z = " << t_zds << std::endl;
 
                 for (uint k = 0; k < t_zds; k++) {
                     uint j = indices[k];
