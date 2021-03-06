@@ -205,8 +205,8 @@ void Population::create_interneuronal_network_projections(Config* config)
                 std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
                 uint t_zsd = zsd;
-                if (src_ext_pseudo_neuron)
-                    t_zsd = get_random_number(1, dst_size);
+//                if (src_ext_pseudo_neuron)
+//                    t_zsd = get_random_number(1, dst_size);
 //                std::cout << "src = " << cell[0] << " ; dst = " << cell[1] << " ; z = " << t_zsd << std::endl;
                 for (uint k = 0; k < t_zsd; k++) {
                     uint j = indices[k];
@@ -246,8 +246,8 @@ void Population::create_interneuronal_network_projections(Config* config)
                 std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
                 uint t_zds = zds;
-                if (dst_ext_pseudo_neuron)
-                    t_zds = get_random_number(1, src_size);
+//                if (dst_ext_pseudo_neuron)
+//                    t_zds = get_random_number(1, src_size);
 //                std::cout << "dst = " << cell[0] << " ; src = " << cell[1] << " ; z = " << t_zds << std::endl;
 
                 for (uint k = 0; k < t_zds; k++) {
@@ -819,8 +819,8 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             //std::cout << str << std::endl;
         }
     } else {
-        auto tmp = get_noisy_delay(ntwk->threshold, this->th_step);
-        if (sum <= tmp) {
+        //auto tmp = get_noisy_delay(ntwk->threshold, this->th_step);
+        if (sum <= ntwk->threshold) {
             this->m_n_matrix[ntwk->start_from_row_index + i] = OFF;
             this->m_nf_matrix[ntwk->start_from_row_index + i] = 0.0f;
 

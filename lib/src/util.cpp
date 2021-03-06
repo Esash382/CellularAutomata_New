@@ -13,7 +13,7 @@ _time_t get_random_real_number(float low, float high)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> d(low, high-1);
+    std::uniform_real_distribution<float> d(low, high);
 
     return d(gen);
 }

@@ -62,7 +62,8 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
-
+    plt.show()
+'''
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
 with open('results/ex.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -133,3 +134,4 @@ with open('results/ca_bin_stats.csv') as f:
 
     plt.tight_layout()
     plt.show()
+'''
