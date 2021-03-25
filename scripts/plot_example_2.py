@@ -49,6 +49,9 @@ with open('results/ca_stats.csv') as f:
     ax2.set_title('External input')
 
     plt.tight_layout()
+    plt.show()
+
+'''
 
     # FFT
     # Number of sample points
@@ -63,7 +66,7 @@ with open('results/ca_stats.csv') as f:
     plt.ylabel('Amplitude')
     plt.grid()
     plt.show()
-'''
+
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
 with open('results/ex.csv') as f:
     reader = csv.reader(f, delimiter='\t')

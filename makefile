@@ -23,10 +23,12 @@ test:
 	make testConfig
 	make testPopulation
 	make testModel
+	make testRandomModel
 	./bin/test/testSpikeGenerator
 	./bin/test/testConfig
 	./bin/test/testPopulation
 	./bin/test/testModel
+	./bin/test/testRandomModel
 
 testSpikeGenerator:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
@@ -51,3 +53,8 @@ testModel:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
 	g++ -o bin/test/testModel lib/test/TestModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+
+testRandomModel:
+	if [ ! -d "./bin" ]; then mkdir bin; fi
+	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
+	g++ -g -o bin/test/testRandomModel lib/test/TestRandomModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl

@@ -4,7 +4,7 @@ uint get_random_number(uint low, uint high)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint> d(low, high-1);
+    std::uniform_int_distribution<uint> d(low, high);
 
     return d(gen);
 }

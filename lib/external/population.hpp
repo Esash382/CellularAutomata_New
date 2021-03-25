@@ -99,7 +99,7 @@ public:
     _time_t last_osc_run_time;
 
     const uint th_step;
-    const float del_step;
+    float del_step;
 
     uint m_N;
 
