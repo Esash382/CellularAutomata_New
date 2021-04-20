@@ -3,8 +3,9 @@
 Network::Network(std::string name, uint ntwk_id, uint N, 
 			NETWORK_TYPE type, float threshold,
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
-			_time_t tau_del, _time_t tau_dur, _time_t tau_osc, uint nf,
-			EXTERNAL_INPUT e_in, float value, float step)
+			_time_t tau_del, _time_t del_step, _time_t tau_dur,
+            _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
+            float value, float step)
 {
 	logger = Log::getInstance();
 
@@ -25,6 +26,7 @@ Network::Network(std::string name, uint ntwk_id, uint N,
 	this->tau_ap = tau_ap;
 	this->tau_ref = tau_ref;
 	this->tau_del = tau_del;
+	this->del_step = del_step;
 	this->tau_dur = tau_dur;
 	this->tau_osc = tau_osc;
 	this->last_osc_run_time = 0;

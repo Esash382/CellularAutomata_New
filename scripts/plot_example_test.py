@@ -69,59 +69,10 @@ with open('results/ca_stats.csv') as f:
     yf = fft(E)
     xf = fftfreq(N, T)[:N//2]
     plt.figure()
-    plt.plot(xf[0:50], 1.0 / 10 * np.abs(yf[0:N//40]))
+    plt.plot(xf[0:50], 1.0 / 10 * np.abs(yf[0:N//20]))
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
-
-#    plt.figure()
-#    plt.plot(t, E)
-
-#    plt.figure()
-#    plt.plot(t, I)
-
-#plt.figure()
-#dataR = genfromtxt('results/ex.csv', delimiter='\t')
-#dataT = dataR.T
-#dataS = np.delete(dataT, 0, axis=0)
-#print(dataS.shape)
-#plt.eventplot(dataS)
-#plt.title('Spike raster plot')
-#plt.xlabel('time (ms)')
-#plt.ylabel('Excitatory population: neuron number')
-#plt.show()
-
-fig, ax1 = plt.subplots(1, 1, figsize=(8, 6), sharex=True)
-with open('results/ex.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax1.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax1.scatter(x, row[1:])
-
-ax1.set_ylabel('Excitatory population: neuron number')
-ax1.set_xlabel('time (ms)')
-
-fig, ax1 = plt.subplots(1, 1, figsize=(8, 6), sharex=True)
-with open('results/in.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax1.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax1.scatter(x, row[1:])
-
-ax1.set_ylabel('Inhibitory population: neuron number')
-ax1.set_xlabel('time (ms)')
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
 with open('results/ex.csv') as f:
@@ -153,7 +104,6 @@ ax1.set_ylabel('Excitatory population: neuron number')
 ax2.set_ylabel('External pseudo population: neuron number')
 ax2.set_xlabel('time (ms)')
 plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
-plt.show()
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')

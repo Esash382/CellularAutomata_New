@@ -19,11 +19,12 @@ typedef enum _NETWORK_TYPE_ {
 class Network
 {
 public:
-	Network(std::string name, uint ntwk_id, uint N, 
+	Network(std::string name, uint ntwk_id, uint N,
 			NETWORK_TYPE type, float threshold,
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
-			_time_t tau_del, _time_t tau_dur, _time_t tau_osc, uint nf,
-			EXTERNAL_INPUT e_in, float value, float step);
+			_time_t tau_del, _time_t del_step, _time_t tau_dur,
+            _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
+            float value, float step);
 
     void init_bins();
 
@@ -43,6 +44,7 @@ public:
 	_time_t tau_ap;
 	_time_t tau_ref;
 	_time_t tau_del;
+    _time_t del_step;
 	_time_t tau_dur;
 	_time_t tau_osc;
 	_time_t last_osc_run_time;

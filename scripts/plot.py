@@ -27,7 +27,10 @@ with open('results/ca_stats.csv') as f:
     time_end = t[-1]
     E = []
     I = []
-    EXT = []
+    HIPP = []
+    S = []
+    CA3 = []
+    PS = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
@@ -36,25 +39,41 @@ with open('results/ca_stats.csv') as f:
                 E = data[:, i]
             elif (name == "in"):
                 I = data[:, i]
+            elif (name == "hipp"):
+                HIPP = data[:, i]
+            elif (name == "septum"):
+                S = data[:, i]
+            elif (name == "ps"):
+                PS = data[:, i]
             else:
-                EXT = data[:, i]
+                CA3 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6))
-    ax1.plot(t, E)
-    ax1.set_xlabel('time, t(ms)')
-    ax1.set_ylabel('E(t)')
-    ax1.set_title('Excitatory population')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, figsize=(8, 6), sharex=True)
+    if (len(E) > 0):
+        ax1.plot(t, E)
+        ax1.set_ylabel('E(t)')
 
-    ax2.plot(t, I)
-    ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('I(t)')
-    ax2.set_title('Inhibitory population')
+    if (len(HIPP) > 0):
+        ax2.plot(t, HIPP)
+        ax2.set_ylabel('HIPP(t)')
 
-    ax3.plot(t, EXT)
-    ax3.set_xlabel('time, t(ms)')
-    ax3.set_ylabel('External input')
-    ax3.set_title('External input')
+    if (len(I) > 0):
+        ax3.plot(t, I)
+        ax3.set_ylabel('I(t)')
+
+    if (len(S) > 0):
+        ax4.plot(t, S)
+        ax4.set_ylabel('S(t)')
+
+    if (len(CA3) > 0):
+        ax5.plot(t, CA3)
+        ax5.set_ylabel('CA3')
+
+    if (len(PS) > 0):
+        ax6.plot(t, PS)
+        ax6.set_xlabel('time, t(ms)')
+        ax6.set_ylabel('PS')
 
     plt.tight_layout()
     plt.show()
