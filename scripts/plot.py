@@ -81,9 +81,7 @@ with open('results/ca_stats.csv') as f:
 '''
 
     # FFT
-    # Number of sample points
     N = len(t)
-    # sample spacing
     T = 1.0 / len(t)
     yf = fft(E)
     xf = fftfreq(N, T)[:N//2]
