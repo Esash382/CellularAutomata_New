@@ -76,9 +76,6 @@ with open('results/ca_stats.csv') as f:
         ax6.set_ylabel('PS')
 
     plt.tight_layout()
-    plt.show()
-
-'''
 
     # FFT
     N = len(t)
@@ -90,6 +87,9 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
+    plt.show()
+
+'''
     plt.show()
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
