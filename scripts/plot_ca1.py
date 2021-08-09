@@ -13,15 +13,6 @@ from scipy.fft import fft, fftfreq
 
 t = []
 
-guess_freq = 1
-guess_amplitude = 0.1
-guess_phase = 0
-guess_offset = 0
-guess_fs = 1
-
-def my_sin(x, freq, amp, phase, fs):
-    return amp * np.sin(((2 * np.pi * freq * x) + phase) / fs)
-
 with open('results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
     row = next(reader)
@@ -65,97 +56,32 @@ with open('results/ca_stats.csv') as f:
                 CA3 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(8, 6), sharex=True)
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
     ax1.title.set_text('Cellular automata simulation of CA1 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
         ax1.set_ylabel('E_CA1(t)')
-        ax1.set_ylim(0, 0.25)
-        guess_fs = 1000
-        guess_phase= 0
-        guess_amplitude = 0.25
-        guess_freq = 6.5
-
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        e_guess = my_sin(t, *p0)
-        ax1.plot(t, e_guess, color='green')
-
-    if (len(HIPP) > 0):
-        ax2.plot(t, HIPP)
-        ax2.set_ylabel('I_CA1P(t)')
-        
-        ax2.set_ylim(0, 0.25)
-        guess_fs = 1010
-        guess_phase = -200
-        guess_amplitude = 0.2
-        guess_freq = 6.5
-            
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        ip_guess = my_sin(t, *p0)
-        ax2.plot(t, ip_guess, color='green')
-
-    if (len(I) > 0):
-        ax3.plot(t, I)
-        ax3.set_ylim(0, 0.25)
-        ax3.set_ylabel('I_CA1I(t)')
-        
-        guess_fs = 1035
-        guess_phase = -1800
-        guess_amplitude = 0.2
-        guess_freq = 6.5
-            
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        i_guess = my_sin(t, *p0)
-        ax3.plot(t, i_guess, color='green')
 
     if (len(B) > 0):
-        ax4.plot(t, B)
-        ax4.set_ylim(0, 0.25)
-        ax4.set_ylabel('I_B(t)')
+        ax2.plot(t, B)
+        ax2.set_ylabel('I_B(t)')
         
-        guess_fs = 1100
-        guess_phase = 2200
-        guess_amplitude = 0.2
-        guess_freq = 7
-            
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        s_guess = my_sin(t, *p0)
-        ax4.plot(t, s_guess, color='green')
-
     if (len(BS) > 0):
-        ax5.plot(t, B)
-        ax5.set_ylim(0, 0.25)
-        ax5.set_ylabel('I_BS(t)')
+        ax3.plot(t, B)
+        ax3.set_ylabel('I_BS(t)')
+
+    if (len(I) > 0):
+        ax4.plot(t, I)
+        ax4.set_ylabel('I_CA1I(t)')
+ 
+    if (len(HIPP) > 0):
+        ax5.plot(t, HIPP)
+        ax5.set_ylabel('I_CA1P(t)')
         
-        guess_fs = 1100
-        guess_phase = 2200
-        guess_amplitude = 0.2
-        guess_freq = 7
-            
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        s_guess = my_sin(t, *p0)
-        ax5.plot(t, s_guess, color='green')
-
     if (len(S) > 0):
         ax6.plot(t, S)
-        ax6.set_ylim(0, 0.25)
         ax6.set_ylabel('I_S(t)')
         
-        guess_fs = 1100
-        guess_phase = 2200
-        guess_amplitude = 0.2
-        guess_freq = 7
-            
-        p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
-
-        s_guess = my_sin(t, *p0)
-        ax6.plot(t, s_guess, color='green')
-
     if (len(EC) > 0):
         ax7.plot(t, EC)
         ax7.set_ylabel('EC')
@@ -166,25 +92,32 @@ with open('results/ca_stats.csv') as f:
 
     if (len(PS) > 0):
         ax9.plot(t, PS)
-        ax9.set_xlabel('time, t(ms)')
         ax9.set_ylabel('PS')
+        ax9.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
     # plt.savefig('curve_fit_ca_denham_results.png', dpi=500)
 
     # FFT
-    # Number of sample points
     N = len(t)
-    # sample spacing
     T = 1.0 / len(t)
     yf = fft(E)
     xf = fftfreq(N, T)[:N//2]
     plt.figure()
-    plt.plot(xf[:20], 1.0 / 10 * np.abs(yf[0:N//50]))
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
+
+    yf = fft(B)
+    xf = fftfreq(N, T)[:N//2]
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+
+    yf = fft(BS)
+    xf = fftfreq(N, T)[:N//2]
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
-    plt.title('FFT of pyramidal cells in CA1')
+    plt.title('FFT of CA1')
     plt.grid()
+    plt.legend()
     plt.show()
 
 
