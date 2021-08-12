@@ -29,8 +29,7 @@ with open('results/ca_stats.csv') as f:
     S = []
     B = []
     BS = []
-    CA1 = []
-    DG = []
+    CA3 = []
     PS = []
     EC = []
 
@@ -51,34 +50,32 @@ with open('results/ca_stats.csv') as f:
                 BS = data[:, i]
             elif (name == "ec"):
                 EC = data[:, i]
-            elif (name == "dg"):
-                DG = data[:, i]
             elif (name == "ps"):
                 PS = data[:, i]
             else:
-                CA1 = data[:, i]
+                CA3 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, figsize=(10, 10), sharex=True)
-    ax1.title.set_text('Cellular automata simulation of CA3 circuit')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
+    ax1.title.set_text('Cellular automata simulation of CA1 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
-#        ax1.set_ylim(0, 0.2)
+        ax1.set_ylim(0, 0.2)
         ax1.set_ylabel('E_CA1(t)')
 
     if (len(B) > 0):
         ax2.plot(t, B)
-#        ax2.set_ylim(0, 0.4)
+        ax2.set_ylim(0, 0.3)
         ax2.set_ylabel('I_B(t)')
         
     if (len(BS) > 0):
         ax3.plot(t, BS)
-#        ax3.set_ylim(0, 0.05)
+        ax3.set_ylim(0, 0.2)
         ax3.set_ylabel('I_BS(t)')
 
     if (len(I) > 0):
         ax4.plot(t, I)
-#        ax4.set_ylim(0, 0.4)
+        ax4.set_ylim(0, 0.3)
         ax4.set_ylabel('I_CA1I(t)')
  
     if (len(HIPP) > 0):
@@ -93,18 +90,14 @@ with open('results/ca_stats.csv') as f:
         ax7.plot(t, EC)
         ax7.set_ylabel('EC')
 
-    if (len(CA1) > 0):
-        ax8.plot(t, CA1)
-        ax8.set_ylabel('CA1')
-
-    if (len(DG) > 0):
-        ax9.plot(t, DG)
-        ax9.set_ylabel('DG')
+    if (len(CA3) > 0):
+        ax8.plot(t, CA3)
+        ax8.set_ylabel('CA3')
 
     if (len(PS) > 0):
-        ax10.plot(t, PS)
-        ax10.set_ylabel('PS')
-        ax10.set_xlabel('time, t(ms)')
+        ax9.plot(t, PS)
+        ax9.set_ylabel('PS')
+        ax9.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
     # plt.savefig('curve_fit_ca_denham_results.png', dpi=500)
