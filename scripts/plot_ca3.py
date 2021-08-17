@@ -63,22 +63,22 @@ with open('results/ca_stats.csv') as f:
     ax1.title.set_text('Cellular automata simulation of CA3 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
-#        ax1.set_ylim(0, 0.2)
+        ax1.set_ylim(0, 0.2)
         ax1.set_ylabel('E_CA1(t)')
 
     if (len(B) > 0):
         ax2.plot(t, B)
-#        ax2.set_ylim(0, 0.4)
+        ax2.set_ylim(0, 0.4)
         ax2.set_ylabel('I_B(t)')
         
     if (len(BS) > 0):
         ax3.plot(t, BS)
-#        ax3.set_ylim(0, 0.05)
+        ax3.set_ylim(0, 0.05)
         ax3.set_ylabel('I_BS(t)')
 
     if (len(I) > 0):
         ax4.plot(t, I)
-#        ax4.set_ylim(0, 0.4)
+        ax4.set_ylim(0, 0.4)
         ax4.set_ylabel('I_CA1I(t)')
  
     if (len(HIPP) > 0):
@@ -126,7 +126,7 @@ with open('results/ca_stats.csv') as f:
     plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
-    plt.title('FFT of CA1')
+    plt.title('FFT of CA3')
     plt.grid()
     plt.legend()
     plt.show()
