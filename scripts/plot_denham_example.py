@@ -9,6 +9,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.fft import fft, fftfreq
 
 t = []
 
@@ -60,7 +61,7 @@ with open('results/ca_stats.csv') as f:
     if (len(E) > 0):
         ax1.plot(t, E)
         ax1.set_ylabel('E_CA1(t)')
-        ax1.set_ylim(0, 0.25)
+#        ax1.set_ylim(0, 0.25)
         guess_fs = 1000
         guess_phase= 0
         guess_amplitude = 0.25
@@ -69,13 +70,13 @@ with open('results/ca_stats.csv') as f:
         p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
 
         e_guess = my_sin(t, *p0)
-        ax1.plot(t, e_guess, color='green')
+#        ax1.plot(t, e_guess, color='green')
 
     if (len(HIPP) > 0):
         ax2.plot(t, HIPP)
         ax2.set_ylabel('I_CA1P(t)')
         
-        ax2.set_ylim(0, 0.25)
+#        ax2.set_ylim(0, 0.25)
         guess_fs = 1010
         guess_phase = -200
         guess_amplitude = 0.2
@@ -84,11 +85,11 @@ with open('results/ca_stats.csv') as f:
         p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
 
         ip_guess = my_sin(t, *p0)
-        ax2.plot(t, ip_guess, color='green')
+#        ax2.plot(t, ip_guess, color='green')
 
     if (len(I) > 0):
         ax3.plot(t, I)
-        ax3.set_ylim(0, 0.25)
+#        ax3.set_ylim(0, 0.25)
         ax3.set_ylabel('I_CA1I(t)')
         
         guess_fs = 1035
@@ -99,11 +100,11 @@ with open('results/ca_stats.csv') as f:
         p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
 
         i_guess = my_sin(t, *p0)
-        ax3.plot(t, i_guess, color='green')
+#        ax3.plot(t, i_guess, color='green')
 
     if (len(S) > 0):
         ax4.plot(t, S)
-        ax4.set_ylim(0, 0.25)
+#        ax4.set_ylim(0, 0.25)
         ax4.set_ylabel('I_S(t)')
         
         guess_fs = 1100
@@ -114,7 +115,7 @@ with open('results/ca_stats.csv') as f:
         p0=[guess_freq, guess_amplitude, guess_phase, guess_fs]
 
         s_guess = my_sin(t, *p0)
-        ax4.plot(t, s_guess, color='green')
+#        ax4.plot(t, s_guess, color='green')
 
     if (len(CA3) > 0):
         ax5.plot(t, CA3)
@@ -126,8 +127,40 @@ with open('results/ca_stats.csv') as f:
         ax6.set_ylabel('PS')
 
     plt.tight_layout()
-    # plt.savefig('curve_fit_ca_denham_results.png', dpi=500)
+    plt.rcParams.update({'font.size': 22})
+    plt.savefig('denham_results.png', dpi=300)
+#    plt.show()
+
+
+    # FFT
+    N = len(t)
+    T = 1.0 / len(t)
+    xf = fftfreq(N, T)[:N//2]
+
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(8, 6), sharex=True)
+
+    yf = fft(E)
+    ax1.set_ylabel('E_CA1(t)')
+    ax1.plot(xf[:10], 1.0 / 10 * np.abs(yf[0:N//100]))
+
+    yf = fft(HIPP)
+    ax2.set_ylabel('I_CA1P(t)')
+    ax2.plot(xf[:10], 1.0 / 10 * np.abs(yf[0:N//100]))
+
+    yf = fft(I)
+    ax3.set_ylabel('I_CA1I(t)')
+    ax3.plot(xf[:10], 1.0 / 10 * np.abs(yf[0:N//100]))
+
+    yf = fft(S)
+    ax4.set_ylabel('S(t)')
+    ax4.set_xlabel('time, t(ms)')
+    plt.plot(xf[:10], 1.0 / 10 * np.abs(yf[0:N//100]))
+
+    plt.xlabel('Frequency')
+    plt.savefig('denham_results_fft.png', dpi=300)
     plt.show()
+
+
     
 '''
 def rmse(predictions, targets):

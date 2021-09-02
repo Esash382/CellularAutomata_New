@@ -1,15 +1,20 @@
-from numpy import genfromtxt
-import csv
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy.fftpack
-
 # neuron_stats
 #-|-------------------------------------------------------------------------------------------------------------------------------|
 # |  0 |      1      |       2       |     3    |     4    |      5     |   6   |        7       |         8        |      9      |
 #-|----|-------------|---------------|----------|----------|------------|-------|----------------|------------------|-------------|
 # |time|basket_active|basket_inactive|basket_ref|olm_active|olm_inactive|olm_ref|pyramidal_active|pyramidal_inactive|pyramidal_ref|
 #-|-------------------------------------------------------------------------------------------------------------------------------|
+
+from numpy import genfromtxt
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft, fftfreq
+
+t = []
+
+def my_sin(x, freq, amp, phase):
+    return amp * np.sin(((2 * np.pi * freq * x / 1000) + phase))
 
 with open('results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -19,280 +24,287 @@ with open('results/ca_stats.csv') as f:
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
-    E_CA3 = []
-    I_CA3P = []
-    I_CA3I = []
-    I_B3 = []
-    I_BS3 = []
+    time_start = t[0]
+    time_end = t[-1]
 
-    I_S = []
+    E3 = []
+    I3 = []
+    HIPP3 = []
+    B3 = []
+    BS3 = []
 
-    E_CA1 = []
-    I_CA1P = []
-    I_CA1I = []
-    I_B1 = []
-    I_BS1 = []
-    I_BP = []
+    E1 = []
+    I1 = []
+    HIPP1 = []
+    B1 = []
+    BS1 = []
+
+    S = []
+    DG = []
+    PS = []
+    EC = []
 
     for i in range(len(row)):
         if (row[i].find("_active") > 0):
             name = row[i][:row[i].find('_')]
-            if (name == "pyramidal1"):
-                E_CA1 = data[:, i]
-            elif (name == "hippocamposeptal1"):
-                I_CA1P = data[:, i]
-            elif (name == "interneurons1"):
-                I_CA1I = data[:, i]
-            elif (name == "basket1"):
-                I_B1 = data[:, i]
-            elif (name == "bistratified1"):
-                I_BS1 = data[:, i]
-            elif (name == "backprojection"):
-                I_BP = data[:, i]
-            if (name == "pyramidal3"):
-                E_CA3 = data[:, i]
-            elif (name == "hippocamposeptal3"):
-                I_CA3P = data[:, i]
-            elif (name == "interneurons3"):
-                I_CA3I = data[:, i]
-            elif (name == "basket3"):
-                I_B3 = data[:, i]
-            elif (name == "bistratified3"):
-                I_BS3 = data[:, i]
-            else:
-                I_S = data[:, i]
+            if (name == "ex3"):
+                E3 = data[:, i]
+            elif (name == "in3"):
+                I3 = data[:, i]
+            elif (name == "hipp3"):
+                HIPP3 = data[:, i]
+            elif (name == "bas3"):
+                B3 = data[:, i]
+            elif (name == "bis3"):
+                BS3 = data[:, i]
+
+            elif (name == "ex1"):
+                E1 = data[:, i]
+            elif (name == "in1"):
+                I1 = data[:, i]
+            elif (name == "hipp1"):
+                HIPP1 = data[:, i]
+            elif (name == "bas1"):
+                B1 = data[:, i]
+            elif (name == "bis1"):
+                BS1 = data[:, i]
+
+            elif (name == "septum"):
+                S = data[:, i]
+            elif (name == "ec"):
+                EC = data[:, i]
+            elif (name == "dg"):
+                DG = data[:, i]
+            elif (name == "ps"):
+                PS = data[:, i]
 
     # Plot active neuron stats
-    fig1, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(7, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA1 dynamics')
-    ax1.plot(t, E_CA1)
-    ax1.set_ylabel('Pyramidal')
-    ax2.plot(t, I_B1)
-    ax2.set_ylabel('Basket')
-    ax3.plot(t, I_BS1)
-    ax3.set_ylabel('Bistratified')
-    ax4.plot(t, I_CA1I)
-    ax4.set_ylabel('Interneurons')
-    ax5.plot(t, I_CA1P)
-    ax5.set_ylabel('hippocampo-septal')
-    ax6.plot(t, I_BP)
-    ax6.set_ylabel('Backprojection')
-    ax7.plot(t, I_S)
-    ax7.set_ylabel('Septum')
-    ax7.set_xlabel('time (ms)')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
+    ax1.title.set_text('Cellular automata simulation of CA3 circuit')
+    if (len(E3) > 0):
+        ax1.plot(t, E3)
+        ax1.set_ylim(0, 0.25)
+        ax1.set_ylabel('E_CA3(t)')
+        guess_phase= 6.5
+        guess_amplitude = 0.2
+        guess_freq = 6.5
 
-    fig2, (ax11, ax22, ax33, ax44, ax55, ax66) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
-    ax11.set_title('CA3 dynamics')
-    ax11.plot(t, E_CA3)
-    ax11.set_ylabel('Pyramidal')
-    ax22.plot(t, I_B3)
-    ax22.set_ylabel('Basket')
-    ax33.plot(t, I_BS3)
-    ax33.set_ylabel('Bistratified')
-    ax44.plot(t, I_CA3I)
-    ax44.set_ylabel('Interneurons')
-    ax55.plot(t, I_CA3P)
-    ax55.set_ylabel('hippocampo-septal')
-    ax66.plot(t, I_S)
-    ax66.set_ylabel('Septum')
-    ax66.set_xlabel('time (ms)')
-    plt.show()
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    # Plot inactive neuron stats
-    # fig = plt.figure(figsize=(8, 6))
-    # for i in range(len(row)):
-    #     if (row[i].find("_inactive") > 0):
-    #         name = row[i][:row[i].find('_')]
-    #         plt.plot(data[:, 0], data[:, i], label=name+' cells')
-    # plt.title('Neuron stats')
-    # plt.xlabel('time')
-    # plt.ylabel('inactive neuron %')
-    # plt.legend()
-    # plt.show()
+        e_guess = my_sin(t, *p0)
+        ax1.plot(t, e_guess, color='green')
 
-# fig = plt.figure(2, figsize=(8, 6))
-# plt.plot(data[:, 0], data[:, 2], label='active inhibitory neurons')
-# plt.plot(data[:, 0], data[:, 8], label='inactive inhibitory neurons')
-# plt.plot(data[:, 0], data[:, 5], label='refractory inhibitory neurons')
-# plt.title('Neuron stats')
-# plt.xlabel('time')
-# plt.ylabel('neuron %')
-# plt.legend()
-# plt.show()
+    if (len(B3) > 0):
+        ax2.plot(t, B3)
+        ax2.set_ylim(0, 0.4)
+        ax2.set_ylabel('I_B(t)')
+        guess_phase = 5
+        guess_amplitude = 0.2
+        guess_freq = 6.5
 
-# fig = plt.figure(1, figsize=(8, 6))
-# ax1 = fig.add_subplot(211)
-# ax1.plot(data[:, 0], data[:, 1], label='active excitatory neurons')
-# ax1.plot(data[:, 0], data[:, 7], label='inactive excitatory neurons')
-# ax1.plot(data[:, 0], data[:, 4], label='refractory excitatory neurons')
-# ax1.set_title('Neuron stats')
-# ax1.set_xlabel('time')
-# ax1.set_ylabel('neuron %')
-# plt.grid(True)
-# plt.legend()
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-# ax2 = fig.add_subplot(212)
-# ax2.plot(data[:, 0], data[:, 2], label='active inhibitory neurons')
-# ax2.plot(data[:, 0], data[:, 8], label='inactive inhibitory neurons')
-# ax2.plot(data[:, 0], data[:, 5], label='refractory inhibitory neurons')
-# ax2.set_title('Neuron stats')
-# ax2.set_xlabel('time')
-# ax2.set_ylabel('neuron %')
-# plt.grid(True)
-# plt.legend()
+        ip_guess = my_sin(t, *p0)
+        ax2.plot(t, ip_guess, color='green')
 
-# plt.tight_layout()
-# plt.show()
+    if (len(BS3) > 0):
+        ax3.plot(t, BS3)
+        ax3.set_ylim(0, 0.055)
+        ax3.set_ylabel('I_BS(t)')
+        guess_phase = 6
+        guess_amplitude = 0.05
+        guess_freq = 6.5
 
-with open('results/ca_bin_stats.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    dataR = genfromtxt('results/ca_bin_stats.csv', delimiter='\t')
-    data = dataR.T
+        i_guess = my_sin(t, *p0)
+        ax3.plot(t, i_guess, color='green')
 
-    data = np.delete(data, 0, axis=0)
-    data = np.delete(data, (len(data)-1), axis=0)
+    if (len(I3) > 0):
+        ax4.plot(t, I3)
+        ax4.set_ylim(0, 0.4)
+        ax4.set_ylabel('I_CA3I(t)')
+        guess_phase = 4
+        guess_amplitude = 0.3
+        guess_freq = 6.5
 
-    bins = []
-    E_CA1 = []
-    I_CA1P = []
-    I_CA1I = []
-    I_S = []
-    I_B1 = []
-    I_BS1 = []
-    PS = []
-    EC = []
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    E_CA3 = []
-    I_CA3P = []
-    I_CA3I = []
-    I_B3 = []
-    I_BS3 = []
-    DG=[]
+        i_guess = my_sin(t, *p0)
+        ax4.plot(t, i_guess, color='green')
+ 
+    if (len(HIPP3) > 0):
+        ax5.plot(t, HIPP3)
+        ax5.set_ylim(0, 0.3)
+        ax5.set_ylabel('I_CA3P(t)')
+        guess_phase = 6
+        guess_amplitude = 0.25
+        guess_freq = 6.5
 
-    for row in reader:
-        if (row[0] == "pyramidal1"):
-            E_CA1 = row[1:-1]
-            E_CA1 = [int(i) for i in E_CA1]
-        elif (row[0] == "basket1"):
-            I_B1 = row[1:-1]
-            I_B1 = [int(i) for i in I_B1]
-        elif (row[0] == "bistratified1"):
-            I_BS1 = row[1:-1]
-            I_BS1 = [int(i) for i in I_BS1]
-        elif (row[0] == "septum"):
-            I_S = row[1:-1]
-            I_S = [int(i) for i in I_S]
-        elif (row[0] == "hippocamposeptal1"):
-            I_CA1P = row[1:-1]
-            I_CA1P = [int(i) for i in I_CA1P]
-        elif (row[0] == "interneurons1"):
-            I_CA1I = row[1:-1]
-            I_CA1I = [int(i) for i in I_CA1I]
-        if (row[0] == "pyramidal3"):
-            E_CA3 = row[1:-1]
-            E_CA3 = [int(i) for i in E_CA3]
-        elif (row[0] == "basket3"):
-            I_B3 = row[1:-1]
-            I_B3 = [int(i) for i in I_B3]
-        elif (row[0] == "bistratified3"):
-            I_BS3 = row[1:-1]
-            I_BS3 = [int(i) for i in I_BS3]
-        elif (row[0] == "hippocamposeptal3"):
-            I_CA3P = row[1:-1]
-            I_CA3P = [int(i) for i in I_CA3P]
-        elif (row[0] == "interneurons3"):
-            I_CA3I = row[1:-1]
-            I_CA3I = [int(i) for i in I_CA3I]
-        elif (row[0] == "ps"):
-            PS = row[1:-1]
-            PS = [int(i) for i in PS]
-        elif (row[0] == "ec"):
-            EC = row[1:-1]
-            EC = [int(i) for i in EC]
-        elif (row[0] == "dg"):
-            DG = row[1:-1]
-            DG = [int(i) for i in DG]
-        elif (row[0] == "bins"):
-            bins = row[1:-1]
-            bins = [int(i) for i in bins]
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    fig1, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA1 dynamics')
-    ax1.bar(bins, E_CA1)
-    ax1.plot(bins, E_CA1)
-    ax1.set_ylabel('Pyramidal')
+        i_guess = my_sin(t, *p0)
+        ax5.plot(t, i_guess, color='green')
 
-    ax2.bar(bins, I_B1)
-    ax2.plot(bins, I_B1)
-    ax2.set_ylabel('Basket')
+    if (len(S) > 0):
+        ax6.plot(t, S)
+        ax6.set_ylim(0, 0.3)
+        ax6.set_ylabel('I_S(t)')
+        guess_phase = 8
+        guess_amplitude = 0.25
+        guess_freq = 6.5
 
-    ax3.bar(bins, I_BS1)
-    ax3.plot(bins, I_BS1)
-    ax3.set_ylabel('Bistratified')
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    ax4.bar(bins, I_CA1P)
-    ax4.plot(bins, I_CA1P)
-    ax4.set_ylabel('Hippocampo-septal')
+        i_guess = my_sin(t, *p0)
+        ax6.plot(t, i_guess, color='green')
+        
+    if (len(EC) > 0):
+        ax7.plot(t, EC)
+        ax7.set_ylabel('EC')
 
-    ax5.bar(bins, I_CA1I)
-    ax5.plot(bins, I_CA1I)
-    ax5.set_ylabel('Interneurons')
+    if (len(DG) > 0):
+        ax8.plot(t, DG)
+        ax8.set_ylabel('DG')
 
-    ax6.bar(bins, I_S)
-    ax6.plot(bins, I_S)
-    ax6.set_ylabel('Septum')
-    ax6.set_xlabel('time (ms)')
-
-    fig2, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, sharex = True, figsize = (9, 9))
-    ax1.set_title('CA3 dynamics')
-    ax1.bar(bins, E_CA3)
-    ax1.plot(bins, E_CA3)
-    ax1.set_ylabel('Pyramidal')
-
-    ax2.bar(bins, I_B3)
-    ax2.plot(bins, I_B3)
-    ax2.set_ylabel('Basket')
-
-    ax3.bar(bins, I_BS3)
-    ax3.plot(bins, I_BS3)
-    ax3.set_ylabel('Bistratified')
-
-    ax4.bar(bins, I_CA3P)
-    ax4.plot(bins, I_CA3P)
-    ax4.set_ylabel('Hippocampo-septal')
-
-    ax5.bar(bins, I_CA3I)
-    ax5.plot(bins, I_CA3I)
-    ax5.set_ylabel('Interneurons')
-
-    ax6.bar(bins, I_S)
-    ax6.plot(bins, I_S)
-    ax6.set_ylabel('Septum')
-    ax6.set_xlabel('time (ms)')
+    if (len(PS) > 0):
+        ax9.plot(t, PS)
+        ax9.set_ylabel('PS')
+        ax9.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
+    # plt.savefig('ca1_ca3_ca3_theta_gamma.png', dpi=500)
+
+    # FFT
+    N = len(t)
+    T = 1.0 / len(t)
+    yf = fft(E3)
+    xf = fftfreq(N, T)[:N//2]
+    plt.figure()
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
+
+    yf = fft(B3)
+    xf = fftfreq(N, T)[:N//2]
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+
+    yf = fft(BS3)
+    xf = fftfreq(N, T)[:N//2]
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
+    plt.title('FFT of CA3')
+    plt.grid()
+    plt.legend()
+    # plt.savefig('ca1_ca3_ca3_theta_gamma_fft.png', dpi=500)
     plt.show()
 
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8) = plt.subplots(8, 1, figsize=(10, 10), sharex=True)
+    ax1.title.set_text('Cellular automata simulation of CA1 circuit')
+    if (len(E1) > 0):
+        ax1.plot(t, E1)
+        ax1.set_ylim(0, 0.25)
+        ax1.set_ylabel('E_CA1(t)')
+        guess_phase= 7.5
+        guess_amplitude = 0.2
+        guess_freq = 6.5
 
-    # FFT
-    # Number of samplepoints
-    xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
-    yt = scipy.fftpack.fft(E_CA1)
-    plt.figure(figsize=(8, 5))
-    plt.semilogx(xt[1:], 2.0/len(bins) * np.abs(yt[0:int(len(bins)/2)])[1:])
-    plt.title('FFT plot: CA1 Pyramidal cell population')
-    plt.xlabel('time')
-    plt.ylabel('frequency')
+        p0=[guess_freq, guess_amplitude, guess_phase]
 
-    # FFT
-    # Number of samplepoints
-    xt = np.linspace(0.0, 1.0/(2.0*len(bins)), int(len(bins)/2))
-    yt = scipy.fftpack.fft(E_CA3)
-    plt.figure(figsize=(8, 5))
-    plt.semilogx(xt[1:], 2.0/len(bins) * np.abs(yt[0:int(len(bins)/2)])[1:])
-    plt.title('FFT plot: CA3 Pyramidal cell population')
-    plt.xlabel('time')
-    plt.ylabel('frequency')
+        e_guess = my_sin(t, *p0)
+        ax1.plot(t, e_guess, color='green')
+
+    if (len(B1) > 0):
+        ax2.plot(t, B1)
+        ax2.set_ylim(0, 0.3)
+        ax2.set_ylabel('I_B(t)')
+        guess_phase = 5
+        guess_amplitude = 0.2
+        guess_freq = 6.5
+
+        p0=[guess_freq, guess_amplitude, guess_phase]
+
+        ip_guess = my_sin(t, *p0)
+        ax2.plot(t, ip_guess, color='green')
+
+    if (len(BS1) > 0):
+        ax3.plot(t, BS1)
+        ax3.set_ylim(0, 0.2)
+        ax3.set_ylabel('I_BS(t)')
+        guess_phase = 5.5
+        guess_amplitude = 0.1
+        guess_freq = 6.5
+
+        p0=[guess_freq, guess_amplitude, guess_phase]
+
+        i_guess = my_sin(t, *p0)
+        ax3.plot(t, i_guess, color='green')
+
+    if (len(I1) > 0):
+        ax4.plot(t, I1)
+        ax4.set_ylim(0, 0.3)
+        ax4.set_ylabel('I_CA1I(t)')
+        guess_phase = 4
+        guess_amplitude = 0.25
+        guess_freq = 7
+            
+        p0=[guess_freq, guess_amplitude, guess_phase]
+
+        s_guess = my_sin(t, *p0)
+        ax4.plot(t, s_guess, color='green')
+
+    if (len(HIPP1) > 0):
+        ax5.plot(t, HIPP1)
+        ax5.set_ylim(0, 0.3)
+        ax5.set_ylabel('I_CA1P(t)')
+        guess_phase = 6
+        guess_amplitude = 0.25
+        guess_freq = 7
+            
+        p0=[guess_freq, guess_amplitude, guess_phase]
+
+        s_guess = my_sin(t, *p0)
+        ax5.plot(t, s_guess, color='green')
+        
+    if (len(S) > 0):
+        ax6.plot(t, S)
+        ax6.set_ylim(0, 0.25)
+        ax6.set_ylabel('I_S(t)')
+        guess_phase = 2
+        guess_amplitude = 0.2
+        guess_freq = 7
+            
+        p0=[guess_freq, guess_amplitude, guess_phase]
+
+        s_guess = my_sin(t, *p0)
+        ax6.plot(t, s_guess, color='green')
+
+    if (len(EC) > 0):
+        ax7.plot(t, EC)
+        ax7.set_ylabel('EC')
+
+    if (len(PS) > 0):
+        ax8.plot(t, PS)
+        ax8.set_ylabel('PS')
+        ax8.set_xlabel('time, t(ms)')
+
     plt.tight_layout()
+    # plt.savefig('ca1_ca3_ca1_theta_gamma.png', dpi=500)
+
+    plt.figure(figsize=(8, 6))
+    N = len(t)
+    T = 1.0 / len(t)
+    xf = fftfreq(N, T)[:N//2]
+
+    yf = fft(E1)
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
+
+    yf = fft(B1)
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+
+    yf = fft(BS1)
+    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+
+    plt.legend()
+    plt.grid()
+    # plt.savefig('ca1_ca3_ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
