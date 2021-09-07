@@ -196,7 +196,6 @@ with open('results/ca_stats.csv') as f:
     plt.grid()
     plt.legend()
     # plt.savefig('ca1_ca3_ca3_theta_gamma_fft.png', dpi=500)
-    plt.show()
 
     fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8) = plt.subplots(8, 1, figsize=(10, 10), sharex=True)
     ax1.title.set_text('Cellular automata simulation of CA1 circuit')
@@ -290,7 +289,7 @@ with open('results/ca_stats.csv') as f:
     plt.tight_layout()
     # plt.savefig('ca1_ca3_ca1_theta_gamma.png', dpi=500)
 
-    plt.figure(figsize=(8, 6))
+    plt.figure()
     N = len(t)
     T = 1.0 / len(t)
     xf = fftfreq(N, T)[:N//2]
@@ -304,6 +303,9 @@ with open('results/ca_stats.csv') as f:
     yf = fft(BS1)
     plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
 
+    plt.title('FFT of CA1')
+    plt.xlabel('Frequency')
+    plt.ylabel('Amplitude')
     plt.legend()
     plt.grid()
     # plt.savefig('ca1_ca3_ca1_theta_gamma_fft.png', dpi=500)

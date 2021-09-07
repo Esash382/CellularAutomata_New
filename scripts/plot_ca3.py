@@ -16,11 +16,11 @@ t = []
 def my_sin(x, freq, amp, phase):
     return amp * np.sin(((2 * np.pi * freq * x / 1000) + phase))
 
-with open('results/ca_stats.csv') as f:
+with open('../results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
     row = next(reader)
 
-    data = genfromtxt('results/ca_stats.csv', delimiter='\t')
+    data = genfromtxt('../results/ca_stats.csv', delimiter='\t')
     data = np.delete(data, (0), axis=0)
 
     t = data[:, 0]
@@ -68,7 +68,7 @@ with open('results/ca_stats.csv') as f:
         ax1.plot(t, E)
         ax1.set_ylim(0, 0.25)
         ax1.set_ylabel('E_CA1(t)')
-        guess_phase= 6.5
+        guess_phase= 0
         guess_amplitude = 0.2
         guess_freq = 6.5
 
@@ -81,7 +81,7 @@ with open('results/ca_stats.csv') as f:
         ax2.plot(t, B)
         ax2.set_ylim(0, 0.4)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = 5
+        guess_phase = -0.8
         guess_amplitude = 0.2
         guess_freq = 6.5
 
@@ -94,7 +94,7 @@ with open('results/ca_stats.csv') as f:
         ax3.plot(t, BS)
         ax3.set_ylim(0, 0.055)
         ax3.set_ylabel('I_BS(t)')
-        guess_phase = 6
+        guess_phase = 0
         guess_amplitude = 0.05
         guess_freq = 6.5
 
@@ -160,29 +160,29 @@ with open('results/ca_stats.csv') as f:
         ax10.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
-    plt.savefig('ca3_theta_gamma.png', dpi=500)
+    # plt.savefig('ca3_theta_gamma.png', dpi=500)
 
     # FFT
-    N = len(t)
-    T = 1.0 / len(t)
-    yf = fft(E)
-    xf = fftfreq(N, T)[:N//2]
-    plt.figure()
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
+    # N = len(t)
+    # T = 1.0 / len(t)
+    # yf = fft(E)
+    # xf = fftfreq(N, T)[:N//2]
+    # plt.figure()
+    # plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
-    yf = fft(B)
-    xf = fftfreq(N, T)[:N//2]
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+    # yf = fft(B)
+    # xf = fftfreq(N, T)[:N//2]
+    # plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
 
-    yf = fft(BS)
-    xf = fftfreq(N, T)[:N//2]
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
-    plt.xlabel('Frequency')
-    plt.ylabel('Amplitude')
-    plt.title('FFT of CA3')
-    plt.grid()
-    plt.legend()
-    plt.savefig('ca3_theta_gamma_fft.png', dpi=500)
+    # yf = fft(BS)
+    # xf = fftfreq(N, T)[:N//2]
+    # plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+    # plt.xlabel('Frequency')
+    # plt.ylabel('Amplitude')
+    # plt.title('FFT of CA3')
+    # plt.grid()
+    # plt.legend()
+    # plt.savefig('ca3_theta_gamma_fft.png', dpi=500)
     plt.show()
 
 

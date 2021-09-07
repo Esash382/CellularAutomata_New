@@ -1066,7 +1066,7 @@ void Population::write_stats()
                         out << "\t" << j;
                         index++;
                     } else {
-                        out << "\t 0";
+                        out << "\t -1";
                     }
                 }
                 out << "\n";

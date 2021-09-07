@@ -15,6 +15,9 @@ from io import BytesIO
 
 time_start = 0
 time_end = 0
+
+#plt.rcParams.update({'font.size' : 14})
+
 with open('results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
     row = next(reader)
@@ -57,10 +60,21 @@ with open('results/ca_stats.csv') as f:
     ax3.set_title('External input')
 
     plt.tight_layout()
+#    plt.show()
+    
+    plt.figure(figsize=(8, 3))
+    dataR = genfromtxt('results/ex.csv', delimiter='\t')
+    dataT = dataR.T
+    dataS = np.delete(dataT, 0, axis=0)
+    dataS[ dataS==-1 ] = np.nan
+    for i in dataS:
+        plt.scatter(t, i, marker=".", s=20)
+    plt.title('Spike raster plot')
+    plt.xlabel('time (ms)')
+    plt.ylabel('Excitatory population: neuron number')
     plt.show()
 
 '''
-
     # FFT
     # Number of sample points
     N = len(t)
@@ -73,6 +87,7 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('Frequency')
     plt.ylabel('Amplitude')
     plt.grid()
+'''
 
 #    plt.figure()
 #    plt.plot(t, E)
@@ -80,17 +95,8 @@ with open('results/ca_stats.csv') as f:
 #    plt.figure()
 #    plt.plot(t, I)
 
-#plt.figure()
-#dataR = genfromtxt('results/ex.csv', delimiter='\t')
-#dataT = dataR.T
-#dataS = np.delete(dataT, 0, axis=0)
-#print(dataS.shape)
-#plt.eventplot(dataS)
-#plt.title('Spike raster plot')
-#plt.xlabel('time (ms)')
-#plt.ylabel('Excitatory population: neuron number')
-#plt.show()
 
+'''
 fig, ax1 = plt.subplots(1, 1, figsize=(8, 6), sharex=True)
 with open('results/ex.csv') as f:
     reader = csv.reader(f, delimiter='\t')
