@@ -1,22 +1,22 @@
-LD_LIBRARY_PATH := /home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast/lib
+LD_LIBRARY_PATH := /home/ashraya/Documents/Notes/CellularAutomata_Fast/lib
 
-out: libca.so main.o
+out: libcalib.so main.o
 	if [ ! -d "./bin" ]; then mkdir bin; fi
-	g++ -g -o bin/out obj/main.o obj/plot.o -L$(LD_LIBRARY_PATH) -lca -ldl
+	g++ -g -o bin/out obj/main.o obj/plot.o -L$(LD_LIBRARY_PATH) -lcalib -ldl
 
 main.o:
 	if [ ! -d "./obj" ]; then mkdir obj; fi
 	g++ -g -o obj/main.o -c src/main.cpp -Iinclude/
 	g++ -g -o obj/plot.o -c src/plot.cpp -Iinclude/
 
-libca.so: 
-	g++ -g -o lib/libca.so -Wall -fPIC -Ilib/include/ -Ilib/external -shared \
+libcalib.so: 
+	g++ -g -o lib/libcalib.so -Wall -fPIC -Ilib/include/ -Ilib/external -shared \
 	lib/src/log.cpp lib/src/network.cpp \
 	lib/src/population.cpp lib/src/util.cpp lib/src/config.cpp \
 	lib/src/spike_generator.cpp
 
 clean:
-	rm -rf bin obj lib/libca.so results/*
+	rm -rf bin obj lib/libcalib.so results/*
 
 test:
 	make testSpikeGenerator
@@ -47,14 +47,14 @@ testConfig:
 testPopulation:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
-	g++ -o bin/test/testPopulation lib/test/TestPopulation.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+	g++ -o bin/test/testPopulation lib/test/TestPopulation.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lcalib -ldl
 
 testModel:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
-	g++ -o bin/test/testModel lib/test/TestModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+	g++ -o bin/test/testModel lib/test/TestModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lcalib -ldl
 
 testRandomModel:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
-	g++ -g -o bin/test/testRandomModel lib/test/TestRandomModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+	g++ -g -o bin/test/testRandomModel lib/test/TestRandomModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lcalib -ldl

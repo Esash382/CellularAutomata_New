@@ -13,7 +13,7 @@
 typedef Population* (*populationCreatorFunction)(const char* filepath);
 
 void init_and_process_networks(const char* filepath) {
-	void* handle = dlopen("libca.so", RTLD_NOW);
+	void* handle = dlopen("libcalib.so", RTLD_NOW);
 	char* error;
 
 	if (!handle) {
@@ -51,7 +51,7 @@ void init_and_process_networks(const char* filepath) {
 
 int main()
 {
-	const char* filepath = "/home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast";
+	const char* filepath = "/home/ashraya/Documents/Notes/CellularAutomata_Fast";
 	init_and_process_networks(filepath);
 
 	Plot::plot_neurons_stats();

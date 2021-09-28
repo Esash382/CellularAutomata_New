@@ -9,12 +9,17 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fft import fft, fftfreq
+from scipy.fftpack import fft, fftfreq
+import os
 
 t = []
 
 def my_sin(x, freq, amp, phase):
     return amp * np.sin(((2 * np.pi * freq * x / 1000) + phase))
+
+curPath = os.getcwd()
+if ("scripts" in curPath):
+    os.chdir("../")
 
 with open('results/ca_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
@@ -63,10 +68,10 @@ with open('results/ca_stats.csv') as f:
     ax1.title.set_text('Cellular automata simulation of CA1 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
-        ax1.set_ylim(0, 0.25)
+        ax1.set_ylim(0, 0.3)
         ax1.set_ylabel('E_CA1(t)')
-        guess_phase= 7.5
-        guess_amplitude = 0.2
+        guess_phase= 0
+        guess_amplitude = 0.25
         guess_freq = 6.5
 
         p0=[guess_freq, guess_amplitude, guess_phase]
@@ -78,7 +83,7 @@ with open('results/ca_stats.csv') as f:
         ax2.plot(t, B)
         ax2.set_ylim(0, 0.3)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = 5
+        guess_phase = 0
         guess_amplitude = 0.2
         guess_freq = 6.5
 
@@ -89,10 +94,10 @@ with open('results/ca_stats.csv') as f:
 
     if (len(BS) > 0):
         ax3.plot(t, BS)
-        ax3.set_ylim(0, 0.2)
+        ax3.set_ylim(0, 0.3)
         ax3.set_ylabel('I_BS(t)')
-        guess_phase = 5.5
-        guess_amplitude = 0.1
+        guess_phase = 0
+        guess_amplitude = 0.25
         guess_freq = 6.5
 
         p0=[guess_freq, guess_amplitude, guess_phase]
@@ -104,7 +109,7 @@ with open('results/ca_stats.csv') as f:
         ax4.plot(t, I)
         ax4.set_ylim(0, 0.3)
         ax4.set_ylabel('I_CA1I(t)')
-        guess_phase = 4
+        guess_phase = -2.5
         guess_amplitude = 0.25
         guess_freq = 7
             
@@ -117,7 +122,7 @@ with open('results/ca_stats.csv') as f:
         ax5.plot(t, HIPP)
         ax5.set_ylim(0, 0.3)
         ax5.set_ylabel('I_CA1P(t)')
-        guess_phase = 6
+        guess_phase = -0.2
         guess_amplitude = 0.25
         guess_freq = 7
             
@@ -130,7 +135,7 @@ with open('results/ca_stats.csv') as f:
         ax6.plot(t, S)
         ax6.set_ylim(0, 0.25)
         ax6.set_ylabel('I_S(t)')
-        guess_phase = 2
+        guess_phase = 1.3
         guess_amplitude = 0.2
         guess_freq = 7
             
@@ -174,29 +179,13 @@ with open('results/ca_stats.csv') as f:
     plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
 
-    # FFT
+    # plt.figure()
     # N = len(t)
     # T = 1.0 / len(t)
     # xf = fftfreq(N, T)[:N//2]
-
-    # fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
-
     # yf = fft(E)
-    # ax1.set_ylabel('E_CA1(t)')
-    # ax1.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
-
-    # yf = fft(B)
-    # ax2.set_ylabel('B(t)')
-    # ax2.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
-
-    # yf = fft(BS)
-    # ax3.set_ylabel('BS(t)')
-    # ax3.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
-
-    # plt.xlabel('Frequency')
-    # plt.savefig('denham_results_fft.png', dpi=300)
+    # plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
     # plt.show()
-
 
     
 '''
