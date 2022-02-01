@@ -9,7 +9,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fftpack import fft, fftfreq
+from scipy.fft import fft, fftfreq
 import os
 
 t = []

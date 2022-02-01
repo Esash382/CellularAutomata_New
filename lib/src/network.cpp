@@ -5,7 +5,9 @@ Network::Network(std::string name, uint ntwk_id, uint N,
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
 			_time_t tau_del, _time_t del_step, _time_t tau_dur,
             _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
-            float value, float step)
+            float value, float step, uint enable_learning,
+            float learning_rate, float unlearning_rate,
+            uint p_rand_no_of_neurons)
 {
 	logger = Log::getInstance();
 
@@ -52,4 +54,9 @@ Network::Network(std::string name, uint ntwk_id, uint N,
         std::vector<float> vec(time_vec_size, 0);
         external_input_vec = vec;
     }
+
+    this->enable_learning = enable_learning;
+    this->learning_rate = learning_rate;
+    this->unlearning_rate = unlearning_rate;
+    this->p_rand_no_of_neurons = p_rand_no_of_neurons;
 }

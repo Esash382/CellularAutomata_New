@@ -48,6 +48,8 @@ private:
     void set_firing_time_for_random_time_network();
     void init_bins();
     int get_bin_index(uint n);
+    void init_p_rand_neurons();
+    bool is_neuron_in_p_rand(uint i, uint ntwk_id);
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -128,6 +130,11 @@ public:
 
     // Activate neurons according to uniform distribution firing times
     std::map<uint, std::map<time_t, std::vector<uint>>> n_rand_map;
+
+    std::map<uint, std::vector<uint>> p_rand_neuron_ids;
+
+    // Store the current network id and the neuron in the network getting fired
+    uint cur_ntwk_neuron;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

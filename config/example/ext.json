@@ -11,7 +11,7 @@
     "ap" : 1.0,
     "ref" : 0.0,
     "del" : 0.0, 
-    "dur" : 1.0,
+    "dur" : 5.0,
 
     "osc" : 0.0,
 
@@ -20,5 +20,7 @@
     "ext_val_1" : 10,
     "ext_step" : 0,
 
-    "nf" : 10 
+    "nf" : 10 ,
+
+    "enable_learning": 1.0
 }

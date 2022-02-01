@@ -13,7 +13,7 @@
 typedef Population* (*populationCreatorFunction)(const char* filepath);
 
 void init_and_process_networks(const char* filepath) {
-	void* handle = dlopen("libcalib.so", RTLD_NOW);
+	void* handle = dlopen("libca.so", RTLD_NOW);
 	char* error;
 
 	if (!handle) {

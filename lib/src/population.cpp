@@ -155,6 +155,24 @@ void Population::init_bins()
     }
 }
 
+void Population::init_p_rand_neurons()
+{
+    for (auto ntwk : this->population_network) {
+        if (ntwk->p_rand_no_of_neurons > 0 && ntwk->m_type != PSEUDO_NEURON) {
+            std::vector<uint> tmp(ntwk->p_rand_no_of_neurons);
+
+            std::vector<unsigned int> indices(ntwk->m_N);
+            std::iota(indices.begin(), indices.end(), 0);
+            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
+            for (uint i = 0; i < ntwk->p_rand_no_of_neurons; i++)
+                tmp.push_back(indices[i]);
+
+            this->p_rand_neuron_ids[ntwk->m_ntwk_id] = tmp;
+        }
+    }    
+}
+
 void Population::create_interneuronal_network_projections(Config* config)
 {
     logger->log("create_interneuronal_network_projections");
@@ -478,6 +496,8 @@ void Population::add_network_internal_func(Config *config)
     create_recurrent_network_projections(config);
 
     calculate_number_of_synapses();
+
+    init_p_rand_neurons();
 }
 
 void Population::set_neuron_firing_time(shared_ptr<Network> ntwk, uint i, _time_t firing)
@@ -710,6 +730,19 @@ void Population::synaptic_block(shared_ptr<Network> ntwk, uint n, uint i)
     activate_synapses(n);
 }
 
+bool Population::is_neuron_in_p_rand(uint neuron_id, uint ntwk_id)
+{
+    if (p_rand_neuron_ids.find(ntwk_id) != p_rand_neuron_ids.end()) {
+        auto ntwk_p_rand_vec = p_rand_neuron_ids[ntwk_id];
+        if (std::find(ntwk_p_rand_vec.begin(), ntwk_p_rand_vec.end(), neuron_id)
+                != ntwk_p_rand_vec.end()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
 {
     logger->log("compute_weights with a given network for a particular cell");
@@ -785,6 +818,19 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
         //auto tmp = get_noisy_delay(ntwk->threshold, this->th_step);
         std::string str = ntwk->m_ntwk_name + " : time = " + std::to_string(this->time_vec[n]) + " : neuron_id = " + std::to_string(i) + " sum = " + std::to_string(sum) + "\n";
         logger->log(str);
+
+        // If the neuron is not present in the selected p_rand, unlearn
+        if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
+            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
+                if (this->m_w_matrix[this->cur_ntwk_neuron]
+                                    [ntwk->start_from_row_index + i] > 0) {
+                    this->m_w_matrix[this->cur_ntwk_neuron]
+                                    [ntwk->start_from_row_index + i]
+                                                -= ntwk->unlearning_rate;
+                }
+            }
+        }
+
         if (sum > ntwk->threshold) {
             //std::cout << __FUNCTION__ << " " << str << std::endl;
             this->m_n_matrix[ntwk->start_from_row_index + i] = ON;
@@ -835,6 +881,27 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             logger->log("threshold_block: switching on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
             str = ("threshold_block: switching on neuron : " + std::to_string(i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
             //std::cout << str << std::endl;
+
+            // Logic to add learning : STDP rule
+            if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0 &&
+                    is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
+                // learn
+                if (this->m_w_matrix[this->cur_ntwk_neuron][i] != 0) {
+                    this->m_w_matrix[this->cur_ntwk_neuron]
+                                    [ntwk->start_from_row_index + i]
+                                            += ntwk->learning_rate;
+                }
+            }
+        } else { // if w_sum < the, unlearn
+            if (this->m_w_matrix[this->cur_ntwk_neuron]
+                                [ntwk->start_from_row_index + i] != 0) {
+                if (this->m_w_matrix[this->cur_ntwk_neuron]
+                                    [ntwk->start_from_row_index + i] > 0) {
+                    this->m_w_matrix[this->cur_ntwk_neuron]
+                                    [ntwk->start_from_row_index + i]
+                                                -= ntwk->unlearning_rate;
+                }
+            }
         }
     } else {
         if (this->m_n_matrix[ntwk->start_from_row_index + i] != ON)
@@ -930,6 +997,10 @@ void Population::process_networks()
                     auto neuron_vec = it2->second;
                     for (uint j = 0; j < neuron_vec.size(); j++) {
 //                        std::cout << __FUNCTION__ << " ntwk = " << ntwk->m_ntwk_name << " neuron = " << neuron_vec[j] << " time = " << this->time_vec[n] << std::endl;
+                        cur_ntwk_neuron = ntwk->start_from_row_index + neuron_vec[j];
+                        std::string str = ("process_networks: current external network id = " + std::to_string(ntwk->m_ntwk_id) + " : neuron id = " + std::to_string(neuron_vec[j]) + " : time = " + std::to_string(time_vec[n]));
+                        logger->log(str);
+//                        std::cout << str << std::endl;
                         synaptic_block(ntwk, n, neuron_vec[j]);
                         flag = true;
                     }

@@ -24,7 +24,9 @@ public:
 			float k, _time_t tau_ap, _time_t tau_ref, uint z,
 			_time_t tau_del, _time_t del_step, _time_t tau_dur,
             _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
-            float value, float step);
+            float value, float step, uint enable_learning,
+            float learning_rate, float unlearning_rate,
+            uint p_rand_no_of_neurons);
 
     void init_bins();
 
@@ -69,4 +71,9 @@ public:
     // which means, 
     // ntwk->start_from_row_index + i = required specific neuron in this population
     uint start_from_row_index; 
+
+    uint enable_learning;
+    float learning_rate;
+    float unlearning_rate;
+    uint p_rand_no_of_neurons;
 };
