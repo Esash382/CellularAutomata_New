@@ -49,7 +49,6 @@ private:
     void init_bins();
     int get_bin_index(uint n);
     void init_p_rand_neurons();
-    bool is_neuron_in_p_rand(uint i, uint ntwk_id);
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -75,6 +74,7 @@ public:
     std::vector<std::vector<double>> get_weight_matrix() const;
 
     void set_weight_matrix(std::vector<std::vector<double>> matrix);
+    void set_p_rand_matrix(std::map<uint, std::vector<uint>> p_rand_neuron_ids);
     void set_state_matrix(uint row_start_index, uint i, STYPE state);
     void set_synapse_firing_time_matrix(uint row_start_index, uint i, double firing_time);
     void set_neuron_firing_time(shared_ptr<Network> ntwk, uint i, _time_t firing);
@@ -87,6 +87,7 @@ public:
     double call_compute_weights(shared_ptr<Network> ntwk, uint n, uint i);
     void call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
     void call_update_stats(uint n);
+    bool is_neuron_in_p_rand(uint i, uint ntwk_id);
 
 public:
 	// Logger

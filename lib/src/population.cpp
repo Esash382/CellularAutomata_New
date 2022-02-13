@@ -49,6 +49,11 @@ void Population::set_weight_matrix(std::vector<std::vector<double>> matrix)
     this->m_w_matrix = matrix;
 }
 
+void Population::set_p_rand_matrix(std::map<uint, std::vector<uint>> p_rand_neuron_ids)
+{
+    this->p_rand_neuron_ids = p_rand_neuron_ids;
+}
+
 void Population::set_state_matrix(uint row_start_index, uint i, STYPE state)
 {
     this->m_s_matrix[row_start_index][i] = state;
@@ -159,7 +164,8 @@ void Population::init_p_rand_neurons()
 {
     for (auto ntwk : this->population_network) {
         if (ntwk->p_rand_no_of_neurons > 0 && ntwk->m_type != PSEUDO_NEURON) {
-            std::vector<uint> tmp(ntwk->p_rand_no_of_neurons);
+            std::vector<uint> tmp;
+	        tmp.reserve(0);
 
             std::vector<unsigned int> indices(ntwk->m_N);
             std::iota(indices.begin(), indices.end(), 0);
@@ -820,16 +826,16 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
         logger->log(str);
 
         // If the neuron is not present in the selected p_rand, unlearn
-        if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
-            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
-                if (this->m_w_matrix[this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i] > 0) {
-                    this->m_w_matrix[this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i]
-                                                -= ntwk->unlearning_rate;
-                }
-            }
-        }
+//        if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
+//            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
+//                if (this->m_w_matrix[this->cur_ntwk_neuron]
+//                                    [ntwk->start_from_row_index + i] > 0) {
+//                    this->m_w_matrix[this->cur_ntwk_neuron]
+//                                    [ntwk->start_from_row_index + i]
+//                                                -= ntwk->unlearning_rate;
+//                }
+//            }
+//        }
 
         if (sum > ntwk->threshold) {
             //std::cout << __FUNCTION__ << " " << str << std::endl;
@@ -883,16 +889,16 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             //std::cout << str << std::endl;
 
             // Logic to add learning : STDP rule
-            if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0 &&
-                    is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
+//            if (ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0 &&
+//                    is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
                 // learn
-                if (this->m_w_matrix[this->cur_ntwk_neuron][i] != 0) {
-                    this->m_w_matrix[this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i]
-                                            += ntwk->learning_rate;
-                }
-            }
-        } else { // if w_sum < the, unlearn
+//                if (this->m_w_matrix[this->cur_ntwk_neuron][i] != 0) {
+//                    this->m_w_matrix[this->cur_ntwk_neuron]
+//                                    [ntwk->start_from_row_index + i]
+//                                            += ntwk->learning_rate;
+//                }
+//            }
+        }/* else { // if w_sum < the, unlearn
             if (this->m_w_matrix[this->cur_ntwk_neuron]
                                 [ntwk->start_from_row_index + i] != 0) {
                 if (this->m_w_matrix[this->cur_ntwk_neuron]
@@ -903,6 +909,7 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
                 }
             }
         }
+        */
     } else {
         if (this->m_n_matrix[ntwk->start_from_row_index + i] != ON)
             return;
@@ -1145,4 +1152,26 @@ void Population::write_stats()
         }
         out.close();
     }
+
+    std::ofstream out3(this->result_file_path + "/ca_p_rand_stats.csv", std::ios_base::binary);
+    if (out3.good()) {
+        for (auto ntwk : this->p_rand_neuron_ids) {
+            for (auto i : ntwk.second) {
+                out3 << i << "\t";
+            }
+            out3 << "\n";
+        }
+    }
+    out3.close();
+
+    std::ofstream out4(this->result_file_path + "/ca_weight_matrix.csv", std::ios_base::binary);
+    if (out4.good()) {
+        for (uint i = 0; i < this->m_w_matrix.size(); i++) {
+            for (uint j = 0; j < this->m_w_matrix.size(); j++) {
+                out4 << this->m_w_matrix[i][j] << "\t";
+            }
+            out4 << "\n";
+        }
+    }
+    out4.close();
 }

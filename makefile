@@ -24,11 +24,13 @@ test:
 	make testPopulation
 	make testModel
 	make testRandomModel
+	make testRecallWeight
 	./bin/test/testSpikeGenerator
 	./bin/test/testConfig
 	./bin/test/testPopulation
 	./bin/test/testModel
 	./bin/test/testRandomModel
+	./bin/test/testRecallWeight
 
 testSpikeGenerator:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
@@ -58,3 +60,8 @@ testRandomModel:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
 	g++ -g -o bin/test/testRandomModel lib/test/TestRandomModel.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+
+testRecallWeight:
+	if [ ! -d "./bin" ]; then mkdir bin; fi
+	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
+	g++ -g -o bin/test/testRecallWeight lib/test/TestRecallWeight.cpp src/plot.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl

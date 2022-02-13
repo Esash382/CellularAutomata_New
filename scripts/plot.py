@@ -72,6 +72,22 @@ with open('results/ca_stats.csv') as f:
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
+#    plt.show()
+
+    plt.figure(figsize=(8, 3))
+    dataR = genfromtxt('results/ex.csv', delimiter='\t')
+    dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
+    dataT = dataR.T
+    dataS = np.delete(dataT, 0, axis=0)
+    dataS[ dataS ==-1 ] = np.nan
+    for i in dataS:
+        for j in range(len(i)):
+            if (i[j] != np.nan and i[j] not in dataPRand):
+                i[j] = np.nan
+        plt.scatter(t, i, marker=".", s=20)
+    plt.title('Spike raster plot')
+    plt.xlabel('time (ms)')
+    plt.ylabel('Excitatory population: neuron number')
     plt.show()
 
 '''
