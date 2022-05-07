@@ -49,6 +49,7 @@ private:
     void init_bins();
     int get_bin_index(uint n);
     void init_p_rand_neurons();
+    void set_p_rand_weight_matrix_without_learning();
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);

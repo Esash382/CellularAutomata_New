@@ -66,10 +66,12 @@ void TestRecallWeight::set_p_rand_neuron_weight_matrix(void)
                               j < dst_ntwk->start_from_row_index + dst_ntwk->m_N;
                               j++) {
                         if (mTestObj->m_w_matrix[i][j] != 0
+                            && mTestObj->is_neuron_in_p_rand(i, src_ntwk->m_ntwk_id)
                             && mTestObj->is_neuron_in_p_rand(j, dst_ntwk->m_ntwk_id)) {
                             mTestObj->m_w_matrix[i][j] += dst_ntwk->learning_rate;
-                        } else if (mTestObj->m_w_matrix[i][j] != 0) {
+                        } else if (mTestObj->m_w_matrix[i][j] > 0) {
                             mTestObj->m_w_matrix[i][j] -= dst_ntwk->unlearning_rate;
+//                            mTestObj->m_w_matrix[i][j] = 0;
                         }
                     }
                 }

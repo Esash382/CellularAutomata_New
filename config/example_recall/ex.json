@@ -2,9 +2,9 @@
     "ex": 101.0,
     "id" : 101.0,
     "type" : 0.0,
-    "N" : 20.0,
+    "N" : 100.0,
     "k" : 0.0,
-    "threshold" : 1.0,
+    "threshold" : 4.0,
     "z" : 0.0,
     
     "ap" : 1,
@@ -18,7 +18,7 @@
     "ext_step" : 0,
 
     "enable_learning": 1.0,
-    "learning_rate": 4.0,
-    "unlearning_rate": 1.0,
-    "p_rand_neurons": 5.0
+    "learning_rate": 5.0,
+    "unlearning_rate": 0.5,
+    "p_rand_neurons": 20.0
 }

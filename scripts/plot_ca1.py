@@ -9,7 +9,7 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fft import fft, fftfreq
+from scipy.fftpack import fft, fftfreq
 import os
 
 t = []
@@ -158,7 +158,45 @@ with open('results/ca_stats.csv') as f:
         ax9.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
-    plt.savefig('ca1_theta_gamma.png', dpi=500)
+#    plt.savefig('ca1_theta_gamma.png', dpi=500)
+
+    plt.figure(figsize=(8, 3))
+    dataR = genfromtxt('results/ex.csv', delimiter='\t')
+    dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
+    dataT = dataR.T
+    dataS = np.delete(dataT, 0, axis=0)
+    dataS[ dataS ==-1 ] = np.nan
+    dataS2 = dataS.copy()
+
+    totalNeurons = len(dataR[0])-1
+    totalSubsetNeurons = len(dataPRand[0])-1
+    tNeurons = 0
+    fNeurons = 0
+
+    dots = None
+    stars = None
+    for (i, k) in zip(dataS, dataS2):
+        for j in range(len(i)):
+            if (i[j] != np.nan and i[j] not in dataPRand):
+                i[j] = np.nan
+            else:
+                k[j] = np.nan
+        tCount = np.count_nonzero(~np.isnan(i))
+        fCount = np.count_nonzero(~np.isnan(k))
+        if (tCount > 0):
+            tNeurons = tNeurons + 1
+        if (fCount > 0):
+            fNeurons = fNeurons + 1
+        dots = plt.scatter(t, i, marker=".", s=150, color='b')
+        stars = plt.scatter(t, k, marker="*", s=20, color='r')
+
+#    print("Truely recalled neurons = ", (tNeurons / totalSubsetNeurons) * 100, "%")
+#    print("Falsely recalled neurons = ", (fNeurons / (totalNeurons - totalSubsetNeurons)) * 100, "%")
+
+    plt.title('Spike raster plot')
+    plt.xlabel('time (ms)')
+    plt.ylabel('Excitatory population: neuron number')
+    plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
 
     plt.figure(figsize=(8, 6))
     N = len(t)
