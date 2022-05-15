@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft, fftfreq
 import os
+import sys
 
 t = []
 
@@ -197,7 +198,9 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
     plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
+    plt.show()
 
+'''
     plt.figure(figsize=(8, 6))
     N = len(t)
     T = 1.0 / len(t)
@@ -214,9 +217,9 @@ with open('results/ca_stats.csv') as f:
 
     plt.legend()
     plt.grid()
-    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
+#    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
-
+'''
     # plt.figure()
     # N = len(t)
     # T = 1.0 / len(t)
@@ -351,7 +354,7 @@ with open('results/ext.csv') as f:
 ax1.set_ylabel('Excitatory population: neuron number')
 ax2.set_ylabel('External pseudo population: neuron number')
 ax2.set_xlabel('time (ms)')
-plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
+#plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
