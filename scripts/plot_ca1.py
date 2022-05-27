@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft, fftfreq
 import os
+import sys
 
 t = []
 
@@ -159,6 +160,7 @@ with open('results/ca_stats.csv') as f:
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)
+#    plt.show()
 
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
@@ -190,8 +192,8 @@ with open('results/ca_stats.csv') as f:
         dots = plt.scatter(t, i, marker=".", s=150, color='b')
         stars = plt.scatter(t, k, marker="*", s=20, color='r')
 
-#    print("Truely recalled neurons = ", (tNeurons / totalSubsetNeurons) * 100, "%")
-#    print("Falsely recalled neurons = ", (fNeurons / (totalNeurons - totalSubsetNeurons)) * 100, "%")
+    print("Truely recalled neurons = ", (tNeurons / totalSubsetNeurons) * 100, "%")
+    print("Falsely recalled neurons = ", (fNeurons / (totalNeurons - totalSubsetNeurons)) * 100, "%")
 
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
@@ -206,15 +208,15 @@ with open('results/ca_stats.csv') as f:
     yf = fft(E)
     plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
-    yf = fft(B)
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+#    yf = fft(B)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
 
-    yf = fft(BS)
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+#    yf = fft(BS)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
 
     plt.legend()
     plt.grid()
-    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
+#    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
 
     # plt.figure()
@@ -351,7 +353,7 @@ with open('results/ext.csv') as f:
 ax1.set_ylabel('Excitatory population: neuron number')
 ax2.set_ylabel('External pseudo population: neuron number')
 ax2.set_xlabel('time (ms)')
-plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
+#plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')

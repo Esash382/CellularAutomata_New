@@ -844,6 +844,11 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
 
     double sum = compute_weights(ntwk, n, i);
 
+    if (ntwk->enable_learning) {
+        if (is_neuron_in_p_rand(ntwk->start_from_row_index + i, ntwk->m_ntwk_id))
+            std::cout << "ntwk = " << ntwk->m_ntwk_name << " id = " << ntwk->start_from_row_index + i << " sum = " << sum;
+    }
+
     /*
     if (type == ON)
         std::cout << n << "\t" << ntwk->m_ntwk_name << "\t" << (ntwk->start_from_row_index + i) << "\t ON" << "\t" << sum << std::endl;

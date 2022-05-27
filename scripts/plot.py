@@ -160,6 +160,7 @@ with open('results/ca_stats.csv') as f:
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)
+#    plt.show()
 
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
@@ -198,9 +199,7 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
     plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
-    plt.show()
 
-'''
     plt.figure(figsize=(8, 6))
     N = len(t)
     T = 1.0 / len(t)
@@ -209,17 +208,17 @@ with open('results/ca_stats.csv') as f:
     yf = fft(E)
     plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
-    yf = fft(B)
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+#    yf = fft(B)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
 
-    yf = fft(BS)
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+#    yf = fft(BS)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
 
     plt.legend()
     plt.grid()
 #    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
-'''
+
     # plt.figure()
     # N = len(t)
     # T = 1.0 / len(t)
