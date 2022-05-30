@@ -38,7 +38,8 @@ with open('results/ca_stats.csv') as f:
     S = []
     B = []
     BS = []
-    CA3 = []
+    CA1 = []
+    DG = []
     PS = []
     EC = []
 
@@ -59,21 +60,23 @@ with open('results/ca_stats.csv') as f:
                 BS = data[:, i]
             elif (name == "ec"):
                 EC = data[:, i]
+            elif (name == "dg"):
+                DG = data[:, i]
             elif (name == "ps"):
                 PS = data[:, i]
             else:
-                CA3 = data[:, i]
+                CA1 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
-    ax1.title.set_text('Cellular automata simulation of CA1 circuit')
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, figsize=(10, 10), sharex=True)
+    ax1.title.set_text('Cellular automata simulation of CA3 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
-        ax1.set_ylim(0, 0.3)
-        ax1.set_ylabel('E_CA1(t)')
-        guess_phase= 0
-        guess_amplitude = 0.25
-        guess_freq = 6.5
+        ax1.set_ylim(0, 0.25)
+        ax1.set_ylabel('E_CA3(t)')
+        guess_phase= -0.8
+        guess_amplitude = 0.2
+        guess_freq = 7
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -82,11 +85,11 @@ with open('results/ca_stats.csv') as f:
 
     if (len(B) > 0):
         ax2.plot(t, B)
-        ax2.set_ylim(0, 0.3)
+        ax2.set_ylim(0, 0.4)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = 0
-        guess_amplitude = 0.2
-        guess_freq = 6.5
+        guess_phase = -0.5
+        guess_amplitude = 0.25
+        guess_freq = 7
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -95,11 +98,11 @@ with open('results/ca_stats.csv') as f:
 
     if (len(BS) > 0):
         ax3.plot(t, BS)
-        ax3.set_ylim(0, 0.3)
+        ax3.set_ylim(0, 0.45)
         ax3.set_ylabel('I_BS(t)')
-        guess_phase = 0
-        guess_amplitude = 0.25
-        guess_freq = 6.5
+        guess_phase = -0.5
+        guess_amplitude = 0.35
+        guess_freq = 7
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -108,55 +111,59 @@ with open('results/ca_stats.csv') as f:
 
     if (len(I) > 0):
         ax4.plot(t, I)
-        ax4.set_ylim(0, 0.3)
+        ax4.set_ylim(0, 0.4)
         ax4.set_ylabel('I_CA1I(t)')
-        guess_phase = -2.5
-        guess_amplitude = 0.25
+        guess_phase = 2.5
+        guess_amplitude = 0.3
         guess_freq = 7
-            
+
         p0=[guess_freq, guess_amplitude, guess_phase]
 
-        s_guess = my_sin(t, *p0)
-        ax4.plot(t, s_guess, color='green')
-
+        i_guess = my_sin(t, *p0)
+        ax4.plot(t, i_guess, color='green')
+ 
     if (len(HIPP) > 0):
         ax5.plot(t, HIPP)
         ax5.set_ylim(0, 0.3)
         ax5.set_ylabel('I_CA1P(t)')
-        guess_phase = -0.2
+        guess_phase = -0.8
         guess_amplitude = 0.25
         guess_freq = 7
-            
+
         p0=[guess_freq, guess_amplitude, guess_phase]
 
-        s_guess = my_sin(t, *p0)
-        ax5.plot(t, s_guess, color='green')
-        
+        i_guess = my_sin(t, *p0)
+        ax5.plot(t, i_guess, color='green')
+
     if (len(S) > 0):
         ax6.plot(t, S)
-        ax6.set_ylim(0, 0.25)
+        ax6.set_ylim(0, 0.3)
         ax6.set_ylabel('I_S(t)')
-        guess_phase = 1.3
-        guess_amplitude = 0.2
+        guess_phase = 0.5
+        guess_amplitude = 0.25
         guess_freq = 7
-            
+
         p0=[guess_freq, guess_amplitude, guess_phase]
 
-        s_guess = my_sin(t, *p0)
-        ax6.plot(t, s_guess, color='green')
-
+        i_guess = my_sin(t, *p0)
+        ax6.plot(t, i_guess, color='green')
+        
     if (len(EC) > 0):
         ax7.plot(t, EC)
         ax7.set_ylabel('EC')
 
-    if (len(CA3) > 0):
-        ax8.plot(t, CA3)
-        ax8.set_ylabel('CA3')
+    if (len(CA1) > 0):
+        ax8.plot(t, CA1)
+        ax8.set_ylabel('CA1')
+
+    if (len(DG) > 0):
+        ax9.plot(t, DG)
+        ax9.set_ylabel('DG')
 
     if (len(PS) > 0):
-        ax9.plot(t, PS)
-        ax9.set_ylabel('PS')
-        ax9.set_xlabel('time, t(ms)')
+        ax10.plot(t, PS)
+        ax10.set_ylabel('PS')
+        ax10.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)

@@ -15,5 +15,10 @@
     "osc" : 0.0,
 
     "num_ext_input" : 0,
-    "ext_step" : 0
+    "ext_step" : 0,
+
+    "enable_learning": 1.0,
+    "learning_rate": 6.0,
+    "unlearning_rate": 5.0,
+    "p_rand_neurons": 20.0
 }
