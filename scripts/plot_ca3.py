@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft, fftfreq
 import os
+import sys
 
 t = []
 
@@ -72,7 +73,7 @@ with open('results/ca_stats.csv') as f:
     if (len(E) > 0):
         ax1.plot(t, E)
         ax1.set_ylim(0, 0.25)
-        ax1.set_ylabel('E_CA1(t)')
+        ax1.set_ylabel('E_CA3(t)')
         guess_phase= -0.8
         guess_amplitude = 0.2
         guess_freq = 7
@@ -165,31 +166,73 @@ with open('results/ca_stats.csv') as f:
         ax10.set_xlabel('time, t(ms)')
 
     plt.tight_layout()
-    # plt.savefig('ca3_theta_gamma.png', dpi=500)
+#    plt.savefig('ca1_theta_gamma.png', dpi=500)
+#    plt.show()
 
-    # FFT
+    plt.figure(figsize=(8, 3))
+    dataR = genfromtxt('results/ex.csv', delimiter='\t')
+    dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
+    dataT = dataR.T
+    dataS = np.delete(dataT, 0, axis=0)
+    dataS[ dataS ==-1 ] = np.nan
+    dataS2 = dataS.copy()
+
+    totalNeurons = len(dataR[0])-1
+    totalSubsetNeurons = len(dataPRand[0])-1
+    tNeurons = 0
+    fNeurons = 0
+
+    dots = None
+    stars = None
+    for (i, k) in zip(dataS, dataS2):
+        for j in range(len(i)):
+            if (i[j] != np.nan and i[j] not in dataPRand):
+                i[j] = np.nan
+            else:
+                k[j] = np.nan
+        tCount = np.count_nonzero(~np.isnan(i))
+        fCount = np.count_nonzero(~np.isnan(k))
+        if (tCount > 0):
+            tNeurons = tNeurons + 1
+        if (fCount > 0):
+            fNeurons = fNeurons + 1
+        dots = plt.scatter(t, i, marker=".", s=150, color='b')
+        stars = plt.scatter(t, k, marker="*", s=20, color='r')
+
+    print("Truely recalled neurons = ", (tNeurons / totalSubsetNeurons) * 100, "%")
+    print("Falsely recalled neurons = ", (fNeurons / (totalNeurons - totalSubsetNeurons)) * 100, "%")
+
+    plt.title('Spike raster plot')
+    plt.xlabel('time (ms)')
+    plt.ylabel('Excitatory population: neuron number')
+    plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
+
+    plt.figure(figsize=(8, 6))
     N = len(t)
     T = 1.0 / len(t)
-    yf = fft(E)
     xf = fftfreq(N, T)[:N//2]
-    plt.figure()
+
+    yf = fft(E)
     plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
-    yf = fft(B)
-    xf = fftfreq(N, T)[:N//2]
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+#    yf = fft(B)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
 
-    yf = fft(BS)
-    xf = fftfreq(N, T)[:N//2]
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
-    plt.xlabel('Frequency')
-    plt.ylabel('Amplitude')
-    plt.title('FFT of CA3')
-    plt.grid()
+#    yf = fft(BS)
+#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+
     plt.legend()
-    # plt.savefig('ca3_theta_gamma_fft.png', dpi=500)
+    plt.grid()
+#    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
 
+    # plt.figure()
+    # N = len(t)
+    # T = 1.0 / len(t)
+    # xf = fftfreq(N, T)[:N//2]
+    # yf = fft(E)
+    # plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
+    # plt.show()
 
     
 '''
@@ -317,7 +360,7 @@ with open('results/ext.csv') as f:
 ax1.set_ylabel('Excitatory population: neuron number')
 ax2.set_ylabel('External pseudo population: neuron number')
 ax2.set_xlabel('time (ms)')
-plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
+#plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
 
 with open('results/ca_bin_stats.csv') as f:
     reader = csv.reader(f, delimiter='\t')
