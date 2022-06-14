@@ -160,8 +160,9 @@ with open('results/ca_stats.csv') as f:
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)
-#    plt.show()
+    plt.show()
 
+'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
@@ -218,7 +219,7 @@ with open('results/ca_stats.csv') as f:
     plt.grid()
 #    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
-
+'''
     # plt.figure()
     # N = len(t)
     # T = 1.0 / len(t)
