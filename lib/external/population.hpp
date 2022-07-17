@@ -137,6 +137,8 @@ public:
 
     // Store the current network id and the neuron in the network getting fired
     uint cur_ntwk_neuron;
+    uint cur_ntwk_id;
+    uint cur_ntwk_start_from_row_index;
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {

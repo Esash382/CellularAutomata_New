@@ -391,8 +391,8 @@ void Population::set_firing_time_for_random_time_network()
             std::map<time_t, std::vector<uint>> n_rand_activate;
 
             for (uint j = 0; j < this->time_vec.size(); j++) {
-                if ((fmod(this->time_vec[j], 100.0) == 0.0) && 
-                        (j < this->time_vec.size() / 2)){
+                if ((ntwk->p_rand_no_of_neurons > 0) &&
+                        fmod(this->time_vec[j], 100.0) == 0.0) {
                     n_rand_activate[this->time_vec[j]] = this->p_rand_neuron_ids[ntwk->m_ntwk_id];
                     continue;
                 }
@@ -851,9 +851,9 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
         // If the neuron is not present in the selected p_rand, unlearn
         if (!stop_learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
             if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id)) {
-                if (this->m_w_matrix[this->cur_ntwk_neuron]
+                if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                     [ntwk->start_from_row_index + i] > 0) {
-                    this->m_w_matrix[this->cur_ntwk_neuron]
+                    this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                     [ntwk->start_from_row_index + i]
                                                 -= ntwk->unlearning_rate;
                 }
@@ -914,9 +914,9 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             // Logic to add learning : STDP rule
             if (!stop_learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
                 // learn
-                if (this->m_w_matrix[this->cur_ntwk_neuron]
+                if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                [ntwk->start_from_row_index + i] != 0) {
-                    this->m_w_matrix[this->cur_ntwk_neuron]
+                    this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                [ntwk->start_from_row_index + i]
                                             += ntwk->learning_rate;
                 }
@@ -1015,7 +1015,9 @@ void Population::process_networks()
                 if (it2 != n_rand_activate.end()) {
                     auto neuron_vec = it2->second;
                     for (uint j = 0; j < neuron_vec.size(); j++) {
-                        cur_ntwk_neuron = ntwk->start_from_row_index + neuron_vec[j];
+                        cur_ntwk_neuron = neuron_vec[j];
+                        cur_ntwk_id = ntwk->m_ntwk_id;
+                        cur_ntwk_start_from_row_index = ntwk->start_from_row_index;
                         std::string str = ("process_networks: current external network id = " + std::to_string(ntwk->m_ntwk_id) + " : neuron id = " + std::to_string(neuron_vec[j]) + " : time = " + std::to_string(time_vec[n]));
                         logger->log(str);
 //                        std::cout << str << std::endl;
