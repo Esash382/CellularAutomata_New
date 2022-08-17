@@ -160,8 +160,9 @@ with open('results/ca_stats.csv') as f:
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)
-#    plt.show()
+    plt.show()
 
+'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
@@ -169,11 +170,6 @@ with open('results/ca_stats.csv') as f:
     dataS = np.delete(dataT, 0, axis=0)
     dataS[ dataS ==-1 ] = np.nan
     dataS2 = dataS.copy()
-
-    totalNeurons = len(dataR[0])-1
-    totalSubsetNeurons = len(dataPRand[0])-1
-    tNeurons = 0
-    fNeurons = 0
 
     dots = None
     stars = None
@@ -185,15 +181,8 @@ with open('results/ca_stats.csv') as f:
                 k[j] = np.nan
         tCount = np.count_nonzero(~np.isnan(i))
         fCount = np.count_nonzero(~np.isnan(k))
-        if (tCount > 0):
-            tNeurons = tNeurons + 1
-        if (fCount > 0):
-            fNeurons = fNeurons + 1
         dots = plt.scatter(t, i, marker=".", s=150, color='b')
         stars = plt.scatter(t, k, marker="*", s=20, color='r')
-
-    print("Truely recalled neurons = ", (tNeurons / totalSubsetNeurons) * 100, "%")
-    print("Falsely recalled neurons = ", (fNeurons / (totalNeurons - totalSubsetNeurons)) * 100, "%")
 
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
@@ -218,6 +207,7 @@ with open('results/ca_stats.csv') as f:
     plt.grid()
 #    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
     plt.show()
+'''
 
     # plt.figure()
     # N = len(t)

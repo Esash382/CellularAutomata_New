@@ -7,7 +7,8 @@ Network::Network(std::string name, uint ntwk_id, uint N,
             _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
             float value, float step, uint enable_learning,
             float learning_rate, float unlearning_rate,
-            uint p_rand_no_of_neurons)
+            uint p_rand_no_of_neurons,
+            uint no_of_patterns)
 {
 	logger = Log::getInstance();
 
@@ -59,4 +60,5 @@ Network::Network(std::string name, uint ntwk_id, uint N,
     this->learning_rate = learning_rate;
     this->unlearning_rate = unlearning_rate;
     this->p_rand_no_of_neurons = p_rand_no_of_neurons;
+    this->no_of_patterns = no_of_patterns;
 }

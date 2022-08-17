@@ -13,7 +13,7 @@ libca.so:
 	g++ -g -o lib/libca.so -Wall -fPIC -Ilib/include/ -Ilib/external -shared \
 	lib/src/log.cpp lib/src/network.cpp \
 	lib/src/population.cpp lib/src/util.cpp lib/src/config.cpp \
-	lib/src/spike_generator.cpp
+	lib/src/spike_generator.cpp lib/src/corr_coeff.cpp
 
 clean:
 	rm -rf bin obj lib/libca.so results/*

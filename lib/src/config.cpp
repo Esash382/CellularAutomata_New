@@ -124,7 +124,8 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["dur"], con["osc"], con["nf"],
                         PERIODIC, 0.0f, con["ext_step"],
                         con["enable_learning"], con["learning_rate"],
-                        con["unlearning_rate"], con["p_rand_neurons"]);
+                        con["unlearning_rate"], con["p_rand_neurons"],
+                        con["no_of_patterns"]);
     }
 
     if (num_ext_input == 0) {
@@ -135,7 +136,8 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["dur"], con["osc"], con["nf"],
                         PERIODIC, 0.0f, con["ext_step"],
                         con["enable_learning"], con["learning_rate"],
-                        con["unlearning_rate"], con["p_rand_neurons"]);
+                        con["unlearning_rate"], con["p_rand_neurons"],
+                        con["no_of_patterns"]);
     }
 
     for (uint i = 1; i <= num_ext_input; i++) {
@@ -149,5 +151,6 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["dur"], con["osc"], con["nf"],
                         EXTERNAL_INPUT(con["ext_type"]), ext_val, con["ext_step"],
                         con["enable_learning"], con["learning_rate"],
-                        con["unlearning_rate"], con["p_rand_neurons"]);
+                        con["unlearning_rate"], con["p_rand_neurons"],
+                        con["no_of_patterns"]);
 }

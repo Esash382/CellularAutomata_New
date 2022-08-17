@@ -49,7 +49,7 @@ private:
     void init_bins();
     int get_bin_index(uint n);
     void init_p_rand_neurons();
-    void set_p_rand_weight_matrix_without_learning();
+//    void set_p_rand_weight_matrix_without_learning();
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -65,6 +65,8 @@ private:
 
     void update_stats(uint n);
     void write_stats();
+    double get_random_pattern_index(uint ntwk_id, std::vector<uint> active_neurons_vec,
+                                        uint &index);
 
     _time_t get_noisy_delay(float del, float step);
 
@@ -75,7 +77,7 @@ public:
     std::vector<std::vector<double>> get_weight_matrix() const;
 
     void set_weight_matrix(std::vector<std::vector<double>> matrix);
-    void set_p_rand_matrix(std::map<uint, std::vector<uint>> p_rand_neuron_ids);
+    void set_p_rand_matrix(std::map<uint, std::vector<std::vector<uint>>> p_rand_neuron_ids);
     void set_state_matrix(uint row_start_index, uint i, STYPE state);
     void set_synapse_firing_time_matrix(uint row_start_index, uint i, double firing_time);
     void set_neuron_firing_time(shared_ptr<Network> ntwk, uint i, _time_t firing);
@@ -88,7 +90,7 @@ public:
     double call_compute_weights(shared_ptr<Network> ntwk, uint n, uint i);
     void call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
     void call_update_stats(uint n);
-    bool is_neuron_in_p_rand(uint i, uint ntwk_id);
+    bool is_neuron_in_p_rand(uint i, uint ntwk_id, _time_t n);
 
 public:
 	// Logger
@@ -133,7 +135,8 @@ public:
     // Activate neurons according to uniform distribution firing times
     std::map<uint, std::map<time_t, std::vector<uint>>> n_rand_map;
 
-    std::map<uint, std::vector<uint>> p_rand_neuron_ids;
+    std::map<uint, std::vector<std::vector<uint>>> p_rand_neuron_ids;
+    std::vector<_time_t> rand_pattern_times;
 
     // Store the current network id and the neuron in the network getting fired
     uint cur_ntwk_neuron;

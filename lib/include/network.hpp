@@ -26,7 +26,7 @@ public:
             _time_t tau_osc, uint nf, EXTERNAL_INPUT e_in,
             float value, float step, uint enable_learning,
             float learning_rate, float unlearning_rate,
-            uint p_rand_no_of_neurons);
+            uint p_rand_no_of_neurons, uint no_of_patterns);
 
     void init_bins();
 
@@ -76,4 +76,5 @@ public:
     float learning_rate;
     float unlearning_rate;
     uint p_rand_no_of_neurons;
+    uint no_of_patterns;
 };
