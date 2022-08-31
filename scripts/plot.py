@@ -65,40 +65,41 @@ with open('results/ca_stats.csv') as f:
     dataT = dataR.T
     dataS = np.delete(dataT, 0, axis=0)
     dataS[ dataS ==-1 ] = np.nan
+    dataS1 = dataS.copy()
     dataS2 = dataS.copy()
     dataS3 = dataS.copy()
     dataS4 = dataS.copy()
     dataS5 = dataS.copy()
-    dataS6 = dataS.copy()
 
     for i in range(len(dataS)):
         for j in range(len(dataS[i])):
             for p in range(len(dataPRand)):
-                if (dataS[i][j] != np.nan and dataS[i][j] not in dataPRand[p]):
-                    if p == 0:
-                        dataS[i][j] = np.nan
-                    elif p == 1:
-                        dataS2[i][j] = np.nan
-                    elif p == 2:
-                        dataS3[i][j] = np.nan
-                    elif p == 3:
-                        dataS4[i][j] = np.nan
-                    elif p == 4:
-                        dataS5[i][j] = np.nan
-                    else:
-                        dataS6[i][j] = np.nan
-                break
-        plt.scatter(t, dataS6[i], marker="*", s=20, color='red')
-        plt.scatter(t, dataS[i], marker=".", s=150, color='blue')
-        plt.scatter(t, dataS2[i], marker=".", s=140, color='olive')
-        plt.scatter(t, dataS3[i], marker=".", s=130, color='green')
-        plt.scatter(t, dataS4[i], marker=".", s=120, color='pink')
-        plt.scatter(t, dataS5[i], marker=".", s=110, color='cyan')
+                if (np.isnan(dataS[i][j])):
+                    continue
+                else:
+                    if (dataS[i][j] not in dataPRand[p]):
+                        if p == 0:
+                            dataS1[i][j] = np.nan
+                        elif p == 1:
+                            dataS2[i][j] = np.nan
+                        elif p == 2:
+                            dataS3[i][j] = np.nan
+                        elif p == 3:
+                            dataS4[i][j] = np.nan
+                        elif p == 4:
+                            dataS5[i][j] = np.nan
+
+        plt.scatter(t, dataS5[i], marker="*", s=20, color='red')
+        plt.scatter(t, dataS1[i], marker="s", s=50, color='blue')
+        plt.scatter(t, dataS2[i], marker="^", s=40, color='yellow')
+        plt.scatter(t, dataS3[i], marker="o", s=30, color='green')
+        plt.scatter(t, dataS4[i], marker="_", s=30, color='pink')
 
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
     # plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
+
 
 # FFT
 # Number of sample points
