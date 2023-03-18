@@ -8,7 +8,7 @@ Network::Network(std::string name, uint ntwk_id, uint N,
             float value, float step, uint enable_learning,
             float learning_rate, float unlearning_rate,
             uint p_rand_no_of_neurons,
-            uint no_of_patterns)
+            uint no_of_patterns, bool intersecting_patterns)
 {
 	logger = Log::getInstance();
 
@@ -61,4 +61,5 @@ Network::Network(std::string name, uint ntwk_id, uint N,
     this->unlearning_rate = unlearning_rate;
     this->p_rand_no_of_neurons = p_rand_no_of_neurons;
     this->no_of_patterns = no_of_patterns;
+    this->intersecting_patterns = intersecting_patterns ? true : false;
 }

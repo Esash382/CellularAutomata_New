@@ -4,7 +4,7 @@
     "type" : 0.0,
     "N" : 100.0,
     "k" : 0.0,
-    "threshold" : 4.0,
+    "threshold" : 5.0,
     "z" : 0.0,
     
     "ap" : 1,
@@ -18,9 +18,10 @@
     "ext_step" : 0,
 
     "enable_learning": 1.0,
-    "learning_rate": 5.0,
-    "unlearning_rate": 10.0,
+    "learning_rate": 15.0,
+    "unlearning_rate": 15.0,
     "p_rand_neurons": 20.0,
 
-    "no_of_patterns": 10
+    "no_of_patterns": 5,
+    "intersecting_patterns": 0.0
 }

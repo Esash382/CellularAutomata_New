@@ -2,9 +2,9 @@
 
 #include "../include/config.hpp"
 
-#include <map>
 #include <set>
 #include <memory>
+#include <tuple>
 
 using std::unique_ptr;
 
@@ -49,6 +49,15 @@ private:
     void init_bins();
     int get_bin_index(uint n);
     void init_p_rand_neurons();
+    void init_intersecting_p_rand_neurons(uint p_rand_no_of_neurons,
+                                          uint N,
+                                          uint no_of_patterns,
+                                          uint ntwk_id);
+    void init_nonintersecting_p_rand_neurons(uint p_rand_no_of_neurons,
+                                             uint N,
+                                             uint no_of_patterns,
+                                             uint start_from_row_index,
+                                             uint ntwk_id);
 //    void set_p_rand_weight_matrix_without_learning();
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
@@ -65,8 +74,11 @@ private:
 
     void update_stats(uint n);
     void write_stats();
-    double get_random_pattern_index(uint ntwk_id, std::vector<uint> active_neurons_vec,
-                                        uint &index);
+//    double get_random_pattern_index(uint ntwk_id, std::vector<uint> active_neurons_vec,
+    int get_random_pattern_index(std::vector<std::vector<uint>> recall_count);
+    void get_random_pattern_index(std::vector<std::vector<uint>> recall_count, _time_t n);
+    void get_recall_correlation(std::vector<std::vector<uint>> recall_count, uint pattern_size);
+    void get_spurious_recall_count(_time_t n);
 
     _time_t get_noisy_delay(float del, float step);
 
@@ -120,6 +132,8 @@ public:
 
     std::vector<std::map<_time_t, std::set<uint>>> bin_values;
 
+    std::vector<uint> m_spurious_recall_count;
+
      // Activate synapses: map <firing time + delay , map <neuron_id, vector<synapse_id >>>
     mmap s_activate;
 
@@ -133,10 +147,10 @@ public:
     std::map<_time_t, std::vector<uint>> n_refractory;
 
     // Activate neurons according to uniform distribution firing times
-    std::map<uint, std::map<time_t, std::vector<uint>>> n_rand_map;
+    std::map<uint, std::map<_time_t, std::vector<uint>>> n_rand_map;
 
     std::map<uint, std::vector<std::vector<uint>>> p_rand_neuron_ids;
-    std::vector<_time_t> rand_pattern_times;
+    std::map<uint, std::tuple<uint, _time_t>> rand_pattern_times;
 
     // Store the current network id and the neuron in the network getting fired
     uint cur_ntwk_neuron;

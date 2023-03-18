@@ -65,3 +65,8 @@ testRecallWeight:
 	if [ ! -d "./bin" ]; then mkdir bin; fi
 	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
 	g++ -g -o bin/test/testRecallWeight lib/test/TestRecallWeight.cpp src/plot.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl
+
+testNonIntersectingRecall:
+	if [ ! -d "./bin" ]; then mkdir bin; fi
+	if [ ! -d "./bin/test" ]; then mkdir bin/test; fi
+	g++ -g -o bin/test/testNonIntersectingRecall lib/test/TestNonIntersectingRecall.cpp -lcppunit -L$(LD_LIBRARY_PATH) -lca -ldl

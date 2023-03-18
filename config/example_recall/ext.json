@@ -23,5 +23,7 @@
     "nf" : 10 ,
 
     "enable_learning": 1.0,
-    "p_rand_neurons": 20.0
+    "p_rand_neurons": 20.0,
+    "no_of_patterns": 5,
+    "intersecting_patterns": 0.0
 }

@@ -22,5 +22,6 @@
     "unlearning_rate": 4.0,
     "p_rand_neurons": 20.0,
 
-    "no_of_patterns": 5
+    "no_of_patterns": 5,
+    "intersecting_patterns": 0.0
 }

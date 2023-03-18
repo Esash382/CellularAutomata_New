@@ -30,9 +30,9 @@ using namespace std;
 typedef unsigned int uint;
 typedef Population* (*populationCreatorFunction)(const char* filepath);
 
-class TestRandomModel: public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(TestRandomModel);
-    CPPUNIT_TEST(testRandomNetwork);
+class TestNonIntersectionRecall: public CppUnit::TestFixture {
+    CPPUNIT_TEST_SUITE(TestNonIntersectionRecall);
+    CPPUNIT_TEST(testRecallNetwork);
     CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -40,14 +40,14 @@ class TestRandomModel: public CppUnit::TestFixture {
         void tearDown(void);
 
     protected:
-        void testRandomNetwork(void);
+        void testRecallNetwork(void);
 
     private:
         void* handle;
         Population *mTestObj;
 };
 
-void TestRandomModel::testRandomNetwork(void)
+void TestNonIntersectionRecall::testRecallNetwork(void)
 {
     srand(0);
 
@@ -55,7 +55,7 @@ void TestRandomModel::testRandomNetwork(void)
     {
         for (auto ntwk : mTestObj->population_network) {
             if (ntwk->external_input == RANDOM_TIME) {
-                std::map<time_t, std::vector<uint>> n_rand_activate;
+                std::map<_time_t, std::vector<uint>> n_rand_activate;
 
                 // which neurons
                 std::vector<std::vector<unsigned int>> n_rand_indices = {
@@ -80,17 +80,9 @@ void TestRandomModel::testRandomNetwork(void)
                                                             {9, 4, 3, 7, 5, 0, 8, 6, 1, 2},
                                                             {3, 9, 6, 5, 1, 7, 8, 0, 2, 4}
                 };
-                std::vector<unsigned int> rand_num_of_neurons = {8, 3, 2, 4, 5, 6, 7, 3, 1, 9, 7, 3, 5, 8, 3, 2, 9, 1, 4, 6}; // how manu neurons
                 CPPUNIT_ASSERT(n_rand_indices.size() == mTestObj->time_vec.size());
                 for (uint j = 0; j < mTestObj->time_vec.size(); j++) {
-                    std::vector<unsigned int> n_indices = n_rand_indices[j]; // which neurons
-
-                    // At every time step, activate 'n' number of pseudo-neurons
-                    std::vector<uint> n_indices_vec;
-                    for (uint i = 0; i < rand_num_of_neurons[j]; i++) {
-                        n_indices_vec.push_back(n_indices[i]);
-                    }
-                    n_rand_activate[mTestObj->time_vec[j]] = n_indices_vec;
+                    n_rand_activate[mTestObj->time_vec[j]] = n_rand_indices[j];
                 }
 
                 mTestObj->n_rand_map[ntwk->m_ntwk_id] = n_rand_activate;
@@ -109,7 +101,7 @@ void TestRandomModel::testRandomNetwork(void)
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 0, 10, 0, 0, 10, 10, 0}, 
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 10, 0, 0, 10, 10, 10, 0, 0}, 
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 10, 10, 10, 0, 0, 10}, 
-        {0, 50, 0, 50, 0, 50, 0, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},                                                                                                                        
+        {0, 50, 0, 50, 0, 50, 0, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {50, 0, 50, 0, 50, 0, 50, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
         {0, 0, 50, 0, 50, 50, 0, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
         {0, 0, 50, 0, 50, 0, 50, 0, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
@@ -1784,14 +1776,14 @@ void TestRandomModel::testRandomNetwork(void)
         }
     }
 
-    std::cout << "\n===== TestRandomModel : RANDOM NETWORKS TEST PASSED =====" << std::endl;
+    std::cout << "\n===== TestNonIntersectionRecall : RANDOM NETWORKS TEST PASSED =====" << std::endl;
 }
 
-void TestRandomModel::setUp(void)
+void TestNonIntersectionRecall::setUp(void)
 {
 	handle = dlopen("libca.so", RTLD_NOW);
 	char* error;
-    const char* filepath = "/home/ashraya/Documents/Projects/CellularAutomata/CellularAutomata_Fast/";
+    const char* filepath = "/home/ashraya/Documents/Notes/CellularAutomata_Fast";
 
 	if (!handle) {
 		fputs (dlerror(), stderr);
@@ -1811,16 +1803,16 @@ void TestRandomModel::setUp(void)
 		return;
 	}
 
-    mTestObj->add_network(filepath, "example_test");
+    mTestObj->add_network(filepath, "example_recall_test");
 }
 
-void TestRandomModel::tearDown(void)
+void TestNonIntersectionRecall::tearDown(void)
 {
 	free(mTestObj);
     dlclose(handle);
 }
 
-CPPUNIT_TEST_SUITE_REGISTRATION( TestRandomModel );
+CPPUNIT_TEST_SUITE_REGISTRATION( TestNonIntersectionRecall );
 
 int main(int argc, char* argv[])
 {

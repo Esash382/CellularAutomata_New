@@ -79,12 +79,13 @@ with open('results/ca_stats.csv') as f:
 
         e_guess = my_sin(t, *p0)
         ax1.plot(t, e_guess, color='green')
+        ax1.grid()
 
     if (len(B) > 0):
         ax2.plot(t, B)
         ax2.set_ylim(0, 0.3)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = 0
+        guess_phase = -1.8
         guess_amplitude = 0.2
         guess_freq = 6.5
 
@@ -92,6 +93,7 @@ with open('results/ca_stats.csv') as f:
 
         ip_guess = my_sin(t, *p0)
         ax2.plot(t, ip_guess, color='green')
+        ax2.grid()
 
     if (len(BS) > 0):
         ax3.plot(t, BS)
@@ -105,6 +107,7 @@ with open('results/ca_stats.csv') as f:
 
         i_guess = my_sin(t, *p0)
         ax3.plot(t, i_guess, color='green')
+        ax3.grid()
 
     if (len(I) > 0):
         ax4.plot(t, I)
@@ -118,6 +121,7 @@ with open('results/ca_stats.csv') as f:
 
         s_guess = my_sin(t, *p0)
         ax4.plot(t, s_guess, color='green')
+        ax4.grid()
 
     if (len(HIPP) > 0):
         ax5.plot(t, HIPP)
@@ -131,6 +135,7 @@ with open('results/ca_stats.csv') as f:
 
         s_guess = my_sin(t, *p0)
         ax5.plot(t, s_guess, color='green')
+        ax5.grid()
         
     if (len(S) > 0):
         ax6.plot(t, S)
@@ -144,58 +149,76 @@ with open('results/ca_stats.csv') as f:
 
         s_guess = my_sin(t, *p0)
         ax6.plot(t, s_guess, color='green')
+        ax6.grid()
 
     if (len(EC) > 0):
         ax7.plot(t, EC)
         ax7.set_ylabel('EC')
+        ax7.grid()
 
     if (len(CA3) > 0):
         ax8.plot(t, CA3)
         ax8.set_ylabel('CA3')
+        ax8.grid()
 
     if (len(PS) > 0):
         ax9.plot(t, PS)
         ax9.set_ylabel('PS')
         ax9.set_xlabel('time, t(ms)')
+        ax9.grid()
 
     plt.tight_layout()
 #    plt.savefig('ca1_theta_gamma.png', dpi=500)
-    plt.show()
+#    plt.show()
 
-'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
     dataT = dataR.T
     dataS = np.delete(dataT, 0, axis=0)
     dataS[ dataS ==-1 ] = np.nan
+    dataS1 = dataS.copy()
     dataS2 = dataS.copy()
+    dataS3 = dataS.copy()
+    dataS4 = dataS.copy()
+    dataS5 = dataS.copy()
 
-    dots = None
-    stars = None
-    for (i, k) in zip(dataS, dataS2):
-        for j in range(len(i)):
-            if (i[j] != np.nan and i[j] not in dataPRand):
-                i[j] = np.nan
-            else:
-                k[j] = np.nan
-        tCount = np.count_nonzero(~np.isnan(i))
-        fCount = np.count_nonzero(~np.isnan(k))
-        dots = plt.scatter(t, i, marker=".", s=150, color='b')
-        stars = plt.scatter(t, k, marker="*", s=20, color='r')
+    for i in range(len(dataS)):
+        for j in range(len(dataS[i])):
+            for p in range(len(dataPRand)):
+                if (np.isnan(dataS[i][j])):
+                    continue
+                else:
+                    if (dataS[i][j] not in dataPRand[p]):
+                        if p == 0:
+                            dataS1[i][j] = np.nan
+                        elif p == 1:
+                            dataS2[i][j] = np.nan
+                        elif p == 2:
+                            dataS3[i][j] = np.nan
+                        elif p == 3:
+                            dataS4[i][j] = np.nan
+                        elif p == 4:
+                            dataS5[i][j] = np.nan
+
+        plt.scatter(t, dataS5[i], marker="*", s=20, color='red')
+        plt.scatter(t, dataS1[i], marker="s", s=50, color='blue')
+        plt.scatter(t, dataS2[i], marker="^", s=40, color='yellow')
+        plt.scatter(t, dataS3[i], marker="o", s=30, color='green')
+        plt.scatter(t, dataS4[i], marker="_", s=30, color='pink')
 
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
-    plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
+    # plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
 
-    plt.figure(figsize=(8, 6))
-    N = len(t)
-    T = 1.0 / len(t)
-    xf = fftfreq(N, T)[:N//2]
+plt.figure(figsize=(8, 6))
+N = len(t)
+T = 1.0 / len(t)
+xf = fftfreq(N, T)[:N//2]
 
-    yf = fft(E)
-    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
+yf = fft(E)
+plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
 #    yf = fft(B)
 #    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
@@ -203,11 +226,10 @@ with open('results/ca_stats.csv') as f:
 #    yf = fft(BS)
 #    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
 
-    plt.legend()
-    plt.grid()
+plt.legend()
+plt.grid()
 #    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
-    plt.show()
-'''
+plt.show()
 
     # plt.figure()
     # N = len(t)
