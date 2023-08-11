@@ -27,7 +27,9 @@ public:
             float value, float step, uint enable_learning,
             float learning_rate, float unlearning_rate,
             uint p_rand_no_of_neurons, uint no_of_patterns,
-            bool intersecting_patterns);
+            bool intersecting_patterns,
+            bool learning_inhibition, bool recall_inhibition,
+            bool sensory_input, bool cueing_input);
 
     void init_bins();
 
@@ -79,4 +81,8 @@ public:
     uint p_rand_no_of_neurons;
     uint no_of_patterns;
     bool intersecting_patterns;
+    bool learning_inhibition;
+    bool recall_inhibition;
+    bool sensory_input;
+    bool cueing_input;
 };

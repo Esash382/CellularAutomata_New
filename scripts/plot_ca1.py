@@ -9,9 +9,13 @@ from numpy import genfromtxt
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from scipy.fftpack import fft, fftfreq
 import os
 import sys
+from scipy.signal import butter, lfilter
+from scipy.signal import freqz
+from basic_units import radians, degrees, cos
 
 t = []
 
@@ -73,7 +77,7 @@ with open('results/ca_stats.csv') as f:
         ax1.set_ylabel('E_CA1(t)')
         guess_phase= 0
         guess_amplitude = 0.25
-        guess_freq = 6.5
+        guess_freq = 6.4
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -85,9 +89,9 @@ with open('results/ca_stats.csv') as f:
         ax2.plot(t, B)
         ax2.set_ylim(0, 0.3)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = -1.8
+        guess_phase = -1.3 #-2.5
         guess_amplitude = 0.2
-        guess_freq = 6.5
+        guess_freq = 6.4
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -101,7 +105,7 @@ with open('results/ca_stats.csv') as f:
         ax3.set_ylabel('I_BS(t)')
         guess_phase = 0
         guess_amplitude = 0.25
-        guess_freq = 6.5
+        guess_freq = 6.4
 
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -115,7 +119,7 @@ with open('results/ca_stats.csv') as f:
         ax4.set_ylabel('I_CA1I(t)')
         guess_phase = -2.5
         guess_amplitude = 0.25
-        guess_freq = 7
+        guess_freq = 6.4
             
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -129,7 +133,7 @@ with open('results/ca_stats.csv') as f:
         ax5.set_ylabel('I_CA1P(t)')
         guess_phase = -0.2
         guess_amplitude = 0.25
-        guess_freq = 7
+        guess_freq = 6.4
             
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -143,7 +147,7 @@ with open('results/ca_stats.csv') as f:
         ax6.set_ylabel('I_S(t)')
         guess_phase = 1.3
         guess_amplitude = 0.2
-        guess_freq = 7
+        guess_freq = 6.4
             
         p0=[guess_freq, guess_amplitude, guess_phase]
 
@@ -168,48 +172,63 @@ with open('results/ca_stats.csv') as f:
         ax9.grid()
 
     plt.tight_layout()
-#    plt.savefig('ca1_theta_gamma.png', dpi=500)
+    plt.savefig('figs/recall_fin/intersecting patterns/more_bas_effect.png', dpi=500)
 #    plt.show()
 
+
+#    dt = 0.01
+#    Fs = 1 / dt
+#    plt.figure()
+#    plt.grid()
+#    spec, freq, _ = plt.phase_spectrum(E, color ='green', Fs=Fs, Fc=0)
+
+'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
     dataT = dataR.T
     dataS = np.delete(dataT, 0, axis=0)
-    dataS[ dataS ==-1 ] = np.nan
+    dataS[dataS == -1] = np.nan
     dataS1 = dataS.copy()
     dataS2 = dataS.copy()
     dataS3 = dataS.copy()
     dataS4 = dataS.copy()
     dataS5 = dataS.copy()
+    dataS6 = dataS.copy()
+
+    colors = cm.rainbow(np.linspace(0, 1, 6))
 
     for i in range(len(dataS)):
         for j in range(len(dataS[i])):
+            if (np.isnan(dataS[i][j])):
+                continue
             for p in range(len(dataPRand)):
-                if (np.isnan(dataS[i][j])):
-                    continue
+                if (dataS[i][j] not in dataPRand[p]): # have only recalled neurons
+                    if p == 0:
+                        dataS1[i][j] = np.nan
+                    elif p == 1:
+                        dataS2[i][j] = np.nan
+                    elif p == 2:
+                        dataS3[i][j] = np.nan
+                    elif p == 3:
+                        dataS4[i][j] = np.nan
+                    elif p == 4:
+                        dataS5[i][j] = np.nan
                 else:
-                    if (dataS[i][j] not in dataPRand[p]):
-                        if p == 0:
-                            dataS1[i][j] = np.nan
-                        elif p == 1:
-                            dataS2[i][j] = np.nan
-                        elif p == 2:
-                            dataS3[i][j] = np.nan
-                        elif p == 3:
-                            dataS4[i][j] = np.nan
-                        elif p == 4:
-                            dataS5[i][j] = np.nan
+                    dataS6[i][j] = np.nan   # have only spurious active neurons
 
-        plt.scatter(t, dataS5[i], marker="*", s=20, color='red')
-        plt.scatter(t, dataS1[i], marker="s", s=50, color='blue')
-        plt.scatter(t, dataS2[i], marker="^", s=40, color='yellow')
-        plt.scatter(t, dataS3[i], marker="o", s=30, color='green')
-        plt.scatter(t, dataS4[i], marker="_", s=30, color='pink')
+        plt.scatter(t, dataS1[i], marker="o", s=5, color=colors[0])
+        plt.scatter(t, dataS2[i], marker="o", s=5, color=colors[1])
+        plt.scatter(t, dataS3[i], marker="o", s=5, color=colors[2])
+        plt.scatter(t, dataS4[i], marker="o", s=5, color=colors[3])
+        plt.scatter(t, dataS5[i], marker="o", s=5, color=colors[4])
+        plt.scatter(t, dataS6[i], marker="o", s=50, color='red')
 
     plt.title('Spike raster plot')
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
+    plt.ylim(0, 100)
+#    plt.savefig('figs/recall_fin/nonintersecting patterns/2_ca1_nonint_raster.png', dpi=500)
     # plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
 
 plt.figure(figsize=(8, 6))
@@ -220,190 +239,50 @@ xf = fftfreq(N, T)[:N//2]
 yf = fft(E)
 plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 
-#    yf = fft(B)
-#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
+#yf = fft(B)
+#plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Basket cells')
 
-#    yf = fft(BS)
-#    plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
+#yf = fft(BS)
+#plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Bistratified cells')
 
+plt.xlabel("Frequency (Hz)")
 plt.legend()
 plt.grid()
-#    plt.savefig('ca1_theta_gamma_fft.png', dpi=500)
+#plt.savefig('figs/recall_fin/nonintersecting patterns/3_ca1_nonint_fft.png', dpi=500)
+
+# bar plot for % recall of patterns
+plt.figure(figsize=(8, 6))
+data = genfromtxt('results/recall_percentage.csv', dtype=int, delimiter='\t')
+last_data = []
+for d in data:
+    if (d[0] == 1000):
+        last_data.append(d)
+
+last_data = np.array(last_data)
+pattern_index = last_data[:, 1]
+recall_percent = last_data[:, 2]
+plt.xlabel('pattern index')
+plt.ylabel('% recall')
+plt.xticks(pattern_index, pattern_index)
+plt.bar(pattern_index, recall_percent)
+#plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_bar.png', dpi=500)
+
+# bar plot for recall correlation
+plt.figure(figsize=(8, 6))
+data = genfromtxt('results/recall_correlation.csv', dtype=float, delimiter='\t')
+last_data = []
+for d in data:
+    last_data.append(d)
+
+last_data = np.array(last_data)
+pattern_index = last_data[:, 0]
+recall_percent = last_data[:, 1]
+plt.xlabel('pattern index')
+plt.ylabel('recall correlation')
+plt.xticks(pattern_index, pattern_index)
+plt.bar(pattern_index, recall_percent)
+#plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
+'''
+
+
 plt.show()
-
-    # plt.figure()
-    # N = len(t)
-    # T = 1.0 / len(t)
-    # xf = fftfreq(N, T)[:N//2]
-    # yf = fft(E)
-    # plt.plot(xf, 1.0 / 10 * np.abs(yf[0:N//2]))
-    # plt.show()
-
-    
-'''
-def rmse(predictions, targets):
-    return np.sqrt(((predictions - targets) ** 2).mean())
-
-E_error = rmse(e_guess, E)
-IP_error = rmse(ip_guess, HIPP)
-I_error = rmse(i_guess, I)
-S_error = rmse(s_guess, S)
-
-print("RMSE of excitatory population = ", E_error)
-print("RMSE of hippocampo-septal population = ", IP_error)
-print("RMSE of inhibitory population = ", I_error)
-print("RMSE of septal population = ", S_error)
-
-fig = plt.figure(figsize=(8, 6))
-fig.suptitle('Phase space diagrams')
-ax1 = fig.add_subplot(2, 2, 1, projection='3d')
-ax1.plot3D(ip_guess, i_guess, e_guess)
-ax1.set_xlabel('I_CA1P(t)', fontsize = 5.0)
-ax1.set_ylabel('I_CA1I(t)', fontsize = 5.0)
-ax1.set_zlabel('E_CA1(t)', fontsize = 5.0)
-ax1.tick_params(axis='x', labelsize= 5.0)
-ax1.tick_params(axis='y', labelsize= 5.0)
-ax1.tick_params(axis='z', labelsize= 5.0)
-ax1.view_init(-150, 60)
-
-ax2 = fig.add_subplot(2, 2, 2, projection='3d')
-ax2.plot3D(ip_guess, s_guess, e_guess)
-ax2.set_xlabel('I_CA1P(t)', fontsize = 5.0)
-ax2.set_ylabel('I_S(t)', fontsize = 5.0)
-ax2.set_zlabel('E_CA1(t)', fontsize = 5.0)
-ax2.tick_params(axis='x', labelsize= 5.0)
-ax2.tick_params(axis='y', labelsize= 5.0)
-ax2.tick_params(axis='z', labelsize= 5.0)
-# ax2.view_init(-140, 60)
-
-ax3 = fig.add_subplot(2, 2, 3, projection='3d')
-ax3.plot3D(i_guess, s_guess, ip_guess)
-ax3.set_xlabel('I_CA1I(t)', fontsize = 5.0)
-ax3.set_ylabel('I_S(t)', fontsize = 5.0)
-ax3.set_zlabel('I_CA1P(t)', fontsize = 5.0)
-ax3.tick_params(axis='x', labelsize= 5.0)
-ax3.tick_params(axis='y', labelsize= 5.0)
-ax3.tick_params(axis='z', labelsize= 5.0)
-ax3.view_init(-140, 60)
-
-ax4 = fig.add_subplot(2, 2, 4, projection='3d')
-ax4.plot3D(i_guess, s_guess, e_guess)
-ax4.set_xlabel('I_CA1I(t)', fontsize = 5.0)
-ax4.set_ylabel('I_S(t)', fontsize = 5.0)
-ax4.set_zlabel('E_CA1(t)', fontsize = 5.0)
-ax4.tick_params(axis='x', labelsize= 5.0)
-ax4.tick_params(axis='y', labelsize= 5.0)
-ax4.tick_params(axis='z', labelsize= 5.0)
-ax4.view_init(-140, 60)
-
-plt.subplots_adjust(hspace=0.12)
-# plt.savefig('phase_space_diagrams.png', dpi=500)
-plt.show()
-
-'''
-'''
-
-    plt.figure()
-    plt.title('E-I phase plot')
-    plt.plot(E[0:200], S[0:200])
-    plt.xlabel('E(t)')
-    plt.ylabel('I(t)')
-
-fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(8, 6), sharex=True)
-ex_data = genfromtxt('results/ex.csv', delimiter='\t')
-ex_data_50th = ex_data[:, 10]
-ax1.scatter(t, ex_data_50th)
-
-hipp_data = genfromtxt('results/hipp.csv', delimiter='\t')
-hipp_data_50th = hipp_data[:, 10]
-ax2.scatter(t, hipp_data_50th)
-
-in_data = genfromtxt('results/in.csv', delimiter='\t')
-in_data_50th = in_data[:, 10]
-ax3.scatter(t, in_data_50th)
-
-sept_data = genfromtxt('results/septum.csv', delimiter='\t')
-sept_data_50th = sept_data[:, 10]
-ax4.scatter(t, sept_data_50th)
-
-plt.figure()
-plt.title('E-I phase plot of the 50th neuron')
-plt.plot(ex_data_50th, in_data_50th)
-plt.xlabel('E(t) 50th neuron')
-plt.ylabel('I(t) 50th neuron')
-
-plt.tight_layout()
-plt.show()
-
-
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
-with open('results/ex.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax1.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax1.scatter(x, row[1:])
-
-with open('results/ext.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-    index = 0
-    for row in reader: 
-        if (len(row)-1 == 0):
-            x = [row[0]] * len(row)
-            row = 0
-            ax2.scatter(x, row)
-        else:
-            x = [row[0]] * (len(row)-1)
-            row = [int(i) for i in row]
-            ax2.scatter(x, row[1:])
-
-ax1.set_ylabel('Excitatory population: neuron number')
-ax2.set_ylabel('External pseudo population: neuron number')
-ax2.set_xlabel('time (ms)')
-#plt.savefig('/home/ashraya/Desktop/1.png', dpi=250)
-
-with open('results/ca_bin_stats.csv') as f:
-    reader = csv.reader(f, delimiter='\t')
-
-    dataR = genfromtxt('results/ca_bin_stats.csv', delimiter='\t')
-    data = dataR.T
-
-    data = np.delete(data, 0, axis=0)
-    data = np.delete(data, (len(data)-1), axis=0)
-
-    bins = []
-    E = []
-    EXT = []
-
-    for row in reader:
-        if (row[0] == "ex"):
-            E = row[1:-1]
-            E = [int(i) for i in E]
-        elif (row[0] == "ext"):
-            EXT = row[1:-1]
-            EXT = [int(i) for i in EXT]
-        elif (row[0] == "bins"):
-            bins = row[1:-1]
-            bins = [int(i) for i in bins]
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-    ax1.bar(bins, E)
-    ax1.plot(bins, E)
-    ax1.set_xlabel('time, t(ms)')
-    ax1.set_ylabel('E(t)')
-    ax1.set_title('Excitatory population')
-
-    ax2.bar(bins, EXT)
-    ax2.plot(bins, EXT)
-    ax2.set_xlabel('time, t(ms)')
-    ax2.set_ylabel('External input')
-    ax2.set_title('External input')
-
-    plt.tight_layout()
-    plt.show()
-'''

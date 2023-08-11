@@ -43,6 +43,7 @@ with open('results/ca_stats.csv') as f:
     B = []
     BS = []
     CA3 = []
+    CA3_2 = []
     PS = []
     EC = []
 
@@ -65,11 +66,13 @@ with open('results/ca_stats.csv') as f:
                 EC = data[:, i]
             elif (name == "ps"):
                 PS = data[:, i]
+            elif (name == "ext2"):
+                CA3_2 = data[:, i]
             else:
                 CA3 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, figsize=(10, 10), sharex=True)
     ax1.title.set_text('Cellular automata simulation of CA1 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
@@ -89,7 +92,7 @@ with open('results/ca_stats.csv') as f:
         ax2.plot(t, B)
         ax2.set_ylim(0, 0.3)
         ax2.set_ylabel('I_B(t)')
-        guess_phase = -2.5
+        guess_phase = -1.3 #-2.5
         guess_amplitude = 0.2
         guess_freq = 6.4
 
@@ -160,19 +163,25 @@ with open('results/ca_stats.csv') as f:
         ax7.set_ylabel('EC')
         ax7.grid()
 
-    if (len(CA3) > 0):
+    if (len(CA3) > 0):4yy
         ax8.plot(t, CA3)
         ax8.set_ylabel('CA3')
         ax8.grid()
 
-    if (len(PS) > 0):
-        ax9.plot(t, PS)
-        ax9.set_ylabel('PS')
+    if (len(CA3_2) > 0):
+        ax9.plot(t, CA3_2)
+        ax9.set_ylabel('CA3_2')
         ax9.set_xlabel('time, t(ms)')
         ax9.grid()
 
+    if (len(PS) > 0):
+        ax10.plot(t, PS)
+        ax10.set_ylabel('PS')
+        ax10.set_xlabel('time, t(ms)')
+        ax10.grid()
+
     plt.tight_layout()
-#    plt.savefig('figs/recall_fin/nonintersecting patterns/1_ca1_nonint_activity.png', dpi=500)
+#    plt.savefig('figs/recall_fin/intersecting patterns/more_bas_effect.png', dpi=500)
 #    plt.show()
 
 
@@ -182,6 +191,7 @@ with open('results/ca_stats.csv') as f:
 #    plt.grid()
 #    spec, freq, _ = plt.phase_spectrum(E, color ='green', Fs=Fs, Fc=0)
 
+'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
@@ -281,6 +291,7 @@ plt.ylabel('recall correlation')
 plt.xticks(pattern_index, pattern_index)
 plt.bar(pattern_index, recall_percent)
 #plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
+'''
 
 
 plt.show()

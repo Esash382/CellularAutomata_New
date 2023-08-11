@@ -8,7 +8,9 @@ Network::Network(std::string name, uint ntwk_id, uint N,
             float value, float step, uint enable_learning,
             float learning_rate, float unlearning_rate,
             uint p_rand_no_of_neurons,
-            uint no_of_patterns, bool intersecting_patterns)
+            uint no_of_patterns, bool intersecting_patterns,
+            bool learning_inhibition, bool recall_inhibition,
+            bool sensory_input, bool cueing_input)
 {
 	logger = Log::getInstance();
 
@@ -62,4 +64,8 @@ Network::Network(std::string name, uint ntwk_id, uint N,
     this->p_rand_no_of_neurons = p_rand_no_of_neurons;
     this->no_of_patterns = no_of_patterns;
     this->intersecting_patterns = intersecting_patterns ? true : false;
+    this->learning_inhibition = learning_inhibition ? true : false;
+    this->recall_inhibition = recall_inhibition ? true : false;
+    this->sensory_input = sensory_input ? true : false;
+    this->cueing_input = cueing_input ? true : false;
 }

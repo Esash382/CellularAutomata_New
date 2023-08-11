@@ -126,7 +126,11 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["enable_learning"], con["learning_rate"],
                         con["unlearning_rate"], con["p_rand_neurons"],
                         con["no_of_patterns"],
-                        con["intersecting_patterns"]);
+                        con["intersecting_patterns"],
+                        con["learning_inhibition"],
+                        con["recall_inhibition"],
+                        con["sensory_input"],
+                        con["cueing_input"]);
     }
 
     if (num_ext_input == 0) {
@@ -139,7 +143,11 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["enable_learning"], con["learning_rate"],
                         con["unlearning_rate"], con["p_rand_neurons"],
                         con["no_of_patterns"],
-                        con["intersecting_patterns"]);
+                        con["intersecting_patterns"],
+                        con["learning_inhibition"],
+                        con["recall_inhibition"],
+                        con["sensory_input"],
+                        con["cueing_input"]);
     }
 
     for (uint i = 1; i <= num_ext_input; i++) {
@@ -155,5 +163,9 @@ shared_ptr<Network> Config::create_network(std::string name)
                         con["enable_learning"], con["learning_rate"],
                         con["unlearning_rate"], con["p_rand_neurons"],
                         con["no_of_patterns"],
-                        con["intersecting_patterns"]);
+                        con["intersecting_patterns"],
+                        con["learning_inhibition"],
+                        con["recall_inhibition"],
+                        con["sensory_input"],
+                        con["cueing_input"]);
 }

@@ -193,11 +193,13 @@ void Population::create_interneuronal_network_projections(Config* config)
                 src_start_from_row_index = n->start_from_row_index;
                 if (n->external_input == RANDOM_TIME)
                     src_ext_pseudo_neuron = true;
+                zsd = (zsd * src_size) / 100.0;
             } else if (n->m_ntwk_name == cell[1]) {
                 dst_size = n->m_N;
                 dst_start_from_row_index = n->start_from_row_index;
                 if (n->external_input == RANDOM_TIME)
                     dst_ext_pseudo_neuron = true;
+                zds = (zds * dst_size) / 100.0;
             }
 
             if ((src_size != 0) && (dst_size != 0))
@@ -504,12 +506,13 @@ void Population::init_p_rand_neurons()
 {
     for (auto ntwk : this->population_network) {
         if (ntwk->p_rand_no_of_neurons > 0) {
+            uint percentage_p_rand_no_of_neurons = (ntwk->p_rand_no_of_neurons * ntwk->m_N) / 100;
             ntwk->intersecting_patterns ?
-                init_intersecting_p_rand_neurons(ntwk->p_rand_no_of_neurons,
+                init_intersecting_p_rand_neurons(percentage_p_rand_no_of_neurons,
                                                  ntwk->m_N,
                                                  ntwk->no_of_patterns,
                                                  ntwk->m_ntwk_id) :
-                init_nonintersecting_p_rand_neurons(ntwk->p_rand_no_of_neurons,
+                init_nonintersecting_p_rand_neurons(percentage_p_rand_no_of_neurons,
                                                  ntwk->m_N,
                                                  ntwk->no_of_patterns,
                                                  ntwk->start_from_row_index,
@@ -912,15 +915,12 @@ double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
                 (this->m_s_matrix[j][cell_id] == S_ON)) {
                 sum += this->m_w_matrix[j][cell_id];
             }
-            // In case of pseudo neuronal synapses for external inputs
-            if ((this->m_w_matrix[j][cell_id] != 0) &&
-                (this->m_s_matrix[j][cell_id] != S_ON) &&
-                (this->m_n_matrix[j] == ON)) {
-                sum += this->m_w_matrix[j][cell_id];
-            }
         }
     }
+//    if (cell->m_ntwk_name == "bas")
+//        std::cout << "network = " << cell->m_ntwk_name << " neuron ID = " << cell_id << " weight = " << sum << std::endl;
 
+    // This is how weighted sum for external pseudo neurons is calculated
     if (cell->external_input == RANDOM_TIME)
         sum += cell->external_input_value;
     else
@@ -964,7 +964,7 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id, this->time_vec[n]) ||
                 !is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
                 if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i] > 0) {
+                                    [ntwk->start_from_row_index + i] != 0) {
                     this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                     [ntwk->start_from_row_index + i]
                                                 -= ntwk->unlearning_rate;
@@ -1030,9 +1030,26 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
                     is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
                     if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
                                    [ntwk->start_from_row_index + i] != 0) { // if the 2 neurons are connected
-                        this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                   [ntwk->start_from_row_index + i]
-                                                += ntwk->learning_rate;
+                        // Check if the pre-synaptic neuron ( in this case, the external pseudo neuron is active
+                        // and check if the pre-synaptic neuron is active within the last 20ms
+                        bool cur_neuron_param_check = false;
+                        if ((this->m_n_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] == ON) &&
+                                (this->m_nf_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] <= time_vec[n]) &&
+                                (this->m_nf_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] > (time_vec[n]-20))) {
+                            cur_neuron_param_check = true;
+                        } else {
+                            cur_neuron_param_check = false;
+                        }
+
+                        if (cur_neuron_param_check) {
+                            this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
+                                       [ntwk->start_from_row_index + i]
+                                                    += ntwk->learning_rate;
+                        } else { // if cur neuron is not active in the last 20ms, unlearn the projection weight
+                            this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
+                                       [ntwk->start_from_row_index + i]
+                                                    -= ntwk->learning_rate;
+                        }
 //                        std::cout << "STDP: time : " << time_vec[n] << "\tneuron : " << (this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron)
 //                                  << " - " << (ntwk->start_from_row_index + i) << " = "
 //                                  << this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron][ntwk->start_from_row_index + i]
