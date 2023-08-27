@@ -163,7 +163,7 @@ with open('results/ca_stats.csv') as f:
         ax7.set_ylabel('EC')
         ax7.grid()
 
-    if (len(CA3) > 0):4yy
+    if (len(CA3) > 0):
         ax8.plot(t, CA3)
         ax8.set_ylabel('CA3')
         ax8.grid()
@@ -191,7 +191,6 @@ with open('results/ca_stats.csv') as f:
 #    plt.grid()
 #    spec, freq, _ = plt.phase_spectrum(E, color ='green', Fs=Fs, Fc=0)
 
-'''
     plt.figure(figsize=(8, 3))
     dataR = genfromtxt('results/ex.csv', delimiter='\t')
     dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
@@ -291,7 +290,5 @@ plt.ylabel('recall correlation')
 plt.xticks(pattern_index, pattern_index)
 plt.bar(pattern_index, recall_percent)
 #plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
-'''
-
 
 plt.show()

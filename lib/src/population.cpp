@@ -552,7 +552,7 @@ void Population::init_intersecting_p_rand_neurons(uint p_rand_no_of_neurons,
             tmp.push_back(pattern_vec);
             pattern_vec.clear();
         }
-       
+
         this->p_rand_neuron_ids[ntwk_id] = tmp;
     }
 }
@@ -593,35 +593,6 @@ void Population::init_nonintersecting_p_rand_neurons(uint p_rand_no_of_neurons,
         this->p_rand_neuron_ids[ntwk_id] = tmp;
     }
 }
-
-//void Population::set_p_rand_weight_matrix_without_learning(void)
-//{
-//    for (auto src_ntwk : population_network) {
-//        for (auto dst_ntwk : population_network) {
-//            if ((src_ntwk->m_type == PSEUDO_NEURON
-//                    && dst_ntwk->m_type != PSEUDO_NEURON)
-//                    && (src_ntwk->enable_learning == 1.0 
-//                        && dst_ntwk->enable_learning == 1.0)) {
-//                for (uint i = src_ntwk->start_from_row_index;
-//                          i < src_ntwk->start_from_row_index + src_ntwk->m_N;
-//                          i++) {
-//                    for (uint j = dst_ntwk->start_from_row_index;
-//                              j < dst_ntwk->start_from_row_index + dst_ntwk->m_N;
-//                              j++) {
-//                        if (m_w_matrix[i][j] != 0
-//                            && is_neuron_in_p_rand(i, src_ntwk->m_ntwk_id)
-//                            && is_neuron_in_p_rand(j, dst_ntwk->m_ntwk_id)) {
-//                            m_w_matrix[i][j] += dst_ntwk->learning_rate;
-//                        } else if (m_w_matrix[i][j] > 0) {
-//                            m_w_matrix[i][j] -= dst_ntwk->unlearning_rate;
-////                            m_w_matrix[i][j] = 0;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 void Population::add_network_internal_func(Config *config)
 {
@@ -909,16 +880,19 @@ double Population::compute_weights(shared_ptr<Network> cell, uint n, uint i)
     if (this->m_n_matrix[cell_id] == ON) return 0.0f;
 
     for (auto ntwk : this->population_network) {
+        double tsum = 0.0f;
         uint size = ntwk->start_from_row_index + ntwk->m_N;
         for (uint j = ntwk->start_from_row_index; j < size; j++) {
             if ((this->m_w_matrix[j][cell_id] != 0) &&
                 (this->m_s_matrix[j][cell_id] == S_ON)) {
                 sum += this->m_w_matrix[j][cell_id];
+                tsum += this->m_w_matrix[j][cell_id];
             }
         }
+//        if (ntwk->learning_inhibition && (cell->m_ntwk_id == 101 || cell->m_ntwk_id == 107)) {
+//            std::cout << "WEIGHT: " << time_vec[n] << " " << ntwk->m_ntwk_name << " " << i << " " << tsum << std::endl;
+//        }
     }
-//    if (cell->m_ntwk_name == "bas")
-//        std::cout << "network = " << cell->m_ntwk_name << " neuron ID = " << cell_id << " weight = " << sum << std::endl;
 
     // This is how weighted sum for external pseudo neurons is calculated
     if (cell->external_input == RANDOM_TIME)
@@ -938,6 +912,30 @@ double Population::call_compute_weights(shared_ptr<Network> cell, uint n, uint i
     return compute_weights(cell, n, i);
 }
 
+void Population::learn(uint n)
+{
+//    std::cout << "time = " << time_vec[n] << " " << this->learning_inhibition_neuron_count << " " << this->learning_inhibition_total_neurons << " " << ca3_neurons.size() << " " << ec_to_pyr_neurons.size() << std::endl;
+                                                            //                                0              1              2             3             4
+    for (auto pyr_tuple : this->ec_to_pyr_neurons) {    // std::vector<std::tuple<uint neuron_id, uint ntwk_id, uint start_index, learning_rate, unlearning_rate>>
+        for (auto ca3_tuple : this->ca3_neurons) {              // std::vector<std::tuple<uint neuron_id, uint ntwk_id, uint start_index>>
+            if (this->m_w_matrix[std::get<2>(ca3_tuple) + std::get<0>(ca3_tuple)]
+                                [std::get<2>(pyr_tuple) + std::get<0>(pyr_tuple)] != 0) { // if the 2 neurons are connected
+                std::cout << "the neurons are connected " << std::get<0>(ca3_tuple) << " " << std::get<0>(pyr_tuple) << std::endl;
+                if (is_neuron_in_p_rand(std::get<0>(pyr_tuple), std::get<1>(pyr_tuple), this->time_vec[n]) &&
+                    is_neuron_in_p_rand(std::get<0>(ca3_tuple), std::get<1>(ca3_tuple), this->time_vec[n])) {
+                    std::cout << "the neurons are in the pattern " << std::get<0>(ca3_tuple) << " " << std::get<0>(pyr_tuple) << std::endl;
+                    this->m_w_matrix[std::get<2>(ca3_tuple) + std::get<0>(ca3_tuple)]
+                                    [std::get<2>(pyr_tuple) + std::get<0>(pyr_tuple)] += std::get<3>(pyr_tuple);
+                } else {
+                    std::cout << "the neurons are not in the pattern " << std::get<0>(ca3_tuple) << " " << std::get<0>(pyr_tuple) << std::endl;
+                    this->m_w_matrix[std::get<2>(ca3_tuple) + std::get<0>(ca3_tuple)]
+                                    [std::get<2>(pyr_tuple) + std::get<0>(pyr_tuple)] -= std::get<4>(pyr_tuple);
+                }
+            }
+        }
+    }
+}
+
 void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type)
 {
     logger->log("threshold_block");
@@ -951,7 +949,6 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
     }
 
     double sum = compute_weights(ntwk, n, i);
-    bool stop_learning = (int)(n > this->time_vec.size() / 2);
 
     if (type == ON) {
         //auto tmp = get_noisy_delay(ntwk->threshold, this->th_step);
@@ -959,20 +956,33 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
         logger->log(str);
 
         // If the neuron is not present in the selected p_rand, unlearn
-        if (!stop_learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
-            // If either of the neuron is not in the pattern and they share a projection, then unlearn
-            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id, this->time_vec[n]) ||
-                !is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
-                if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i] != 0) {
-                    this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                    [ntwk->start_from_row_index + i]
-                                                -= ntwk->unlearning_rate;
-                }
-            }
-        }
+//        if (!this->learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
+//            // If either of the neuron is not in the pattern and they share a projection, then unlearn
+//            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id, this->time_vec[n]) ||
+//                !is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
+//                if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
+//                                    [ntwk->start_from_row_index + i] != 0) {
+//                    this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
+//                                    [ntwk->start_from_row_index + i]
+//                                                -= ntwk->unlearning_rate;
+//                    std::cout << "un learning" << std::endl;
+//                }
+//            }
+//        }
 
         if (sum > ntwk->threshold) {
+            if (ntwk->learning_inhibition) { // in the case of CA1, this is basket cell population
+                this->learning_inhibition_neuron_count++;
+                this->learning_inhibition_total_neurons = ntwk->m_N;
+            }
+            if (ntwk->sensory_input) { // EC neuron
+                this->current_sensory_neuron = {this->cur_ntwk_start_from_row_index, this->cur_ntwk_neuron};
+            }
+            if (ntwk->m_type == EXCITATORY) { // Pyramidal neuron
+                if (this->m_w_matrix[this->current_sensory_neuron.first + this->current_sensory_neuron.second][ntwk->start_from_row_index + i] > 0) {
+                    this->ec_to_pyr_neurons.push_back(std::make_tuple(i, ntwk->m_ntwk_id, ntwk->start_from_row_index, ntwk->learning_rate, ntwk->unlearning_rate));
+                }
+            }
             //std::cout << __FUNCTION__ << " " << str << std::endl;
             this->m_n_matrix[ntwk->start_from_row_index + i] = ON;
             this->m_nf_matrix[ntwk->start_from_row_index + i] = time_vec[n];
@@ -1022,46 +1032,6 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             logger->log("threshold_block: switching on neuron : " + std::to_string(ntwk->start_from_row_index + i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
             str = ("threshold_block: switching on neuron : " + std::to_string(ntwk->start_from_row_index + i) + " : network : " + ntwk->m_ntwk_name + " : time : " + std::to_string(time_vec[n])); 
             // std::cout << str << std::endl;
-
-            // Logic to add learning : STDP rule
-            if (!stop_learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
-                // If both the neurons in the projection are in the pattern, and they share a projection, then learn
-                if (is_neuron_in_p_rand(i, ntwk->m_ntwk_id, this->time_vec[n]) &&
-                    is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
-                    if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                   [ntwk->start_from_row_index + i] != 0) { // if the 2 neurons are connected
-                        // Check if the pre-synaptic neuron ( in this case, the external pseudo neuron is active
-                        // and check if the pre-synaptic neuron is active within the last 20ms
-                        bool cur_neuron_param_check = false;
-                        if ((this->m_n_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] == ON) &&
-                                (this->m_nf_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] <= time_vec[n]) &&
-                                (this->m_nf_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron] > (time_vec[n]-20))) {
-                            cur_neuron_param_check = true;
-                        } else {
-                            cur_neuron_param_check = false;
-                        }
-
-                        if (cur_neuron_param_check) {
-                            this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                       [ntwk->start_from_row_index + i]
-                                                    += ntwk->learning_rate;
-                        } else { // if cur neuron is not active in the last 20ms, unlearn the projection weight
-                            this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-                                       [ntwk->start_from_row_index + i]
-                                                    -= ntwk->learning_rate;
-                        }
-//                        std::cout << "STDP: time : " << time_vec[n] << "\tneuron : " << (this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron)
-//                                  << " - " << (ntwk->start_from_row_index + i) << " = "
-//                                  << this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron][ntwk->start_from_row_index + i]
-//                                  << std::endl;
-                    }
-                }
-            }
-
-//            if (stop_learning && ntwk->m_type != PSEUDO_NEURON) {
-//                    std::cout << "time : " << time_vec[n] << "\tneuron : " << (this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron)
-//                              << " - " << ntwk->start_from_row_index + i << std::endl;
-//            }
         }
     } else {
         if (this->m_n_matrix[ntwk->start_from_row_index + i] != ON)
@@ -1117,64 +1087,6 @@ void Population::call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, 
 {
     threshold_block(ntwk, n, i, type);
 }
-
-/*
-void Population::process_networks()
-{
-    logger->log("process_networks");
-
-    srand(NULL);
-    for (uint n = 0; n < time_vec.size(); n++) {
-        deactivate_neurons(n);
-        uint ntwk_id = rand() % this->population_network.size();
-        uint k = (rand() % this->population_network[ntwk_id]->m_N);
-        synaptic_block(this->population_network[ntwk_id], n, k);
-        update_stats(this->time_vec[n]);
-    }
-
-    write_stats();
-
-    logger->log("DONE");
-}
-*/
-
-/*
-double Population::get_random_pattern_index(uint ntwk_id,
-                                            std::vector<uint> active_neurons_vec,
-                                            uint &index)
-{
-    auto patterns_vec = this->p_rand_neuron_ids[ntwk_id];
-    uint patterns_vec_size = 0;
-    std::vector<uint> false_positive_count(patterns_vec.size(), 0);
-
-    for (uint p = 0; p < patterns_vec.size(); p++) {
-        bool found = true;
-        for (uint active_neuron_index : active_neurons_vec) {
-            if (std::find(patterns_vec[p].begin(),
-                          patterns_vec[p].end(),
-                          active_neuron_index) == patterns_vec[p].end()) {
-                found = false;
-                false_positive_count[p]++;
-            }
-        }
-        if (found) { // If 100% recall
-            index = p;
-            return (patterns_vec[p].size() / patterns_vec[p].size())*100;
-        }
-        patterns_vec_size = patterns_vec[p].size();
-    }
-
-    // If no 100% recall, return that pattern which has the maximum number
-    // of neurons that are recalled.
-    
-    auto it = std::max_element(false_positive_count.begin(),
-                               false_positive_count.end());
-    index = (it - false_positive_count.begin());
-//    std::cout << "index = " << index << "    *it = " << *it << "    % = " << ((*it/patterns_vec_size)*100) << std::endl;
-    return (*it/patterns_vec_size)*100;
-}
-*/
-
 
 int Population::get_random_pattern_index(std::vector<std::vector<uint>> recall_count)
 {
@@ -1270,11 +1182,12 @@ void Population::process_networks()
         deactivate_neurons(n);
 
         bool flag = false;
+        learning_inhibition_neuron_count = 0;
+        ca3_neurons.clear();
+        ec_to_pyr_neurons.clear();
         for (auto ntwk : this->population_network) {
             auto it = n_rand_map.find(ntwk->m_ntwk_id);
             if (it != n_rand_map.end()) {
-//                if (ntwk->m_ntwk_name == "ext" || ntwk->m_ntwk_name == "ec")
-//                    std::cout << "time = " << this->time_vec[n] << "    network = " << ntwk->m_ntwk_name << std::endl;
                 auto n_rand_activate = it->second;
                 auto it2 = n_rand_activate.find(time_vec[n]);
                 if (it2 != n_rand_activate.end()) {
@@ -1288,9 +1201,19 @@ void Population::process_networks()
 //                        std::cout << str << std::endl;
                         synaptic_block(ntwk, n, neuron_vec[j]);
                         flag = true;
+
+                        if (ntwk->cueing_input) { // Enter only for CA3
+                            ca3_neurons.push_back(std::make_tuple(cur_ntwk_neuron, cur_ntwk_id, cur_ntwk_start_from_row_index));
+                        }
                     }
                 }
             }
+        }
+
+//        std::cout << "time = " << time_vec[n] << " " << learning_inhibition_neuron_count << " " << this->learning_inhibition_total_neurons << " " << (this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) << " " << ((this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) > 0.0125) << std::endl;
+
+        if ((this->learning_inhibition_total_neurons > 0) && (this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) > 0.025) {
+            learn(n);
         }
 
         if (!flag) {

@@ -58,7 +58,6 @@ private:
                                              uint no_of_patterns,
                                              uint start_from_row_index,
                                              uint ntwk_id);
-//    void set_p_rand_weight_matrix_without_learning();
 
     void synaptic_block(shared_ptr<Network> ntwk, uint n, uint i);
     void threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
@@ -74,7 +73,6 @@ private:
 
     void update_stats(uint n);
     void write_stats();
-//    double get_random_pattern_index(uint ntwk_id, std::vector<uint> active_neurons_vec,
     int get_random_pattern_index(std::vector<std::vector<uint>> recall_count);
     void get_random_pattern_index(std::vector<std::vector<uint>> recall_count, _time_t n);
     void get_recall_correlation(std::vector<std::vector<uint>> recall_count, uint pattern_size);
@@ -103,10 +101,8 @@ public:
     void call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE type);
     void call_update_stats(uint n);
     bool is_neuron_in_p_rand(uint i, uint ntwk_id, _time_t n);
-
-public:
-	// Logger
-	Log* logger;
+    void learn(uint n);
+	Log* logger; // Logger
 
     std::string filepath;
     std::string result_file_path;
@@ -156,6 +152,12 @@ public:
     uint cur_ntwk_neuron;
     uint cur_ntwk_id;
     uint cur_ntwk_start_from_row_index;
+    bool learning{false};
+    std::pair<uint, uint> current_sensory_neuron; // <ntwk start index, ntwk neuron id>
+    std::vector<std::tuple<uint, uint, uint, uint, uint>> ec_to_pyr_neurons; // std::vector<std::tuple<uint neuron_id, uint ntwk_id, uint start_index, learning_rate, unlearning_rate>>
+    std::vector<std::tuple<uint, uint, uint>> ca3_neurons; // std::vector<std::tuple<uint neuron_id, uint ntwk_id, uint start_index>>
+    float learning_inhibition_neuron_count{0};
+    float learning_inhibition_total_neurons{0};
 };
 
 extern "C" Population* ext_create_population(const char* filepath) {
