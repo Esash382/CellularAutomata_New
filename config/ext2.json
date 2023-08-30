@@ -2,7 +2,7 @@
     "ext2" : 109.0,
     "id" : 109.0,
     "type" : 2.0,
-    "N" : 100.0,
+    "N" : 10.0,
     "k" : 0.0,
     "nburst" : 1.0,
     "threshold" : 1.0,
@@ -23,9 +23,9 @@
     "nf" : 10,
 
     "enable_learning": 1.0,
-    "p_rand_neurons": 20.0,
+    "p_rand_neurons": 10.0,
 
-    "no_of_patterns": 5,
+    "no_of_patterns": 1,
     "intersecting_patterns": 1.0,
     "cueing_input": 1.0 
 }

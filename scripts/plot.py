@@ -292,3 +292,4 @@ plt.bar(pattern_index, recall_percent)
 #plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
 
 plt.show()
+
