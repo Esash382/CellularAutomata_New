@@ -181,7 +181,7 @@ with open('results/ca_stats.csv') as f:
         ax10.grid()
 
     plt.tight_layout()
-#    plt.savefig('figs/recall_fin/intersecting patterns/more_bas_effect.png', dpi=500)
+    plt.savefig('figs/CA1/recall-2/1_ca1_int_activity_no_LTP_no_LTD.png', dpi=500)
 #    plt.show()
 
 
@@ -236,7 +236,7 @@ with open('results/ca_stats.csv') as f:
     plt.xlabel('time (ms)')
     plt.ylabel('Excitatory population: neuron number')
     plt.ylim(0, 100)
-#    plt.savefig('figs/recall_fin/nonintersecting patterns/2_ca1_nonint_raster.png', dpi=500)
+    plt.savefig('figs/CA1/recall-2/2_ca1_int_raster_no_LTP_no_LTD.png', dpi=500)
     # plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
 
 plt.figure(figsize=(8, 6))
@@ -256,7 +256,7 @@ plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 plt.xlabel("Frequency (Hz)")
 plt.legend()
 plt.grid()
-#plt.savefig('figs/recall_fin/nonintersecting patterns/3_ca1_nonint_fft.png', dpi=500)
+plt.savefig('figs/CA1/recall-2/3_ca1_int_fft_no_LTP_no_LTD.png', dpi=500)
 
 # bar plot for % recall of patterns
 plt.figure(figsize=(8, 6))
@@ -289,7 +289,7 @@ plt.xlabel('pattern index')
 plt.ylabel('recall correlation')
 plt.xticks(pattern_index, pattern_index)
 plt.bar(pattern_index, recall_percent)
-#plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
+plt.savefig('figs/CA1/recall-2/4_ca1_int_bar_no_LTP_no_LTD.png', dpi=500)
 
 plt.show()
 
