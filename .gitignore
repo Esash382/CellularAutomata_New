@@ -13,3 +13,4 @@ config/CA1/.*.swp
 config/CA1_CA3/.*.swp
 lib/external/.*.swp
 lib/src/.*.swp
+lib/libca.so
