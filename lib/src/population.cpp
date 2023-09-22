@@ -956,6 +956,9 @@ double Population::get_recall_correlation(std::vector<uint> active_neuron_stats,
 
     std::cout << "time = " << time << " sum = " << sum << " active_neuron_stats_sum = " << active_neuron_stats_sum << " pattern_sum = " << pattern_sum << " corr = " << (sum / sqrt(active_neuron_stats_sum * pattern_sum)) << std::endl;
 
+    if (active_neuron_stats_sum == 0 || pattern_sum == 0 || sum == 0)
+        return 0.0f;
+
     return (sum / sqrt(active_neuron_stats_sum * pattern_sum));
 }
 
