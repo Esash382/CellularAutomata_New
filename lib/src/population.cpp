@@ -10,6 +10,7 @@
 #include <cassert>
 #include <chrono>
 #include <ostream>
+#include <iomanip>
 
 #define ASSERT_WITH_MESSAGE(condition, message) do { \
 if (!(condition)) { std::cout << ((message)) << std::endl; } \
@@ -804,21 +805,6 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
         std::string str = ntwk->m_ntwk_name + " : time = " + std::to_string(this->time_vec[n]) + " : neuron_id = " + std::to_string(i) + " sum = " + std::to_string(sum) + "\n";
         logger->log(str);
 
-        // If the neuron is not present in the selected p_rand, unlearn
-//        if (!this->learning && ntwk->enable_learning && ntwk->p_rand_no_of_neurons > 0) {
-//            // If either of the neuron is not in the pattern and they share a projection, then unlearn
-//            if (!is_neuron_in_p_rand(i, ntwk->m_ntwk_id, this->time_vec[n]) ||
-//                !is_neuron_in_p_rand(this->cur_ntwk_neuron, this->cur_ntwk_id, this->time_vec[n])) {
-//                if (this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-//                                    [ntwk->start_from_row_index + i] != 0) {
-//                    this->m_w_matrix[this->cur_ntwk_start_from_row_index + this->cur_ntwk_neuron]
-//                                    [ntwk->start_from_row_index + i]
-//                                                -= ntwk->unlearning_rate;
-//                    std::cout << "un learning" << std::endl;
-//                }
-//            }
-//        }
-
         if (sum > ntwk->threshold) {
             if (ntwk->learning_inhibition) { // in the case of CA1, this is basket cell population
                 this->learning_inhibition_neuron_count++;
@@ -827,9 +813,13 @@ void Population::threshold_block(shared_ptr<Network> ntwk, uint n, uint i, MTYPE
             if (ntwk->sensory_input) { // EC neuron
                 this->current_sensory_neuron = {this->cur_ntwk_start_from_row_index, this->cur_ntwk_neuron};
             }
+
             if (ntwk->m_type == EXCITATORY) { // Pyramidal neuron
-                if (this->m_w_matrix[this->current_sensory_neuron.first + this->current_sensory_neuron.second][ntwk->start_from_row_index + i] > 0) {
-                    this->ec_to_pyr_neurons.push_back(std::make_tuple(i, ntwk->m_ntwk_id, ntwk->start_from_row_index, ntwk->learning_rate, ntwk->unlearning_rate));
+                if ((this->learning_inhibition_total_neurons > 0) && (this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) > 0.025) {
+                    if (this->m_w_matrix[this->current_sensory_neuron.first + this->current_sensory_neuron.second][ntwk->start_from_row_index + i] > 0) {
+                        this->ec_to_pyr_neurons.push_back(std::make_tuple(i, ntwk->m_ntwk_id, ntwk->start_from_row_index, ntwk->learning_rate, ntwk->unlearning_rate));
+                    }
+                    return;
                 }
             }
             //std::cout << __FUNCTION__ << " " << str << std::endl;
@@ -937,23 +927,6 @@ void Population::call_threshold_block(shared_ptr<Network> ntwk, uint n, uint i, 
     threshold_block(ntwk, n, i, type);
 }
 
-int Population::get_random_pattern_index(std::vector<std::vector<uint>> recall_count)
-{
-    for (uint i = 0; i < recall_count.size(); i++) {
-        uint j = 0;
-        for (; j < recall_count[i].size(); j++) {
-            if (recall_count[i][j] == 0) {
-                break;
-            }
-        }
-
-        if (j == recall_count[i].size())
-            return i;
-    }
-
-    return -1;
-}
-
 // Correlation
 // (B . B') / sqrt(sumof(B) * sumof(B'))
 // B = recalled pattern , B' = original pattern
@@ -961,64 +934,39 @@ int Population::get_random_pattern_index(std::vector<std::vector<uint>> recall_c
 // sumof(B') = always sizeof B'
 // sumof(B) = how many neurons are recalled
 // B . B' = dot product = how many neurons are recalled
-
-void Population::get_recall_correlation(std::vector<std::vector<uint>> recall_count, uint pattern_size)
+double Population::get_recall_correlation(std::vector<uint> active_neuron_stats, std::vector<uint> pattern, uint N, uint time)
 {
-    std::ofstream out(this->result_file_path + "/recall_correlation.csv", std::ios_base::binary);
-    std::vector<uint> expected_pattern(pattern_size, 1);
-    float avg_corr = 0.0f;
-    for (uint i = 0; i < recall_count.size(); i++) {
-        uint count = 0;
-        uint bb = 0;
-        for (uint j = 0; j < recall_count[i].size(); j++) {
-            if (recall_count[i][j] > 0) {
-                count++;
-                bb += (recall_count[i][j] > 0) ? 1 * expected_pattern[j] : 0 * expected_pattern[j];
-            }
-        }
-        auto corr = bb / sqrt(count * pattern_size);
-        std::cout << " Pattern = " << (i+1) << " Recall correlation = " << corr << std::endl;
-        avg_corr += corr;
+    std::vector<uint> pattern_binary_vec(N, 0);
 
-        if (out.good()) {
-            out << (i+1) << "\t" << corr << "\n";
-        }
+    for (auto i : pattern) {
+        pattern_binary_vec[i] = 1;
     }
 
-    std::cout << "Average recall correlation = " << ((avg_corr / recall_count.size()) * 100 ) << "%" << std::endl;
-
-    out.close();
-}
-
-void Population::get_random_pattern_index(std::vector<std::vector<uint>> recall_count, _time_t n)
-{
-    std::ofstream out(this->result_file_path + "/recall_percentage.csv", std::ios_base::binary);
-
-    for (uint i = 0; i < recall_count.size(); i++) {
-        uint count = 0;
-        for (uint j = 0; j < recall_count[i].size(); j++) {
-            if (recall_count[i][j] != 0) {
-                count++;
-            }
-        }
-        auto percent = (count * 100.0 / recall_count[i].size());
-
-        if (out.good() && n == this->time_vec.back()) {
-            out << (n+1) << "\t" << (i+1) << "\t" << percent  << "\n";
-        }
+    double sum = 0.0f;
+    for (uint i = 0; i < N; i++) {
+        sum += active_neuron_stats[i] * pattern_binary_vec[i];
     }
 
-    out.close();
+    double active_neuron_stats_sum = 0.0f;
+    double pattern_sum = 0.0f;
+    for (uint i = 0; i < N; i++) {
+        active_neuron_stats_sum += active_neuron_stats[i];
+        pattern_sum += pattern_binary_vec[i];
+    }
+
+    std::cout << "time = " << time << " sum = " << sum << " active_neuron_stats_sum = " << active_neuron_stats_sum << " pattern_sum = " << pattern_sum << " corr = " << (sum / sqrt(active_neuron_stats_sum * pattern_sum)) << std::endl;
+
+    return (sum / sqrt(active_neuron_stats_sum * pattern_sum));
 }
 
-void Population::get_spurious_recall_count(_time_t n)
+void Population::get_spurious_recall_count(_time_t n, std::vector<uint> spurious_recall_count)
 {
     uint count = 0;
-    for (uint i = 0; i < this->m_spurious_recall_count.size(); i++) {
-        if (this->m_spurious_recall_count[i]) count++;
+    for (uint i = 0; i < spurious_recall_count.size(); i++) {
+        if (spurious_recall_count[i] > 0) count++;
     }
 
-    auto percent = (double)count/this->m_spurious_recall_count.size();
+    auto percent = (double)count/spurious_recall_count.size();
 
     std::cout << "Time = " << (n+1) << " Spurious recall % = " << (percent * 100.0) << "%" << std::endl;
     std::cout << std::endl << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
@@ -1062,8 +1010,6 @@ void Population::process_networks()
             }
         }
 
-//        std::cout << "time = " << time_vec[n] << " " << learning_inhibition_neuron_count << " " << this->learning_inhibition_total_neurons << " " << (this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) << " " << ((this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) > 0.0125) << std::endl;
-
         if ((this->learning_inhibition_total_neurons > 0) && (this->learning_inhibition_neuron_count / this->learning_inhibition_total_neurons) > 0.025) {
             learn(n);
         }
@@ -1078,59 +1024,98 @@ void Population::process_networks()
     }
 
     // Recall metrics
+    std::ofstream out(this->result_file_path + "/recall_correlation.csv", std::ios_base::binary);
     for (auto ntwk : this->population_network) {
         if (ntwk->m_type != PSEUDO_NEURON && ntwk->enable_learning == 1.0) {
-            std::vector<uint> spurious_recall(ntwk->m_N, 0);
-            std::vector<std::vector<uint>> recall_count;
-            std::map<_time_t, int> pattern_recalled_at_time_t;
             auto patterns_vec = this->p_rand_neuron_ids[ntwk->m_ntwk_id];
+            std::vector<std::vector<uint>> recall_count;
+            std::vector<uint> spurious_recall_count(ntwk->m_N);
 
-            // initialize recall_count to zeroes
-            for (uint p = 0; p < patterns_vec.size(); p++) {
-                std::vector<uint> tmp_p(patterns_vec[p].size(), 0);
-                recall_count.push_back(tmp_p);
+            for (uint i = 0; i < patterns_vec.size(); i++) {
+                std::vector<uint> tmp(ntwk->m_N, 0);
+                recall_count.push_back(tmp);
             }
 
-            std::vector<_time_t> random_pattern_times_after_900ms;
-            for (uint t = 899; t < this->time_vec.size();  t+=20)
-                random_pattern_times_after_900ms.push_back(t);
+            for (uint j = 0; j < ntwk->m_N; j++) {
+                spurious_recall_count[j] = 0;
+            }
 
-            uint index = 1;
+            this->m_spurious_recall_count = spurious_recall_count;
+
+            double p1_corr = 0.0f;
+            double p2_corr = 0.0f;
+            double p3_corr = 0.0f;
+            double p4_corr = 0.0f;
+            double p5_corr = 0.0f;
+
             for (uint i = 900; i < this->time_vec.size(); i++) {
-                if (i == random_pattern_times_after_900ms[index]) {
-                    get_random_pattern_index(recall_count, this->time_vec[i]);
-                    get_spurious_recall_count(this->time_vec[i]);
-                    index++;
-                }
-
                 auto active_neurons_vec = ntwk->active_neuron_stats[this->time_vec[i]];
-                if (active_neurons_vec.empty()) continue;
-
-                for (uint active_neuron_index : active_neurons_vec) {
-                    bool found = false;
-                    for (uint p = 0; p < patterns_vec.size(); p++) {
-                        auto flag = std::find(patterns_vec[p].begin(), patterns_vec[p].end(), active_neuron_index);
-                        if (flag != patterns_vec[p].end()) { // if the neuron in pattern is found to be active
-                            uint pattern_index = flag - patterns_vec[p].begin();
-                            if (pattern_index != patterns_vec[p].size()) {
-                                recall_count[p][pattern_index] += 1;
+                if (!active_neurons_vec.empty()) {
+                    for (uint active_neuron_index : active_neurons_vec) {
+                        bool found = false;
+                        for (uint p = 0; p < patterns_vec.size(); p++) {
+                            if (std::find(patterns_vec[p].begin(), patterns_vec[p].end(), active_neuron_index) !=
+                                                patterns_vec[p].end()) { // if the neuron in pattern is found to be active
+                                recall_count[p][active_neuron_index] = 1;
                                 found = true;
+                                break;
                             }
                         }
-                    }
 
-                    if (!found) { // if it is a spurious neuron recall
-                        std::cout << "spurious recall of " << active_neuron_index << std::endl;
-                        spurious_recall[active_neuron_index] += 1;
+                        if (!found) { // if it is a spurious neuron recall
+                            std::cout << "time = " << this->time_vec[i] << " spurious recall of " << active_neuron_index << std::endl;
+                            spurious_recall_count[active_neuron_index] = 1;
+                        }
                     }
                 }
 
-                this->m_spurious_recall_count = spurious_recall;
-            }
+                if ((i % 20 == 0) || i == 999) {
+                    p1_corr = get_recall_correlation(recall_count[0], patterns_vec[0], ntwk->m_N, this->time_vec[i]);
+                    p2_corr = get_recall_correlation(recall_count[1], patterns_vec[1], ntwk->m_N, this->time_vec[i]);
+                    p3_corr = get_recall_correlation(recall_count[2], patterns_vec[2], ntwk->m_N, this->time_vec[i]);
+                    p4_corr = get_recall_correlation(recall_count[3], patterns_vec[3], ntwk->m_N, this->time_vec[i]);
+                    p5_corr = get_recall_correlation(recall_count[4], patterns_vec[4], ntwk->m_N, this->time_vec[i]);
 
-            get_recall_correlation(recall_count, patterns_vec[0].size());
+                    get_spurious_recall_count(this->time_vec[i], spurious_recall_count);
+
+                    std::cout << std::fixed << std::setprecision(2);
+                    std::cout << "Time = " << this->time_vec[i] << " Pattern = 1 Recall correlation = " << (p1_corr * 100) << "%" << std::endl;
+                    std::cout << "Time = " << this->time_vec[i] << " Pattern = 2 Recall correlation = " << (p2_corr * 100) << "%" << std::endl;
+                    std::cout << "Time = " << this->time_vec[i] << " Pattern = 3 Recall correlation = " << (p3_corr * 100) << "%" << std::endl;
+                    std::cout << "Time = " << this->time_vec[i] << " Pattern = 4 Recall correlation = " << (p4_corr * 100) << "%" << std::endl;
+                    std::cout << "Time = " << this->time_vec[i] << " Pattern = 5 Recall correlation = " << (p5_corr * 100) << "%" << std::endl;
+
+                    if (out.good() && i == 999) {
+                        out << "1\t" << p1_corr << "\n";
+                        out << "2\t" << p2_corr << "\n";
+                        out << "3\t" << p3_corr << "\n";
+                        out << "4\t" << p4_corr << "\n";
+                        out << "5\t" << p5_corr << "\n";
+                    }
+
+                    for (uint i = 0; i < ntwk->m_N; i++) {
+                        this->m_spurious_recall_count[i] += spurious_recall_count[i];
+                    }
+
+                    for (uint i = 0; i < patterns_vec.size(); i++) {
+                        std::vector<uint> tmp(ntwk->m_N, 0);
+                        recall_count.push_back(tmp);
+                    }
+
+                    for (uint j = 0; j < ntwk->m_N; j++) {
+                        spurious_recall_count[j] = 0;
+                    }
+
+                    p1_corr = 0.0f;
+                    p2_corr = 0.0f;
+                    p3_corr = 0.0f;
+                    p4_corr = 0.0f;
+                    p5_corr = 0.0f;
+                }
+            }
         }
     }
+    out.close();
 
     write_stats();
 
@@ -1302,7 +1287,6 @@ void Population::write_stats()
     }
     out5.close();
 
-    
     std::ofstream out6(this->result_file_path + "/ca_spurious_recalled_neurons.csv", std::ios_base::binary);
     if (out6.good()) {
         for (uint i = 0; i < this->m_spurious_recall_count.size(); i++) {

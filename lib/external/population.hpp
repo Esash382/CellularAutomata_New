@@ -73,10 +73,8 @@ private:
 
     void update_stats(uint n);
     void write_stats();
-    int get_random_pattern_index(std::vector<std::vector<uint>> recall_count);
-    void get_random_pattern_index(std::vector<std::vector<uint>> recall_count, _time_t n);
-    void get_recall_correlation(std::vector<std::vector<uint>> recall_count, uint pattern_size);
-    void get_spurious_recall_count(_time_t n);
+    void get_spurious_recall_count(_time_t n, std::vector<uint> spurious_recall_count);
+    double get_recall_correlation(std::vector<uint> active_neuron_stats, std::vector<uint> pattern, uint N, uint time);
 
     _time_t get_noisy_delay(float del, float step);
 
