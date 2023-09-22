@@ -1031,12 +1031,19 @@ void Population::process_networks()
     for (auto ntwk : this->population_network) {
         if (ntwk->m_type != PSEUDO_NEURON && ntwk->enable_learning == 1.0) {
             auto patterns_vec = this->p_rand_neuron_ids[ntwk->m_ntwk_id];
-            std::vector<std::vector<uint>> recall_count;
             std::vector<uint> spurious_recall_count(ntwk->m_N);
+            std::vector<uint> recall_count1(ntwk->m_N);
+            std::vector<uint> recall_count2(ntwk->m_N);
+            std::vector<uint> recall_count3(ntwk->m_N);
+            std::vector<uint> recall_count4(ntwk->m_N);
+            std::vector<uint> recall_count5(ntwk->m_N);
 
-            for (uint i = 0; i < patterns_vec.size(); i++) {
-                std::vector<uint> tmp(ntwk->m_N, 0);
-                recall_count.push_back(tmp);
+            for (uint i = 0; i < ntwk->m_N; i++) {
+                recall_count1[i] = 0;
+                recall_count2[i] = 0;
+                recall_count3[i] = 0;
+                recall_count4[i] = 0;
+                recall_count5[i] = 0;
             }
 
             for (uint j = 0; j < ntwk->m_N; j++) {
@@ -1059,25 +1066,43 @@ void Population::process_networks()
                         for (uint p = 0; p < patterns_vec.size(); p++) {
                             if (std::find(patterns_vec[p].begin(), patterns_vec[p].end(), active_neuron_index) !=
                                                 patterns_vec[p].end()) { // if the neuron in pattern is found to be active
-                                recall_count[p][active_neuron_index] = 1;
+                                switch(p) {
+                                    case 0: recall_count1[active_neuron_index] = 1; break;
+                                    case 1: recall_count2[active_neuron_index] = 1; break;
+                                    case 2: recall_count3[active_neuron_index] = 1; break;
+                                    case 3: recall_count4[active_neuron_index] = 1; break;
+                                    case 4: recall_count5[active_neuron_index] = 1; break;
+                                }
                                 found = true;
-                                break;
                             }
                         }
 
                         if (!found) { // if it is a spurious neuron recall
                             std::cout << "time = " << this->time_vec[i] << " spurious recall of " << active_neuron_index << std::endl;
                             spurious_recall_count[active_neuron_index] = 1;
+
+                            for (uint p = 0; p < patterns_vec.size(); p++) {
+                                switch(p) {
+                                    case 0: recall_count1[active_neuron_index] = 1; break;
+                                    case 1: recall_count2[active_neuron_index] = 1; break;
+                                    case 2: recall_count3[active_neuron_index] = 1; break;
+                                    case 3: recall_count4[active_neuron_index] = 1; break;
+                                    case 4: recall_count5[active_neuron_index] = 1; break;
+                                }
+                            }
                         }
                     }
                 }
 
-                if ((i % 20 == 0) || i == 999) {
-                    p1_corr = get_recall_correlation(recall_count[0], patterns_vec[0], ntwk->m_N, this->time_vec[i]);
-                    p2_corr = get_recall_correlation(recall_count[1], patterns_vec[1], ntwk->m_N, this->time_vec[i]);
-                    p3_corr = get_recall_correlation(recall_count[2], patterns_vec[2], ntwk->m_N, this->time_vec[i]);
-                    p4_corr = get_recall_correlation(recall_count[3], patterns_vec[3], ntwk->m_N, this->time_vec[i]);
-                    p5_corr = get_recall_correlation(recall_count[4], patterns_vec[4], ntwk->m_N, this->time_vec[i]);
+//                if (i == 924 || i == 949 || i == 974 || i == 999) {
+                if (i == 919 || i == 939 || i == 959 || i == 979 || i == 999) {
+//                if ( (i % 20) == 0 || i == 999) {
+//                if (i == 949 || i == 999) {
+                    p1_corr = get_recall_correlation(recall_count1, patterns_vec[0], ntwk->m_N, this->time_vec[i]);
+                    p2_corr = get_recall_correlation(recall_count2, patterns_vec[1], ntwk->m_N, this->time_vec[i]);
+                    p3_corr = get_recall_correlation(recall_count3, patterns_vec[2], ntwk->m_N, this->time_vec[i]);
+                    p4_corr = get_recall_correlation(recall_count4, patterns_vec[3], ntwk->m_N, this->time_vec[i]);
+                    p5_corr = get_recall_correlation(recall_count5, patterns_vec[4], ntwk->m_N, this->time_vec[i]);
 
                     get_spurious_recall_count(this->time_vec[i], spurious_recall_count);
 
@@ -1096,17 +1121,20 @@ void Population::process_networks()
                         out << "5\t" << p5_corr << "\n";
                     }
 
-                    for (uint i = 0; i < ntwk->m_N; i++) {
-                        this->m_spurious_recall_count[i] += spurious_recall_count[i];
+                    for (uint k = 0; k < ntwk->m_N; k++) {
+                        this->m_spurious_recall_count[k] += spurious_recall_count[k];
                     }
 
-                    for (uint i = 0; i < patterns_vec.size(); i++) {
-                        std::vector<uint> tmp(ntwk->m_N, 0);
-                        recall_count.push_back(tmp);
+                    for (uint k = 0; k < ntwk->m_N; k++) {
+                        recall_count1[k] = 0;
+                        recall_count2[k] = 0;
+                        recall_count3[k] = 0;
+                        recall_count4[k] = 0;
+                        recall_count5[k] = 0;
                     }
 
-                    for (uint j = 0; j < ntwk->m_N; j++) {
-                        spurious_recall_count[j] = 0;
+                    for (uint k = 0; k < ntwk->m_N; k++) {
+                        spurious_recall_count[k] = 0;
                     }
 
                     p1_corr = 0.0f;
