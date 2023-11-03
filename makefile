@@ -1,4 +1,4 @@
-LD_LIBRARY_PATH := /home/ashraya/Documents/Notes/CellularAutomata_Fast/lib
+LD_LIBRARY_PATH := /home/$(USER)/Documents/Notes/CellularAutomata_Fast/lib
 
 out: libca.so main.o
 	if [ ! -d "./bin" ]; then mkdir bin; fi

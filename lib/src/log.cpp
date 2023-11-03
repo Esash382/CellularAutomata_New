@@ -1,12 +1,15 @@
 #include "../include/log.hpp"
+#include <unistd.h>
 
 Log* Log::m_instance = nullptr;
 std::ofstream Log::out;
 
-Log* Log::getInstance() {
+Log* Log::getInstance()
+{
+    std::string username = getlogin();
     if (!m_instance) {
         m_instance = new Log();
-        out.open("/home/ashraya/Documents/Notes/CellularAutomata_Fast/results/log.txt", ios::out | ios::binary);
+        out.open("/home/" + username + "/Documents/Notes/CellularAutomata_Fast/results/log.txt", ios::out | ios::binary);
     }
 
     return m_instance;

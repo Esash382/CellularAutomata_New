@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <dlfcn.h>
+#include <unistd.h>
 
 #include "../lib/external/population.hpp"
 #include "../include/plot.hpp"
@@ -51,8 +52,9 @@ void init_and_process_networks(const char* filepath) {
 
 int main()
 {
-	const char* filepath = "/home/ashraya/Documents/Notes/CellularAutomata_Fast";
-	init_and_process_networks(filepath);
+    std::string username = getlogin();
+    std::string filepath = "/home/" + username + "/Documents/Notes/CellularAutomata_Fast";
+	init_and_process_networks(filepath.c_str());
 
 	Plot::plot_neurons_stats();
 

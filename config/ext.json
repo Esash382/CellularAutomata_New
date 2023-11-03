@@ -20,5 +20,10 @@
     "ext_val_1" : 10,
     "ext_step" : 0,
 
-    "nf" : 10
+    "nf" : 10 ,
+
+    "enable_learning": 0.0,
+    "p_rand_neurons": 0.0,
+    "no_of_patterns": 0,
+    "intersecting_patterns": 0.0
 }
