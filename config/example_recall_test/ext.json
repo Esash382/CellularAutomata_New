@@ -2,7 +2,7 @@
     "ext" : 102.0,
     "id" : 102.0,
     "type" : 2.0,
-    "N" : 10.0,
+    "N" : 100.0,
     "k" : 0.0,
     "nburst" : 1.0,
     "threshold" : 1.0,
@@ -22,7 +22,7 @@
 
     "nf" : 10 ,
 
-    "enable_learning": 1.0,
-    "p_rand_neurons": 10.0,
+    "enable_learning": 0.0,
+    "p_rand_neurons": 0.0,
     "no_of_patterns": 1
 }

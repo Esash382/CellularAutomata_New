@@ -43,6 +43,7 @@ with open('results/ca_stats.csv') as f:
     B = []
     BS = []
     CA3 = []
+    CA3_2 = []
     PS = []
     EC = []
 
@@ -65,11 +66,13 @@ with open('results/ca_stats.csv') as f:
                 EC = data[:, i]
             elif (name == "ps"):
                 PS = data[:, i]
+            elif (name == "ext2"):
+                CA3_2 = data[:, i]
             else:
                 CA3 = data[:, i]
 
     # Plot active neuron stats
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9) = plt.subplots(9, 1, figsize=(10, 10), sharex=True)
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, figsize=(10, 10), sharex=True)
     ax1.title.set_text('Cellular automata simulation of CA1 circuit')
     if (len(E) > 0):
         ax1.plot(t, E)
@@ -124,7 +127,7 @@ with open('results/ca_stats.csv') as f:
         p0=[guess_freq, guess_amplitude, guess_phase]
 
         s_guess = my_sin(t, *p0)
-        ax4.plot(t, s_guess, color='green')
+#        ax4.plot(t, s_guess, color='green')
         ax4.grid()
 
     if (len(HIPP) > 0):
@@ -165,14 +168,20 @@ with open('results/ca_stats.csv') as f:
         ax8.set_ylabel('CA3')
         ax8.grid()
 
-    if (len(PS) > 0):
-        ax9.plot(t, PS)
-        ax9.set_ylabel('PS')
+    if (len(CA3_2) > 0):
+        ax9.plot(t, CA3_2)
+        ax9.set_ylabel('CA3_2')
         ax9.set_xlabel('time, t(ms)')
         ax9.grid()
 
+    if (len(PS) > 0):
+        ax10.plot(t, PS)
+        ax10.set_ylabel('PS')
+        ax10.set_xlabel('time, t(ms)')
+        ax10.grid()
+
     plt.tight_layout()
-    plt.savefig('figs/recall_fin/intersecting patterns/more_bas_effect.png', dpi=500)
+    plt.savefig('figs/CA1/recall-2/1_ca1_int_no_oth_activity.png', dpi=500)
 #    plt.show()
 
 
@@ -182,53 +191,54 @@ with open('results/ca_stats.csv') as f:
 #    plt.grid()
 #    spec, freq, _ = plt.phase_spectrum(E, color ='green', Fs=Fs, Fc=0)
 
-'''
-    plt.figure(figsize=(8, 3))
-    dataR = genfromtxt('results/ex.csv', delimiter='\t')
-    dataPRand = genfromtxt('results/ca_p_rand_stats.csv', delimiter='\t')
-    dataT = dataR.T
-    dataS = np.delete(dataT, 0, axis=0)
-    dataS[dataS == -1] = np.nan
-    dataS1 = dataS.copy()
-    dataS2 = dataS.copy()
-    dataS3 = dataS.copy()
-    dataS4 = dataS.copy()
-    dataS5 = dataS.copy()
-    dataS6 = dataS.copy()
+    path = 'results/ca_p_rand_stats.csv'
+    if (os.path.isfile(path) and (os.stat(path).st_size != 0)):
+        plt.figure(figsize=(8, 3))
+        dataR = genfromtxt('results/ex.csv', delimiter='\t')
+        dataPRand = genfromtxt(path, delimiter='\t')
+        dataT = dataR.T
+        dataS = np.delete(dataT, 0, axis=0)
+        dataS[dataS == -1] = np.nan
+        dataS1 = dataS.copy()
+        dataS2 = dataS.copy()
+        dataS3 = dataS.copy()
+        dataS4 = dataS.copy()
+        dataS5 = dataS.copy()
+        dataS6 = dataS.copy()
 
-    colors = cm.rainbow(np.linspace(0, 1, 6))
+        colors = cm.rainbow(np.linspace(0, 1, 6))
 
-    for i in range(len(dataS)):
-        for j in range(len(dataS[i])):
-            if (np.isnan(dataS[i][j])):
-                continue
-            for p in range(len(dataPRand)):
-                if (dataS[i][j] not in dataPRand[p]): # have only recalled neurons
-                    if p == 0:
-                        dataS1[i][j] = np.nan
-                    elif p == 1:
-                        dataS2[i][j] = np.nan
-                    elif p == 2:
-                        dataS3[i][j] = np.nan
-                    elif p == 3:
-                        dataS4[i][j] = np.nan
-                    elif p == 4:
-                        dataS5[i][j] = np.nan
-                else:
-                    dataS6[i][j] = np.nan   # have only spurious active neurons
+        for i in range(len(dataS)):
+            for j in range(len(dataS[i])):
+                if (np.isnan(dataS[i][j])):
+                    continue
+                for p in range(len(dataPRand)):
+                    if (dataS[i][j] not in dataPRand[p]): # have only recalled neurons
+                        if p == 0:
+                            dataS1[i][j] = np.nan
+                        elif p == 1:
+                            dataS2[i][j] = np.nan
+                        elif p == 2:
+                            dataS3[i][j] = np.nan
+                        elif p == 3:
+                            dataS4[i][j] = np.nan
+                        elif p == 4:
+                            dataS5[i][j] = np.nan
+                    else:
+                        dataS6[i][j] = np.nan   # have only spurious active neurons
 
-        plt.scatter(t, dataS1[i], marker="o", s=5, color=colors[0])
-        plt.scatter(t, dataS2[i], marker="o", s=5, color=colors[1])
-        plt.scatter(t, dataS3[i], marker="o", s=5, color=colors[2])
-        plt.scatter(t, dataS4[i], marker="o", s=5, color=colors[3])
-        plt.scatter(t, dataS5[i], marker="o", s=5, color=colors[4])
-        plt.scatter(t, dataS6[i], marker="o", s=50, color='red')
+            plt.scatter(t, dataS1[i], marker="o", s=5, color=colors[0])
+            plt.scatter(t, dataS2[i], marker="o", s=5, color=colors[1])
+            plt.scatter(t, dataS3[i], marker="o", s=5, color=colors[2])
+            plt.scatter(t, dataS4[i], marker="o", s=5, color=colors[3])
+            plt.scatter(t, dataS5[i], marker="o", s=5, color=colors[4])
+            plt.scatter(t, dataS6[i], marker="o", s=50, color='red')
 
-    plt.title('Spike raster plot')
-    plt.xlabel('time (ms)')
-    plt.ylabel('Excitatory population: neuron number')
-    plt.ylim(0, 100)
-#    plt.savefig('figs/recall_fin/nonintersecting patterns/2_ca1_nonint_raster.png', dpi=500)
+        plt.title('Spike raster plot')
+        plt.xlabel('time (ms)')
+        plt.ylabel('Excitatory population: neuron number')
+        plt.ylim(0, 100)
+        plt.savefig('figs/CA1/recall-2/2_ca1_int_no_oth_raster.png', dpi=500)
     # plt.legend((dots, stars), ('Truely recalled neurons', 'Falsely recalled neurons'))
 
 plt.figure(figsize=(8, 6))
@@ -248,8 +258,9 @@ plt.plot(xf[:100], 1.0 / 10 * np.abs(yf[0:N//10]), label='Pyramidal cells')
 plt.xlabel("Frequency (Hz)")
 plt.legend()
 plt.grid()
-#plt.savefig('figs/recall_fin/nonintersecting patterns/3_ca1_nonint_fft.png', dpi=500)
+#plt.savefig('figs/CA1/recall-2/3_ca1_no_bis_fft.png', dpi=500)
 
+'''
 # bar plot for % recall of patterns
 plt.figure(figsize=(8, 6))
 data = genfromtxt('results/recall_percentage.csv', dtype=int, delimiter='\t')
@@ -266,23 +277,25 @@ plt.ylabel('% recall')
 plt.xticks(pattern_index, pattern_index)
 plt.bar(pattern_index, recall_percent)
 #plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_bar.png', dpi=500)
+'''
 
 # bar plot for recall correlation
 plt.figure(figsize=(8, 6))
-data = genfromtxt('results/recall_correlation.csv', dtype=float, delimiter='\t')
-last_data = []
-for d in data:
-    last_data.append(d)
+path = 'results/recall_correlation.csv'
+if (os.path.isfile(path) and (os.stat(path).st_size != 0)):
+    data = genfromtxt(path, dtype=float, delimiter='\t')
+    last_data = []
+    for d in data:
+        last_data.append(d)
 
-last_data = np.array(last_data)
-pattern_index = last_data[:, 0]
-recall_percent = last_data[:, 1]
-plt.xlabel('pattern index')
-plt.ylabel('recall correlation')
-plt.xticks(pattern_index, pattern_index)
-plt.bar(pattern_index, recall_percent)
-#plt.savefig('figs/recall_fin/nonintersecting patterns/4_ca1_nonint_recall_corr.png', dpi=500)
-'''
-
+    last_data = np.array(last_data)
+    pattern_index = last_data[:, 0]
+    recall_percent = last_data[:, 1]
+    plt.xlabel('pattern index')
+    plt.ylabel('recall correlation')
+    plt.xticks(pattern_index, pattern_index)
+    plt.bar(pattern_index, recall_percent)
+    #plt.savefig('figs/CA1/recall-2/4_ca1_no_bis_recall.png', dpi=500)
 
 plt.show()
+
